@@ -836,7 +836,7 @@ function findKey(tab,row,col){
 }
 function applyLive(data){
   TEAM.name=data.athlete.name;EVENTS=[];SEASON=parsePeriod(data.period);if(SEASON)EVENTS=SEASON.events;
-  WEEKS=data.weeks.map((w,wi)=>({week:wi+1,name:w.name,label:w.label,date:w.date,tab:w.tab,
+  WEEKS=data.weeks.filter(w=>w.days.length&&parseFloat(w.name)>=1).map((w,wi)=>({week:wi+1,name:w.name,label:w.label,date:w.date,tab:w.tab,
     days:w.days.map(d=>({day:d.day,summary:d.summary,items:d.items.map(it=>({...it,
       sets:it.sets.map(s=>{const p=parseLogged(s.load,s.reps);return{load:p.presc,reps:s.reps,col:s.col,_logged:p.logged}})}))}))}));
   S.logs={};S.notes={};
