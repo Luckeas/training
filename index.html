@@ -54,6 +54,8 @@ a{color:inherit}
 /* top bar */
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
 .top .wrap{display:flex;align-items:center;gap:12px;padding-block:12px}
+.teamlogo{width:40px;height:40px;border-radius:10px;object-fit:contain;background:#fff;flex:none;margin-right:10px;box-shadow:0 0 0 1px var(--line)}
+.loader .teamlogo{width:84px;height:84px;margin:0 0 6px}
 .brand{font-family:var(--display);font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:15px}
 .brand small{display:block;font-family:var(--body);font-weight:500;letter-spacing:0;text-transform:none;color:var(--muted);font-size:12px}
 .spacer{flex:1}
@@ -266,6 +268,21 @@ const TEAM = {name:"Training", season:"Sample", timerBase:"https://luckeas.githu
 const API_URL = "https://script.google.com/macros/s/AKfycbwH9P1wdXPqAPo1tIr3hjFzJVvE0OO_EeRn2xI1jGWI0xn1sMzggLXCIA5cE2FooFslHw/exec";  // the Google script's web-app URL, once deployed
 const TOKEN = new URLSearchParams(location.search).get("t") || "";
 const LIVE = !!(API_URL && TOKEN);
+// Team branding: logo + accent colour, picked from the athlete's team (Admin → Copies column B).
+const BRANDS={
+  immortals:{logo:"logos/immortals.png",icon:"logos/immortals-icon.png",accent:"#c4492d",ink:"#fff"},
+  concordia:{logo:"logos/concordia.png",icon:"logos/concordia-icon.png",accent:"#912338",ink:"#fff"},
+  mcgill:{logo:"logos/mcgill.png",icon:"logos/mcgill-icon.png",accent:"#e0202f",ink:"#fff"},
+  dbz:{logo:"logos/dbz.png",icon:"logos/dbz-icon.png",accent:"#d7191f",ink:"#fff"}};
+let BRAND=null;
+function applyBrand(team){
+  const k=String(team||"").toLowerCase().replace(/[^a-z]/g,"");BRAND=BRANDS[k]||null;
+  try{if(BRAND)localStorage.setItem("training-team",k);else localStorage.removeItem("training-team")}catch(e){}
+  const r=document.documentElement.style;
+  if(BRAND){r.setProperty("--accent",BRAND.accent);r.setProperty("--accent-ink",BRAND.ink)}else{r.removeProperty("--accent");r.removeProperty("--accent-ink")}
+  const ic=document.querySelector('link[rel="apple-touch-icon"]');if(ic&&BRAND)ic.href=BRAND.icon;
+}
+try{const k=localStorage.getItem("training-team");if(LIVE&&k)applyBrand(k)}catch(e){}
 // One random id per phone/browser. The script allows 2 devices per athlete link.
 const DEVICE = (()=>{let d="";try{d=localStorage.getItem("training-device")||""}catch(e){}
   if(!d){d=Array.from(crypto.getRandomValues(new Uint8Array(12)),b=>b.toString(16).padStart(2,"0")).join("");try{localStorage.setItem("training-device",d)}catch(e){}}
@@ -413,7 +430,7 @@ document.getElementById("tabs").addEventListener("click",e=>{const b=e.target.cl
 
 function topbar(inner){return `<header class="top"><div class="wrap">${inner}</div></header>`}
 function brandBar(){const ini=(S.profile.name||"?").trim().slice(0,1).toUpperCase();
-  return topbar(`<div class="brand">${LIVE?esc(TEAM.name)+"'s Program":TEAM.name+" Gym"}<small>${LIVE?'<span id="sync" class="sync">Synced with your sheet</span>':TEAM.season}</small></div><div class="spacer"></div><button class="avatar" id="openSettings" aria-label="${T("settings")}">${esc(ini)}</button>`)}
+  return topbar(`${BRAND?`<img class="teamlogo" src="${BRAND.logo}" alt="">`:""}<div class="brand">${LIVE?esc(TEAM.name)+"'s Program":TEAM.name+" Gym"}<small>${LIVE?'<span id="sync" class="sync">Synced with your sheet</span>':TEAM.season}</small></div><div class="spacer"></div><button class="avatar" id="openSettings" aria-label="${T("settings")}">${esc(ini)}</button>`)}
 
 /* ---------- TODAY ---------- */
 function viewToday(){
@@ -835,6 +852,7 @@ function findKey(tab,row,col){
   return null;
 }
 function applyLive(data){
+  applyBrand(data.athlete.team);
   TEAM.name=data.athlete.name;EVENTS=[];SEASON=parsePeriod(data.period);if(SEASON)EVENTS=SEASON.events;
   WEEKS=data.weeks.filter(w=>w.days.length&&parseFloat(w.name)>=1).map((w,wi)=>({week:wi+1,name:w.name,label:w.label,date:w.date,tab:w.tab,
     days:w.days.map(d=>({day:d.day,summary:d.summary,items:d.items.map(it=>({...it,
@@ -878,7 +896,7 @@ function setSync(st){const el=document.getElementById("sync");if(!el)return;el.d
 window.addEventListener("online",()=>flushQueue());
 async function boot(){
   if(!LIVE){render();return}
-  app.innerHTML=`<div class="loader"><div class="ring" aria-hidden="true"><i></i></div><div class="eyebrow">Loading your program…</div></div>`;
+  app.innerHTML=`<div class="loader">${BRAND?`<img class="teamlogo" src="${BRAND.logo}" alt="">`:""}<div class="ring" aria-hidden="true"><i></i></div><div class="eyebrow">Loading your program…</div></div>`;
   const CK=KEY+"-cache";
   try{
     const r=await fetch(API_URL+"?t="+encodeURIComponent(TOKEN)+"&d="+encodeURIComponent(DEVICE));const data=await r.json();
