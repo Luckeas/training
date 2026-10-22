@@ -350,7 +350,7 @@ function phaseColor(p){return PHASE_COLORS[p]||"var(--accent)"}
 
 /* ---------- helpers ---------- */
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const isCircuit=d=>d.day==="Day 4";
+const isCircuit=d=>d.circuit!==undefined?!!d.circuit:d.day==="Day 4";
 function dayTitle(d){
   if(isCircuit(d))return T("dayNames").circuit;
   const types=d.items.map(i=>i.type);const legs=types.filter(t=>t==="Legs").length,ub=types.filter(t=>t==="Push"||t==="Pull").length;
@@ -545,11 +545,11 @@ function viewCircuit(w,d){
   const groups={};d.items.forEach((it,i)=>{const g=/^[A-Z]/.test(it.pod)?it.pod[0]:"Stations";(groups[g]=groups[g]||[]).push([it,i])});
   const doneKey=`${w.week}|${d.day}`;
   return `<div class="wrap">
-   <div class="whead"><div class="eyebrow">${T("week")} ${w.week} · ${esc(phaseOf(w))}</div><h1>${T("circuit")}</h1></div>
+   <div class="whead"><div class="eyebrow">${T("week")} ${esc(LIVE?w.name:w.week)}${phaseOf(w)?" · "+esc(phaseOf(w)):""}</div><h1>${T("circuit")}</h1></div>
    <section>
     <div class="timerband"><div class="big">${esc(d.summary.split(" · ").slice(1).join(" · ")||d.summary)}</div>
       <div class="small">${T("timerNote")}</div>
-      <a href="${TEAM.timerBase}${w.week}/" target="_blank" rel="noopener">▶ ${T("openTimer")}</a></div>
+      ${(()=>{const u=LIVE?d.timer:TEAM.timerBase+w.week+"/";return u?`<a href="${esc(u)}" target="_blank" rel="noopener">▶ ${T("openTimer")}</a>`:""})()}</div>
     ${Object.entries(groups).map(([g,list])=>`<div class="card pod">
       <div class="ph"><b>${g==="Stations"?"Stations":"Pod "+g}</b><span class="chip">${esc(String(list[0][0].rounds).split("\n")[0])}${/^\d+$/.test(list[0][0].rounds)?" rounds":""}</span></div>
       ${list.map(([it])=>`<div class="st"><span class="p">${esc(it.pod)}</span><div><div class="nm">${esc(it.name)}</div><div class="nt">${esc([it.work,it.rest&&it.rest!=="0s"&&it.rest!=="—"?it.rest+" rest":"",it.notes].filter(Boolean).join(" · "))}</div></div>
@@ -855,8 +855,8 @@ function applyLive(data){
   applyBrand(data.athlete.team);
   TEAM.name=data.athlete.name;EVENTS=[];SEASON=parsePeriod(data.period);if(SEASON)EVENTS=SEASON.events;
   WEEKS=data.weeks.filter(w=>w.days.length&&parseFloat(w.name)>=1).map((w,wi)=>({week:wi+1,name:w.name,label:w.label,date:w.date,tab:w.tab,
-    days:w.days.map(d=>({day:d.day,summary:d.summary,items:d.items.map(it=>({...it,
-      sets:it.sets.map(s=>{const p=parseLogged(s.load,s.reps);return{load:p.presc,reps:s.reps,col:s.col,_logged:p.logged}})}))}))}));
+    days:w.days.map(d=>({day:d.day,summary:d.summary,circuit:!!d.circuit,timer:d.timer||null,items:d.items.map(it=>({...it,
+      sets:(it.sets||[]).map(s=>{const p=parseLogged(s.load,s.reps);return{load:p.presc,reps:s.reps,col:s.col,_logged:p.logged}})}))}))}));
   S.logs={};S.notes={};
   WEEKS.forEach(w=>w.days.forEach(d=>d.items.forEach((it,i)=>{
     if(it.note)S.notes[`${w.week}|${d.day}|${i}`]=it.note;
