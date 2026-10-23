@@ -55,7 +55,7 @@ a{color:inherit}
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
 .top .wrap{display:flex;align-items:center;gap:12px;padding-block:12px}
 .teamlogo{width:40px;height:40px;border-radius:10px;object-fit:contain;background:#fff;flex:none;margin-right:10px;box-shadow:0 0 0 1px var(--line)}
-.loader .teamlogo{width:84px;height:84px;margin:0 0 6px}
+.loader .teamlogo{width:150px;height:150px;border-radius:22px;margin:0 0 8px}
 .brand{font-family:var(--display);font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:15px}
 .brand small{display:block;font-family:var(--body);font-weight:500;letter-spacing:0;text-transform:none;color:var(--muted);font-size:12px}
 .spacer{flex:1}
@@ -305,13 +305,13 @@ const STR = {
  en:{today:"Today",program:"Program",progress:"Progress",guide:"Guide",seasonTab:"Season",seasonIntro:"Your training blocks and the dates that matter",blocks:"Training blocks",dates:"Key dates",now:"Now",weeksWord:"Weeks",week:"Week",thisWeek:"This week",start:"Start",resume:"Resume",done:"Done",notStarted:"To do",opens:"Opens",nextUp:"Next up",inDays:d=>d===0?"today":d===1?"tomorrow":`in ${d} days`,
   sets:"sets",lb:"lb",reps:"reps",target:"Target",last:"Last time",demo:"Demo",notes:"Notes (optional)",finish:"Finish workout",finished:"Workout done",volume:"Volume",setsDone:"Sets",prs:"PRs",back:"Back",rest:"Rest",skip:"Skip",restOver:"Rest done — go",superset:"Superset · go straight to the next exercise",
   circuit:"Team circuit",openTimer:"Open circuit timer",timerNote:"Coach runs this on the speaker. Everyone follows the same clock.",markCircuit:"Mark circuit done",circuitDone:"Circuit done",
-  compliance:"Sessions done",streak:"Week streak",bench1rm:"Bench est. 1RM",pullups:"Pull-ups max",benchmarks:"Benchmarks",yourLevel:"You're at",toNext:"to",records:"Best lifts",noData:"Log a few sessions and your numbers show up here.",
+  compliance:"Sessions done",streak:"Week streak",bench1rm:"Bench est. 1RM",fromWorkouts:"Estimated from the sets you log in your workouts. Your official numbers are the ones from fitness test days.",pullups:"Pull-ups max",benchmarks:"Benchmarks",yourLevel:"You're at",toNext:"to",records:"Best lifts",noData:"Log a few sessions and your numbers show up here.",
   settings:"Profile & settings",name:"Name",sex:"Benchmark table",women:"Women",men:"Men",bw:"Bodyweight (lb)",lang:"Language",look:"Look",coach:"Coach preview (show all 32 weeks)",restTimer:"Rest timer after each set",sample:"You're looking at sample logs so you can see the app in use.",clear:"Clear sample",close:"Close",
   rules:"How to train",season:"Season calendar",terms:"Terms",locked:"Locked until",dayNames:{upper:"Upper body",lower:"Lower body",full:"Full body",circuit:"Team circuit"},est:"est.",ofSets:"of",guideIntro:"Your coach's rules for every session.",synced:"Program updates from the team master sheet."},
  fr:{today:"Aujourd'hui",program:"Programme",progress:"Progrès",guide:"Guide",seasonTab:"Saison",seasonIntro:"Tes blocs d'entraînement et les dates importantes",blocks:"Blocs d'entraînement",dates:"Dates importantes",now:"En cours",weeksWord:"Semaines",week:"Semaine",thisWeek:"Cette semaine",start:"Commencer",resume:"Continuer",done:"Fait",notStarted:"À faire",opens:"Ouvre",nextUp:"Prochain",inDays:d=>d===0?"aujourd'hui":d===1?"demain":`dans ${d} jours`,
   sets:"séries",lb:"lb",reps:"rép.",target:"Cible",last:"Dernière fois",demo:"Démo",notes:"Notes (optionnel)",finish:"Terminer la séance",finished:"Séance terminée",volume:"Volume",setsDone:"Séries",prs:"Records",back:"Retour",rest:"Repos",skip:"Passer",restOver:"Repos fini — go",superset:"Superset · enchaîne avec le prochain exercice",
   circuit:"Circuit d'équipe",openTimer:"Ouvrir le chrono du circuit",timerNote:"Le coach le fait jouer sur le haut-parleur. Tout le monde suit le même chrono.",markCircuit:"Circuit terminé",circuitDone:"Circuit terminé",
-  compliance:"Séances faites",streak:"Semaines de suite",bench1rm:"Développé couché 1RM est.",pullups:"Tractions max",benchmarks:"Standards",yourLevel:"Ton niveau",toNext:"pour",records:"Meilleurs levés",noData:"Note quelques séances et tes chiffres vont apparaître ici.",
+  compliance:"Séances faites",streak:"Semaines de suite",bench1rm:"Développé couché 1RM est.",fromWorkouts:"Estimé à partir des séries que tu notes à l\u2019entraînement. Tes chiffres officiels sont ceux des journées de tests.",pullups:"Tractions max",benchmarks:"Standards",yourLevel:"Ton niveau",toNext:"pour",records:"Meilleurs levés",noData:"Note quelques séances et tes chiffres vont apparaître ici.",
   settings:"Profil et réglages",name:"Nom",sex:"Tableau de standards",women:"Femmes",men:"Hommes",bw:"Poids corporel (lb)",lang:"Langue",look:"Style",restTimer:"Chrono de repos après chaque série",coach:"Aperçu coach (voir les 32 semaines)",sample:"Ce sont des données d'exemple pour voir l'app en action.",clear:"Effacer l'exemple",close:"Fermer",
   rules:"Consignes",season:"Calendrier de saison",terms:"Termes",locked:"Disponible le",dayNames:{upper:"Haut du corps",lower:"Bas du corps",full:"Corps complet",circuit:"Circuit d'équipe"},est:"est.",ofSets:"sur",guideIntro:"Les consignes de ton coach pour chaque séance.",synced:"Le programme se met à jour depuis la feuille maîtresse de l'équipe."}
 };
@@ -418,7 +418,7 @@ const I={
 };
 
 /* ---------- router ---------- */
-let VIEW={name:"today"};
+let VIEW=(()=>{try{if(!localStorage.getItem("training-seen-guide")){localStorage.setItem("training-seen-guide","1");return{name:"guide",first:true}}}catch(e){}return{name:"today"}})();
 const app=document.getElementById("app");
 function go(v){VIEW=v;render();window.scrollTo(0,0)}
 function renderTabs(){
@@ -533,7 +533,7 @@ function exCard(wn,dn,it,i){
   return `<article class="card ex">
     <div class="name"><div><div class="idx">${String(i+1).padStart(2,"0")}${it.type?" · "+esc(it.type).toUpperCase():""}</div><h3>${esc(it.name)}</h3></div>
       ${it.video?`<a class="demo" href="${esc(it.video)}" target="_blank" rel="noopener">${I.play}${T("demo")}</a>`:""}</div>
-    <div class="chips">${it.rpe?`<span class="chip">RPE ${esc(it.rpe)}</span>`:""}<span class="chip">${T("rest")} ${esc(restLabel(it.rest))}</span>${rm?`<span class="chip">1RM ${T("est")} ${r5(rm)} ${T("lb")}</span>`:""}</div>
+    <div class="chips">${/\b(db|dbs|dumbb?ells?)\b/i.test(it.name)?`<span class="chip">${S.profile.lang==="fr"?"Poids d'un haltère":"Weight of ONE dumbbell"}</span>`:""}${it.rpe?`<span class="chip">RPE ${esc(it.rpe)}</span>`:""}<span class="chip">${T("rest")} ${esc(restLabel(it.rest))}</span>${rm?`<span class="chip">1RM ${T("est")} ${r5(rm)} ${T("lb")}</span>`:""}</div>
     ${ss?`<div class="ssflag">${T("superset")}</div>`:""}
     ${last?`<div class="last">${T("last")} (${T("week").toLowerCase()} ${WN(last.w)}): <b class="num">${esc(lastTxt)}</b></div>`:""}
     <div class="colhead"><span>#</span><span>${T("target")}</span><span>${T("lb")}</span><span>${T("reps")}</span><span></span></div>
@@ -609,7 +609,7 @@ function viewProgress(){
       <div class="stat"><b>${bBest?r5(bBest):"—"}</b><span>${T("bench1rm")}</span></div></div></section>
    <section><div class="card chart"><div class="eyebrow">${T("bench1rm")} (lb)</div>${lineChart(bench," lb")}</div>
     <div class="card chart"><div class="eyebrow">${T("pullups")} (${T("reps")})</div>${lineChart(pulls,"")}</div></section>
-   <section><h2>${T("benchmarks")}</h2>
+   <section><h2>${T("benchmarks")}</h2><p class="muted small" style="margin:-4px 0 10px">${T("fromWorkouts")}</p>
     <div class="callout">Bench press 1RM: ${bl.lvl?`${T("yourLevel")} <b>${bl.lvl[0]}</b>`:"Below Entry"}${bl.next?` · <b>${bl.next[bl.col]-r5(bBest)} lb</b> ${T("toNext")} ${bl.next[0]}`:""}</div>${bl.html}
     <div class="callout">Pull-ups: ${pl.lvl?`${T("yourLevel")} <b>${pl.lvl[0]}</b>`:"Below Entry"}${pl.next?` · <b>${Math.max(0,Math.ceil(pl.next[pl.col]-pBest))} ${T("reps")}</b> ${T("toNext")} ${pl.next[0]}`:""}</div>${pl.html}
    </section>
@@ -622,6 +622,7 @@ const NEWBIE={
  en:[["RPE: how hard a set should feel","RPE 6 = you could do 4 more reps. RPE 7 = 3 more. RPE 8 = 2 more. Pick a weight that matches the RPE on the exercise."],
   ["Picking your weight","Start light on your first set. If it felt easier than the RPE, go up a little on the next set. Next week, start where you finished."],
   ["Reading an exercise","Tap the name for a demo video. \"x10-12\" means 10 to 12 reps per set. Rest is in minutes. Log the weight and reps you actually did."],
+  ["Dumbbells","Log the weight of ONE dumbbell, not both added together. Two 40s = log 40."],
   ["Pull-ups","Can't do one yet? Use a band or the assisted machine. That counts. Log the reps you did."],
   ["Technique first","Never grind a rep with bad form. Stop the set one rep early if your form breaks down."],
   ["Missed a day?","Just do the next session. Don't try to double up."],
@@ -629,6 +630,7 @@ const NEWBIE={
  fr:[["RPE : l'effort d'une série","RPE 6 = encore 4 répétitions possibles. RPE 7 = 3. RPE 8 = 2. Choisissez une charge qui correspond au RPE indiqué."],
   ["Choisir sa charge","Commencez léger à la première série. Si c'était plus facile que le RPE, augmentez un peu à la suivante. La semaine suivante, repartez où vous avez terminé."],
   ["Lire un exercice","Touchez le nom pour voir la vidéo. « x10-12 » = 10 à 12 répétitions par série. Le repos est en minutes. Inscrivez la charge et les répétitions réellement faites."],
+  ["Haltères","Inscrivez le poids d'UN haltère, pas les deux additionnés. Deux de 40 = inscrivez 40."],
   ["Tractions","Pas encore capable ? Utilisez un élastique ou la machine assistée. Ça compte. Inscrivez vos répétitions."],
   ["La technique d'abord","Ne forcez jamais une répétition avec une mauvaise technique. Arrêtez la série une répétition plus tôt si la forme se dégrade."],
   ["Séance manquée ?","Passez simplement à la suivante. Ne doublez pas."],
@@ -636,6 +638,7 @@ const NEWBIE={
 function viewGuide(){
   const L=S.profile.lang;
   return brandBar()+`<div class="wrap guide">
+   ${VIEW.first?`<section><div class="card" style="padding:16px;border-color:var(--accent)"><h2 style="margin:0 0 6px">${L==="fr"?"👋 Bienvenue!":"👋 Welcome!"}</h2><p class="muted" style="margin:0 0 12px">${L==="fr"?"Lis ce guide une fois (2 minutes). Ensuite, touche Aujourd'hui pour ta première séance. Tu peux revenir ici en tout temps avec l'onglet Guide.":"Read this guide once (2 minutes). Then tap Today to start your first session. You can come back here anytime from the Guide tab."}</p><button class="btn block" onclick="go({name:'today'})">${L==="fr"?"C'est parti →":"Let's go →"}</button></div></section>`:""}
    <section><div class="eyebrow">${T("guideIntro")}</div><h1>${T("guide")}</h1>
     <div class="card" style="padding:4px 16px">${RULES[L].map(([h,p],i)=>`<div class="rule"><h3><span class="idx">${i+1} · </span>${esc(h)}</h3><p class="muted">${esc(p)}</p></div>`).join("")}</div></section>
    <section><details class="card newbie" style="padding:4px 16px" open><summary><h2 style="display:inline">${L==="fr"?"Nouveau au gym ? Commencez ici":"New to the gym? Start here"}</h2></summary>
