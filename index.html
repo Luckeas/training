@@ -50,6 +50,7 @@ a{color:inherit}
 .app{max-width:540px;margin:0 auto;min-height:100%;padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .num{font-variant-numeric:tabular-nums}
+input.warn{border-color:var(--amber,#f2b233)!important;box-shadow:0 0 0 2px rgba(242,178,51,.35)}
 
 /* top bar */
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
@@ -621,6 +622,7 @@ function viewProgress(){
 const NEWBIE={
  en:[["RPE: how hard a set should feel","RPE 6 = you could do 4 more reps. RPE 7 = 3 more. RPE 8 = 2 more. Pick a weight that matches the RPE on the exercise."],
   ["Picking your weight","Start light on your first set. If it felt easier than the RPE, go up a little on the next set. Next week, start where you finished."],
+  ["Suggested weights","The grey numbers and \"≈ lb\" come from your best logged sets, so early on they can be a little light. If you feel strong (or your fitness test says you're stronger), go heavier. The numbers catch up as you log."],
   ["Reading an exercise","Tap the name for a demo video. \"x10-12\" means 10 to 12 reps per set. Rest is in minutes. Log the weight and reps you actually did."],
   ["Dumbbells","Log the weight of ONE dumbbell, not both added together. Two 40s = log 40."],
   ["Pull-ups","Can't do one yet? Use a band or the assisted machine. That counts. Log the reps you did."],
@@ -629,6 +631,7 @@ const NEWBIE={
   ["Pain, not effort?","Stop that exercise and message your coach."]],
  fr:[["RPE : l'effort d'une série","RPE 6 = encore 4 répétitions possibles. RPE 7 = 3. RPE 8 = 2. Choisissez une charge qui correspond au RPE indiqué."],
   ["Choisir sa charge","Commencez léger à la première série. Si c'était plus facile que le RPE, augmentez un peu à la suivante. La semaine suivante, repartez où vous avez terminé."],
+  ["Charges suggérées","Les chiffres gris et « ≈ lb » viennent de vos meilleures séries notées, donc au début ils peuvent être un peu légers. Si vous vous sentez fort (ou si votre test dit que vous l'êtes), allez plus lourd. Les chiffres s'ajustent à mesure que vous notez."],
   ["Lire un exercice","Touchez le nom pour voir la vidéo. « x10-12 » = 10 à 12 répétitions par série. Le repos est en minutes. Inscrivez la charge et les répétitions réellement faites."],
   ["Haltères","Inscrivez le poids d'UN haltère, pas les deux additionnés. Deux de 40 = inscrivez 40."],
   ["Tractions","Pas encore capable ? Utilisez un élastique ou la machine assistée. Ça compte. Inscrivez vos répétitions."],
@@ -687,7 +690,7 @@ function startRest(secs){
 function stopRest(){clearInterval(restT);document.getElementById("rest").hidden=true}
 document.getElementById("restbox").addEventListener("click",e=>{if(e.target.closest("[data-add]"))restEnd+=15000;if(e.target.closest("[data-skip]"))stopRest()});
 
-function toast(msg){const t=document.createElement("div");t.className="toast";t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),1800)}
+function toast(msg,ms){document.querySelectorAll(".toast").forEach(x=>x.remove());const t=document.createElement("div");t.className="toast";t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),ms||1800)}
 
 /* ---------- finish summary ---------- */
 function finishWorkout(wn,dn){
@@ -731,10 +734,20 @@ app.addEventListener("input",e=>{
   const f=e.target.dataset.f;if(f){const row=e.target.closest(".set");const k=row.dataset.k;S.logs[k]=Object.assign(S.logs[k]||{},{[f]:e.target.value});save();if(S.logs[k].done)queueSet(k)}
   const n=e.target.dataset.note;if(n){S.notes[n]=e.target.value;save();queueNote(n)}
 });
+/* Heaviest weight this athlete has logged on this exercise (other sets), for the typo check. */
+function usualWeight(key){const [w0,d0,i0]=key.split("|");const it0=WEEKS[w0-1]?.days.find(x=>x.day===d0)?.items[i0];if(!it0)return 0;const k=exKey(it0.name);let m=0;
+  for(const [kk,v] of Object.entries(S.logs)){if(kk===key||!v.done||!+v.wt)continue;const [w,d,i]=kk.split("|");const it=WEEKS[w-1]?.days.find(x=>x.day===d)?.items[i];if(it&&exKey(it.name)===k)m=Math.max(m,+v.wt)}
+  return m}
 function toggleSet(row,forceDone){
   const k=row.dataset.k;const v=S.logs[k]||{};
   const wt=row.querySelector('[data-f="wt"]'),rp=row.querySelector('[data-f="reps"]');
-  if(forceDone||!v.done){if(v.done)return;v.wt=wt.value||(wt.placeholder&&/^\d/.test(wt.placeholder)?wt.placeholder:"");v.reps=rp.value||(/^\d/.test(rp.placeholder)?rp.placeholder:"");wt.value=v.wt;rp.value=v.reps;v.done=true;startRest(+row.dataset.rest)}
+  if(forceDone||!v.done){if(v.done)return;
+    const cand=+(wt.value||(wt.placeholder&&/^\d/.test(wt.placeholder)?wt.placeholder:0));
+    if(cand>0&&row.dataset.ok!==String(cand)){const ref=usualWeight(k);
+      if(cand>=700||(ref>0&&cand>ref*1.6&&cand-ref>=40)){row.dataset.ok=String(cand);wt.classList.add("warn");
+        toast(S.profile.lang==="fr"?`${cand} lb ? C'est bien plus que d'habitude${ref?` (${ref})`:""}. Corrige ou touche ✓ pour confirmer.`:`${cand} lb? That's way more than usual${ref?` (${ref})`:""}. Fix it, or tap ✓ to confirm.`,4500);return}}
+    wt.classList.remove("warn");
+    v.wt=wt.value||(wt.placeholder&&/^\d/.test(wt.placeholder)?wt.placeholder:"");v.reps=rp.value||(/^\d/.test(rp.placeholder)?rp.placeholder:"");wt.value=v.wt;rp.value=v.reps;v.done=true;startRest(+row.dataset.rest)}
   else v.done=false;
   S.logs[k]=v;save();row.classList.toggle("done",v.done);updateCount();queueSet(k);
 }
