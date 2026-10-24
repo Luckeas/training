@@ -359,12 +359,15 @@ function dayTitle(d){
 }
 function restSecs(r){r=String(r||"").trim();if(/super/i.test(r))return 0;const m=r.match(/^(\d+)(?:\s*-\s*(\d+))?\s*\+?\s*(?:min)?$/i);if(!m)return 90;return +(m[2]||m[1])*60}
 function restLabel(r){r=String(r||"");if(/super/i.test(r))return "Superset";if(/^\d+(\s*-\s*\d+)?\s*\+?$/.test(r))return r.replace(/\s*-\s*/,"–").replace(/\s+/g,"")+" min";return r}
-function repsTarget(r){r=String(r||"").replace(/^x/i,"");if(/conti/i.test(r))return "max";return r.replace("-","–")}
+function repsTarget(r){r=String(r||"").replace(/^x/i,"");if(/conti/i.test(r))return "conti";return r.replace("-","–")}
 function repsPlaceholder(r){const m=String(r||"").match(/(\d+)(?:-(\d+))?/);return m?(m[2]||m[1]):""}
 function pctOf(load){const m=String(load).match(/(\d+)(?:-(\d+))?%\s*of\s*1RM/i);return m?((+m[1]+ +(m[2]||m[1]))/2)/100:null}
 const e1rm=(w,r)=>w>0&&r>0&&r<=12?w*(1+r/30):0;
 const r5=x=>Math.round(x/5)*5;
 const keyOf=(w,d,i,s)=>`${w}|${d}|${i}|${s}`;
+/* Unticked entries are kept as drafts (by sheet cell) so a reload never wipes what the athlete typed. */
+function cellKeyOf(k){const [w,d,i,s]=k.split("|");const W=WEEKS[w-1];const it=W&&W.days.find(x=>x.day===d)?.items[i];const st=it&&it.sets[s];return st&&W.tab?`${W.tab}|${it.row}|${st.col}`:null}
+function keepDraft(k){if(!LIVE)return;S.drafts=S.drafts||{};const ck=cellKeyOf(k);if(!ck)return;const v=S.logs[k]||{};if(v.done||!(v.wt||v.reps))delete S.drafts[ck];else S.drafts[ck]={wt:v.wt||"",reps:v.reps||""}}
 const WN=n=>(WEEKS[n-1]&&WEEKS[n-1].name)||n;
 const exKey=n=>n.toLowerCase().replace(/\s+/g," ").trim();
 
@@ -529,7 +532,7 @@ function exCard(wn,dn,it,i){
       <span class="sn">${si+1}</span>
       <div class="tg"><b>${esc(repsTarget(s.reps))} ${/^\d|–/.test(repsTarget(s.reps))?T("reps"):""}</b><span>${loadTxt}</span> ${sug}</div>
       <input id="wt-${wn}-${dn.slice(-1)}-${i}-${si}" inputmode="decimal" aria-label="Weight set ${si+1}" placeholder="${s.load==="BW"?"BW":/^\d+(\.\d+)?$/.test(s.load)?s.load:(prevSet?.wt||(p&&rm?r5(rm*p):"lb"))}" value="${esc(v.wt||"")}" data-f="wt">
-      <input id="rp-${wn}-${dn.slice(-1)}-${i}-${si}" inputmode="numeric" aria-label="Reps set ${si+1}" placeholder="${/conti/i.test(s.reps)?(prevSet?.reps||"max"):repsPlaceholder(s.reps)||"—"}" value="${esc(v.reps||"")}" data-f="reps">
+      <input id="rp-${wn}-${dn.slice(-1)}-${i}-${si}" inputmode="numeric" aria-label="Reps set ${si+1}" placeholder="${/conti/i.test(s.reps)?(prevSet?.reps||"conti"):repsPlaceholder(s.reps)||"—"}" value="${esc(v.reps||"")}" data-f="reps">
       <button class="chk" aria-label="Complete set ${si+1}" data-check>${I.check}</button></div>`}).join("");
   return `<article class="card ex">
     <div class="name"><div><div class="idx">${String(i+1).padStart(2,"0")}${it.type?" · "+esc(it.type).toUpperCase():""}</div><h3>${esc(it.name)}</h3></div>
@@ -731,7 +734,7 @@ app.addEventListener("click",e=>{
   if(t.closest("#circuitDone")){const k=`${VIEW.w}|${VIEW.d}`;if(S.days[k])delete S.days[k];else S.days[k]=Date.now();save();render();return}
 });
 app.addEventListener("input",e=>{
-  const f=e.target.dataset.f;if(f){const row=e.target.closest(".set");const k=row.dataset.k;S.logs[k]=Object.assign(S.logs[k]||{},{[f]:e.target.value});save();if(S.logs[k].done)queueSet(k)}
+  const f=e.target.dataset.f;if(f){const row=e.target.closest(".set");const k=row.dataset.k;S.logs[k]=Object.assign(S.logs[k]||{},{[f]:e.target.value});keepDraft(k);save();if(S.logs[k].done)queueSet(k)}
   const n=e.target.dataset.note;if(n){S.notes[n]=e.target.value;save();queueNote(n)}
 });
 /* Heaviest weight this athlete has logged on this exercise (other sets), for the typo check. */
@@ -749,7 +752,7 @@ function toggleSet(row,forceDone){
     wt.classList.remove("warn");
     v.wt=wt.value||(wt.placeholder&&/^\d/.test(wt.placeholder)?wt.placeholder:"");v.reps=rp.value||(/^\d/.test(rp.placeholder)?rp.placeholder:"");wt.value=v.wt;rp.value=v.reps;v.done=true;startRest(+row.dataset.rest)}
   else v.done=false;
-  S.logs[k]=v;save();row.classList.toggle("done",v.done);updateCount();queueSet(k);
+  S.logs[k]=v;keepDraft(k);save();row.classList.toggle("done",v.done);updateCount();queueSet(k);
 }
 // Typing the reps (and leaving the box) completes the set and starts the rest timer.
 app.addEventListener("change",e=>{
@@ -879,6 +882,8 @@ function applyLive(data){
     it.sets.forEach((s,si)=>{if(s._logged)S.logs[keyOf(w.week,d.day,i,si)]=s._logged})})));
   for(const q of Object.values(S.queue||{})){const f=findKey(q.tab,q.row,q.col);if(!f)continue;
     if(f.set&&q.log)S.logs[f.set]=q.log;if(f.note!=null&&q.note!=null)S.notes[f.note]=q.note}
+  S.drafts=S.drafts||{};for(const [ck,dv] of Object.entries(S.drafts)){const [tab,row,col]=ck.split("|");const f=findKey(tab,+row,+col);
+    if(!f||!f.set){delete S.drafts[ck];continue}if(S.logs[f.set]?.done){delete S.drafts[ck];continue}S.logs[f.set]={wt:dv.wt,reps:dv.reps,done:false}}
   if(!S.profile.name||S.profile.name==="Alex")S.profile.name=data.athlete.name;
   CUR=currentWeekNum();save();
 }
