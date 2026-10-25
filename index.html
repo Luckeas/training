@@ -476,6 +476,8 @@ function openA2hs(){
   if(IS_IOS){const otherBrowser=/CriOS|FxiOS|EdgiOS/.test(UA);
     steps=fr?[otherBrowser?"Touche le bouton <b>Partager</b> (carré avec une flèche ⬆) dans la barre d\u2019adresse.":"Touche le bouton <b>Partager</b> (carré avec une flèche ⬆) en bas de l\u2019écran (en haut à droite sur iPad).","Fais défiler et touche <b>« Sur l\u2019écran d\u2019accueil »</b>.","Touche <b>« Ajouter »</b>."]
       :[otherBrowser?"Tap the <b>Share</b> button (square with an arrow ⬆) in the address bar.":"Tap the <b>Share</b> button (square with an arrow ⬆) at the bottom of the screen (top right on iPad).","Scroll down and tap <b>“Add to Home Screen”</b>.","Tap <b>“Add”</b>."]}
+  else if(IS_ANDROID&&/SamsungBrowser/i.test(UA)){steps=fr?["Touche le menu <b>≡</b> en bas à droite.","Touche <b>« Ajouter la page à »</b>, puis <b>« Écran d\u2019accueil »</b>.","Touche <b>« Ajouter »</b>."]
+      :["Tap the <b>≡</b> menu at the bottom right.","Tap <b>“Add page to”</b>, then <b>“Home screen”</b>.","Tap <b>“Add”</b>."]}
   else if(IS_ANDROID){steps=fr?["Touche le menu <b>⋮</b> en haut à droite du navigateur.","Touche <b>« Ajouter à l\u2019écran d\u2019accueil »</b> (ou « Installer l\u2019application »).","Touche <b>« Ajouter »</b>."]
       :["Tap the <b>⋮</b> menu at the top right of your browser.","Tap <b>“Add to Home screen”</b> (or “Install app”).","Tap <b>“Add”</b>."]}
   else steps=fr?["Ajoute cette page à tes favoris : c\u2019est ton lien personnel."]:["Bookmark this page: it\u2019s your private link."];
