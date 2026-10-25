@@ -604,8 +604,8 @@ function ladder(table,val,unitFmt){
 }
 function viewProgress(){
   const released=WEEKS.filter(w=>w.week<=CUR).reduce((a,w)=>a+w.days.length,0);
-  const doneN=Object.keys(S.days).filter(k=>+k.split("|")[0]<=CUR).length;
-  let streak=0;for(let w=CUR;w>=1;w--){const ww=WEEKS[w-1];const all=ww.days.filter(d=>!isCircuit(d)).every(d=>S.days[`${w}|${d.day}`]);if(all)streak++;else if(w<CUR)break}
+  let doneN=0;for(let w=1;w<=Math.min(CUR,WEEKS.length);w++)WEEKS[w-1].days.forEach(d=>{if(dayStatus(w,d.day)==="done")doneN++});
+  let streak=0;for(let w=CUR;w>=1;w--){const ww=WEEKS[w-1];if(!ww)continue;const all=ww.days.filter(d=>!isCircuit(d)).every(d=>dayStatus(w,d.day)==="done");if(all)streak++;else if(w<CUR)break}
   const isBench=it=>/^bench press touch/i.test(it.name);
   const isPull=it=>/pull-?ups?$/i.test(it.name.trim())||/^pull-ups/i.test(it.name);
   const bench=weeklyBest(isBench,(v)=>e1rm(+v.wt,+v.reps));
@@ -729,14 +729,17 @@ setInterval(()=>{const el=document.getElementById("wtimer");if(el&&el.dataset.st
 window.addEventListener("message",e=>{const m=e.data;if(!m||!m.dbspeedTimer||typeof m.desc!=="string")return;
   S.circDesc=S.circDesc||{};if(m.url)S.circDesc[m.url]=m.desc.slice(0,800);save();
   const el=document.getElementById("circDesc");if(el){el.textContent=m.desc;el.hidden=false}});
-function queueDuration(w,d){
+/* Finished workouts are marked in the athlete's sheet (column P of the "Day N" row): "⏱ 58 min" or "✓ Done".
+   The app reads these back, so sessions done and the week streak survive a new phone. */
+function dayRowOf(day){if(day.row)return day.row;const rows=day.items.map(it=>it.row).filter(Boolean);return rows.length?Math.min(...rows)-2:0}
+function queueDayMark(w,d,value){
   if(!LIVE)return;const W=WEEKS[w-1];const day=W&&W.days.find(x=>x.day===d);if(!day||!W.tab)return;
-  const rows=day.items.map(it=>it.row).filter(Boolean);if(!rows.length)return;const dayRow=Math.min(...rows)-2;if(dayRow<1)return;
-  const v=`⏱ ${wtMins(S.timers[`${w}|${d}`])} min`;
-  S.queue[`${W.tab}|${dayRow}|16`]={tab:W.tab,row:dayRow,col:16,value:v,v:Date.now()};save();scheduleFlush();
+  const dayRow=dayRowOf(day);if(dayRow<1)return;
+  S.queue[`${W.tab}|${dayRow}|16`]={tab:W.tab,row:dayRow,col:16,value,v:Date.now()};save();scheduleFlush();
 }
+function queueDuration(w,d){queueDayMark(w,d,`⏱ ${wtMins(S.timers[`${w}|${d}`])} min`)}
 function finishWorkout(wn,dn){
-  const tm=wtFinish(wn,dn);
+  const tm=wtFinish(wn,dn);if(!tm)queueDayMark(wn,dn,"✓ Done");
   const d=WEEKS[wn-1].days.find(x=>x.day===dn);let sets=0,vol=0,prs=[];
   d.items.forEach((it,i)=>{const before=best1rm(it.name,wn);let best=0;(it.sets||[]).forEach((_,s)=>{const v=S.logs[keyOf(wn,dn,i,s)];if(v?.done){sets++;vol+=(+v.wt||0)*(+v.reps||0);best=Math.max(best,e1rm(+v.wt,+v.reps))}});
     if(best&&before&&best>before+0.5)prs.push(it.name)});
@@ -771,7 +774,7 @@ app.addEventListener("click",e=>{
   if(t.closest("#clearSample")){S.logs={};S.notes={};S.days={};S.sample=false;save();toast("Sample cleared");render();return}
   const chk=t.closest("[data-check]");if(chk){toggleSet(chk.closest(".set"));return}
   if(t.closest("#finish")){finishWorkout(VIEW.w,VIEW.d);return}
-  if(t.closest("#circuitDone")){const k=`${VIEW.w}|${VIEW.d}`;if(S.days[k])delete S.days[k];else S.days[k]=Date.now();save();render();return}
+  if(t.closest("#circuitDone")){const k=`${VIEW.w}|${VIEW.d}`;if(S.days[k]){delete S.days[k];queueDayMark(VIEW.w,VIEW.d,"")}else{S.days[k]=Date.now();queueDayMark(VIEW.w,VIEW.d,"✓ Done")}save();render();return}
 });
 app.addEventListener("input",e=>{
   const f=e.target.dataset.f;if(f){const row=e.target.closest(".set");const k=row.dataset.k;S.logs[k]=Object.assign(S.logs[k]||{},{[f]:e.target.value});keepDraft(k);save();if(S.logs[k].done)queueSet(k)}
@@ -914,7 +917,7 @@ function applyLive(data){
   applyBrand(data.athlete.team);
   TEAM.name=data.athlete.name;EVENTS=[];SEASON=parsePeriod(data.period);if(SEASON)EVENTS=SEASON.events;
   WEEKS=data.weeks.filter(w=>w.days.length&&parseFloat(w.name)>=1).map((w,wi)=>({week:wi+1,name:w.name,label:w.label,date:w.date,tab:w.tab,
-    days:w.days.map(d=>({day:d.day,summary:d.summary,circuit:!!d.circuit,timer:d.timer||null,items:d.items.map(it=>({...it,
+    days:w.days.map(d=>({day:d.day,row:d.row||0,mark:d.mark||"",summary:d.summary,circuit:!!d.circuit,timer:d.timer||null,items:d.items.map(it=>({...it,
       sets:(it.sets||[]).map(s=>{const p=parseLogged(s.load,s.reps);return{load:p.presc,reps:s.reps,col:s.col,_logged:p.logged}})}))}))}));
   S.logs={};S.notes={};
   WEEKS.forEach(w=>w.days.forEach(d=>d.items.forEach((it,i)=>{
@@ -922,6 +925,9 @@ function applyLive(data){
     it.sets.forEach((s,si)=>{if(s._logged)S.logs[keyOf(w.week,d.day,i,si)]=s._logged})})));
   for(const q of Object.values(S.queue||{})){const f=findKey(q.tab,q.row,q.col);if(!f)continue;
     if(f.set&&q.log)S.logs[f.set]=q.log;if(f.note!=null&&q.note!=null)S.notes[f.note]=q.note}
+  S.timers=S.timers||{};WEEKS.forEach(w=>w.days.forEach(d=>{const k=`${w.week}|${d.day}`,m=String(d.mark||"");
+    if(/⏱|✓|done/i.test(m))S.days[k]=S.days[k]||1;
+    const mm=m.match(/(\d+)\s*min/);if(mm&&!(S.timers[k]&&S.timers[k].start))S.timers[k]={start:1,end:1+ +mm[1]*60000,last:1,fin:true}}));
   S.drafts=S.drafts||{};for(const [ck,dv] of Object.entries(S.drafts)){const [tab,row,col]=ck.split("|");const f=findKey(tab,+row,+col);
     if(!f||!f.set){delete S.drafts[ck];continue}if(S.logs[f.set]?.done){delete S.drafts[ck];continue}S.logs[f.set]={wt:dv.wt,reps:dv.reps,done:false}}
   if(!S.profile.name||S.profile.name==="Alex")S.profile.name=data.athlete.name;
