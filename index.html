@@ -380,9 +380,9 @@ const exKey=n=>n.toLowerCase().replace(/\s+/g," ").trim();
 
 /* Best estimated 1RM per exercise before a given week */
 /* Estimated 1RM from earlier weeks only (never from today's sets). Coach's rule for a solid working set
-   (no grind): 1 rep ≈ 91% of 1RM, 2 reps ≈ 89%, 3 reps ≈ 86%; beyond 3 the same curve continues
+   (no grind): 1 rep ≈ 91% of 1RM, 2 reps ≈ 88.5%, 3 reps ≈ 86%; beyond 3 the same curve continues
    (Epley with ~2 reps in reserve: 4 ≈ 83%, 5 ≈ 81%, 6 ≈ 79%, 8 ≈ 75%, 10 ≈ 71%). Up to 12 reps. */
-const PCT_BY_REPS={1:.91,2:.89,3:.86};
+const PCT_BY_REPS={1:.91,2:.885,3:.86};
 function e1rmRpe(w,r){w=+w;r=+r;if(!(w>0&&r>0&&r<=12))return 0;const pct=PCT_BY_REPS[r]||1/(1+(r+2)/30);return w/pct}
 function best1rm(name,beforeWeek){let best=0;const k=exKey(name);
   for(const [key,v] of Object.entries(S.logs)){if(!v.done)continue;const [w,d,i]=key.split("|");if(beforeWeek&&+w>=beforeWeek)continue;
