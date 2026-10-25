@@ -154,6 +154,7 @@ section{display:grid;gap:12px;padding-block:18px}
 .chk svg{width:20px;height:20px}
 .set.done .chk{background:var(--good);border-color:var(--good);color:#06150e}
 .set.done input{border-color:color-mix(in srgb,var(--good) 60%,var(--line))}
+.set input.rng::placeholder{font-size:13px;letter-spacing:0}
 .set input.bw::placeholder{font-size:13px;letter-spacing:0}
 .colhead{display:grid;grid-template-columns:28px minmax(0,1fr) 74px 62px 46px;gap:8px;font-family:var(--display);font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);text-align:center}
 .colhead span:nth-child(2){text-align:left}
@@ -366,7 +367,9 @@ function dayTitle(d){
 }
 function restSecs(r){r=String(r||"").trim();if(/super/i.test(r))return 0;const m=r.match(/^(\d+)(?:\s*-\s*(\d+))?\s*\+?\s*(?:min)?$/i);if(!m)return 90;return +(m[2]||m[1])*60}
 function restLabel(r){r=String(r||"");if(/super/i.test(r))return "Superset";if(/^\d+(\s*-\s*\d+)?\s*\+?$/.test(r))return r.replace(/\s*-\s*/,"–").replace(/\s+/g,"")+" min";return r}
-function repsTarget(r){r=String(r||"").replace(/^x/i,"");if(/conti/i.test(r))return "conti";return r.replace("-","–")}
+function repsTarget(r){r=String(r||"").replace(/^x/i,"");if(/conti/i.test(r))return "conti";return r.replace(/\s*\|\s*x?/gi," + ").replace("-","–")}
+/* "x12-15" → "12–15" so the reps box shows the whole range. */
+function repsRange(r){const m=String(r||"").match(/^x?\s*(\d+)\s*-\s*(\d+)\s*$/i);return m?`${m[1]}–${m[2]}`:""}
 function repsPlaceholder(r){const m=String(r||"").match(/(\d+)(?:-(\d+))?/);return m?(m[2]||m[1]):""}
 function pctOf(load){const m=String(load).match(/(\d+)(?:-(\d+))?%\s*of\s*1RM/i);return m?((+m[1]+ +(m[2]||m[1]))/2)/100:null}
 const e1rm=(w,r)=>w>0&&r>0&&r<=12?w*(1+r/30):0;
@@ -545,7 +548,7 @@ function exCard(wn,dn,it,i){
       <span class="sn">${si+1}</span>
       <div class="tg"><b>${esc(repsTarget(s.reps))} ${/^\d|–/.test(repsTarget(s.reps))?T("reps"):""}</b><span>${loadTxt}</span> ${sug}</div>
       <input id="wt-${wn}-${dn.slice(-1)}-${i}-${si}" ${/^BW\b/i.test(s.load||"")?'class="bw"':""} inputmode="decimal" aria-label="Weight set ${si+1}" placeholder="${/^BW\b/i.test(s.load||"")?(+S.profile.bw?"BW "+Math.round(+S.profile.bw):"BW"):/^\d+(\.\d+)?$/.test(s.load)?s.load:(prevSet?.wt||(p&&rm?r5(rm*p):"lb"))}" value="${esc(v.wt||"")}" data-f="wt">
-      <input id="rp-${wn}-${dn.slice(-1)}-${i}-${si}" inputmode="numeric" aria-label="Reps set ${si+1}" placeholder="${/conti/i.test(s.reps)?(prevSet?.reps||"conti"):repsPlaceholder(s.reps)||"—"}" value="${esc(v.reps||"")}" data-f="reps">
+      <input id="rp-${wn}-${dn.slice(-1)}-${i}-${si}" inputmode="numeric" aria-label="Reps set ${si+1}" ${repsRange(s.reps)?'class="rng"':""} placeholder="${/conti/i.test(s.reps)?(prevSet?.reps||"conti"):repsRange(s.reps)||repsPlaceholder(s.reps)||"—"}" value="${esc(v.reps||"")}" data-f="reps">
       <button class="chk" aria-label="Complete set ${si+1}" data-check>${I.check}</button></div>`}).join("");
   return `<article class="card ex">
     <div class="name"><div><div class="idx">${String(i+1).padStart(2,"0")}${it.type?" · "+esc(it.type).toUpperCase():""}</div><h3>${esc(it.name)}</h3></div>
@@ -799,7 +802,7 @@ function toggleSet(row,forceDone){
       if(cand>=700||(ref>0&&cand>ref*1.6&&cand-ref>=40)){row.dataset.ok=String(cand);wt.classList.add("warn");
         toast(S.profile.lang==="fr"?`${cand} lb ? C'est bien plus que d'habitude${ref?` (${ref})`:""}. Corrige ou touche ✓ pour confirmer.`:`${cand} lb? That's way more than usual${ref?` (${ref})`:""}. Fix it, or tap ✓ to confirm.`,4500);return}}
     wt.classList.remove("warn");
-    v.wt=wt.value||(wt.placeholder&&/^\d/.test(wt.placeholder)?wt.placeholder:"");v.reps=rp.value||(/^\d/.test(rp.placeholder)?rp.placeholder:"");wt.value=v.wt;rp.value=v.reps;v.done=true;startRest(+row.dataset.rest);{const [w0,d0]=k.split("|");wtTouch(+w0,d0)}}
+    v.wt=wt.value||(wt.placeholder&&/^\d/.test(wt.placeholder)?wt.placeholder:"");v.reps=rp.value||(/^\d/.test(rp.placeholder)?(rp.placeholder.match(/(\d+)\D*$/)||[])[1]||"":"");wt.value=v.wt;rp.value=v.reps;v.done=true;startRest(+row.dataset.rest);{const [w0,d0]=k.split("|");wtTouch(+w0,d0)}}
   else v.done=false;
   S.logs[k]=v;keepDraft(k);save();row.classList.toggle("done",v.done);updateCount();queueSet(k);
 }
