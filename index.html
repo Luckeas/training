@@ -471,16 +471,18 @@ function openA2hs(){
   const fr=S.profile.lang==="fr";let steps;
   // Opened inside another app (Messenger, Instagram, Gmail, Discord…): those browsers can't add to the home screen.
   const inApp=/FBAN|FBAV|FB_IAB|Instagram|Messenger|Line\/|Snapchat|TikTok|musical_ly|GSA\/|Discord/i.test(UA);
+  const appName=/GSA\//.test(UA)?(fr?"l\u2019app Google":"the Google app"):/Instagram/i.test(UA)?"Instagram":/Messenger|FBAN\/Messenger/i.test(UA)?"Messenger":/FBAN|FBAV|FB_IAB/i.test(UA)?"Facebook":/Snapchat/i.test(UA)?"Snapchat":/TikTok|musical_ly/i.test(UA)?"TikTok":/Discord/i.test(UA)?"Discord":(fr?"une autre app":"another app");
+  const browser=IS_IOS?"Safari":"Chrome";
   if(IS_IOS){const otherBrowser=/CriOS|FxiOS|EdgiOS/.test(UA);
     steps=fr?[otherBrowser?"Touche le bouton <b>Partager</b> (carré avec une flèche ⬆) dans la barre d\u2019adresse.":"Touche le bouton <b>Partager</b> (carré avec une flèche ⬆) en bas de l\u2019écran (en haut à droite sur iPad).","Fais défiler et touche <b>« Sur l\u2019écran d\u2019accueil »</b>.","Touche <b>« Ajouter »</b>."]
       :[otherBrowser?"Tap the <b>Share</b> button (square with an arrow ⬆) in the address bar.":"Tap the <b>Share</b> button (square with an arrow ⬆) at the bottom of the screen (top right on iPad).","Scroll down and tap <b>“Add to Home Screen”</b>.","Tap <b>“Add”</b>."]}
   else if(IS_ANDROID){steps=fr?["Touche le menu <b>⋮</b> en haut à droite du navigateur.","Touche <b>« Ajouter à l\u2019écran d\u2019accueil »</b> (ou « Installer l\u2019application »).","Touche <b>« Ajouter »</b>."]
       :["Tap the <b>⋮</b> menu at the top right of your browser.","Tap <b>“Add to Home screen”</b> (or “Install app”).","Tap <b>“Add”</b>."]}
   else steps=fr?["Ajoute cette page à tes favoris : c\u2019est ton lien personnel."]:["Bookmark this page: it\u2019s your private link."];
-  if(inApp&&(IS_IOS||IS_ANDROID))steps.unshift(fr?`Tu es dans le navigateur d\u2019une autre app. Touche <b>⋯</b> ou le bouton boussole et choisis <b>« Ouvrir dans ${IS_IOS?"Safari":"Chrome"} »</b>, puis reviens à ces étapes.`:`You're in another app's browser. Tap <b>⋯</b> or the compass button and choose <b>“Open in ${IS_IOS?"Safari":"Chrome"}”</b>, then follow these steps.`);
+  if(inApp&&(IS_IOS||IS_ANDROID))steps.unshift(fr?`Tu as ouvert ce lien dans <b>${appName}</b>, qui ne peut pas l\u2019ajouter à l\u2019écran d\u2019accueil. Touche <b>⋯</b> (ou Partager) et choisis <b>« Ouvrir dans ${browser} »</b>. Pas d\u2019option? Choisis <b>« Copier le lien »</b> et colle-le dans ${browser}.`:`You opened this link in <b>${appName}</b>, which can't add it to your home screen. Tap <b>⋯</b> (or Share) and choose <b>“Open in ${browser}”</b>. No such option? Choose <b>“Copy link”</b> and paste it into ${browser}.`);
   document.getElementById("overlay").innerHTML=`<div class="scrim" data-close></div><div class="sheet" role="dialog" aria-label="${T("a2hsTitle")}"><div class="inner wrap">
     <h2>${T("a2hsTitle")}</h2><ol class="a2hs-steps">${steps.map(x=>`<li>${x}</li>`).join("")}</ol>
-    <p class="muted small" style="margin:0">${T("a2hsNote")} ${fr?"Si tu ne vois pas « Sur l\u2019écran d\u2019accueil », ouvre d\u2019abord le lien dans "+(IS_ANDROID?"Chrome":"Safari ou Chrome")+" (pas dans Messenger, Gmail ou Discord).":"Don\u2019t see “Add to Home Screen”? Open your link in "+(IS_ANDROID?"Chrome":"Safari or Chrome")+" first (not inside Messenger, Gmail or Discord)."}</p>
+    <p class="muted small" style="margin:0">${T("a2hsNote")} ${fr?"Si tu ne vois pas « Sur l\u2019écran d\u2019accueil », ouvre d\u2019abord le lien dans "+(IS_ANDROID?"Chrome":"Safari ou Chrome")+" (pas dans l\u2019app Google, Gmail, Messenger ou Discord).":"Don\u2019t see “Add to Home Screen”? Open your link in "+(IS_ANDROID?"Chrome":"Safari or Chrome")+" first (not inside the Google app, Gmail, Messenger or Discord)."}</p>
     <button class="btn block" data-close>${T("a2hsDone")}</button></div></div>`;
 }
 function viewToday(){
