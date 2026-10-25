@@ -563,7 +563,7 @@ function viewCircuit(w,d){
       const sm=(d.summary||"").replace(/^▶\s*Timer\s*·\s*/,"").trim();
       const cd=(S.circDesc||{})[String(u).split("?")[0]]||(sm?sm+". "+T("circHow"):"");
       return `<p class="circ-desc" id="circDesc" ${cd?"":"hidden"}>${esc(cd)}</p><div class="tframe-wrap"><iframe class="tframe" src="${esc(u+(String(u).includes("?")?"&":"?")+"v=3")}" title="${T("circuit")} timer" allow="screen-wake-lock; autoplay; fullscreen"></iframe></div>
-      <div class="small muted" style="text-align:center">${T("timerBelow")} · <a href="${esc(u)}" target="_blank" rel="noopener">${T("fullScreen")}</a></div>`})()}
+      <div class="small muted" style="text-align:center">${T("timerBelow")} ↓</div>`})()}
     ${Object.entries(groups).map(([g,list])=>`<div class="card pod">
       <div class="ph"><b>${g==="Stations"?"Stations":"Pod "+g}</b><span class="chip">${esc(String(list[0][0].rounds).split("\n")[0])}${/^\d+$/.test(list[0][0].rounds)?" rounds":""}</span></div>
       ${list.map(([it])=>`<div class="st"><span class="p">${esc(it.pod)}</span><div><div class="nm">${esc(it.name)}</div><div class="nt">${esc([it.work,it.rest&&it.rest!=="0s"&&it.rest!=="—"?it.rest+" rest":"",it.notes].filter(Boolean).join(" · "))}</div></div>
