@@ -538,7 +538,7 @@ function exCard(wn,dn,it,i){
     return `<div class="set ${v.done?"done":""}" data-k="${keyOf(wn,dn,i,si)}" data-rest="${restSecs(it.rest)}">
       <span class="sn">${si+1}</span>
       <div class="tg"><b>${esc(repsTarget(s.reps))} ${/^\d|–/.test(repsTarget(s.reps))?T("reps"):""}</b><span>${loadTxt}</span> ${sug}</div>
-      <input id="wt-${wn}-${dn.slice(-1)}-${i}-${si}" inputmode="decimal" aria-label="Weight set ${si+1}" placeholder="${s.load==="BW"?"BW":/^\d+(\.\d+)?$/.test(s.load)?s.load:(prevSet?.wt||(p&&rm?r5(rm*p):"lb"))}" value="${esc(v.wt||"")}" data-f="wt">
+      <input id="wt-${wn}-${dn.slice(-1)}-${i}-${si}" inputmode="decimal" aria-label="Weight set ${si+1}" placeholder="${/^BW\b/i.test(s.load||"")?(+S.profile.bw?"BW · "+esc(String(S.profile.bw)):"BW"):/^\d+(\.\d+)?$/.test(s.load)?s.load:(prevSet?.wt||(p&&rm?r5(rm*p):"lb"))}" value="${esc(v.wt||"")}" data-f="wt">
       <input id="rp-${wn}-${dn.slice(-1)}-${i}-${si}" inputmode="numeric" aria-label="Reps set ${si+1}" placeholder="${/conti/i.test(s.reps)?(prevSet?.reps||"conti"):repsPlaceholder(s.reps)||"—"}" value="${esc(v.reps||"")}" data-f="reps">
       <button class="chk" aria-label="Complete set ${si+1}" data-check>${I.check}</button></div>`}).join("");
   return `<article class="card ex">
@@ -613,7 +613,7 @@ function viewProgress(){
   const bBest=bench.length?Math.max(...bench.map(p=>p[1])):0,pBest=pulls.length?Math.max(...pulls.map(p=>p[1])):0;
   const bl=ladder(BENCH.bench,bBest,v=>v+" lb"),pl=ladder(BENCH.pullups,pBest,v=>v);
   // best lifts
-  const bests={};for(const [key,v] of Object.entries(S.logs)){if(!v.done||!+v.wt)continue;const [w,d,i]=key.split("|");const it=WEEKS[w-1]?.days.find(x=>x.day===d)?.items[i];if(!it)continue;const e=e1rm(+v.wt,+v.reps);const k=it.name.trim();if(!bests[k]||e>bests[k].e)bests[k]={e,wt:v.wt,reps:v.reps}}
+  const bests={};for(const [key,v] of Object.entries(S.logs)){if(!v.done||!+v.wt)continue;const [w,d,i,si]=key.split("|");const it=WEEKS[w-1]?.days.find(x=>x.day===d)?.items[i];if(!it||/^BW/i.test(String(it.sets?.[si]?.load||"")))continue;const e=e1rm(+v.wt,+v.reps);const k=it.name.trim();if(!bests[k]||e>bests[k].e)bests[k]={e,wt:v.wt,reps:v.reps}}
   const top=Object.entries(bests).sort((a,b)=>b[1].e-a[1].e).slice(0,6);
   const sexLbl=S.profile.sex==="women"?T("women"):T("men");
   return brandBar()+`<div class="wrap">
@@ -890,7 +890,9 @@ function viewSeason(){
 function parseLogged(load,repsCell){
   load=String(load||"").trim();
   let m=load.match(/^(.*?)\s*\(([^()]*)\)\s*$/);
-  if(m){const inner=m[2].trim();let k=inner.match(/^(\d+(?:\.\d+)?)\s*[x×]\s*(\d+)$/i);
+  if(m){const inner=m[2].trim();
+    const bw=m[1].trim().match(/^BW\s*\+\s*(\d+(?:\.\d+)?)$/i);if(bw&&/^\d+$/.test(inner))return{presc:"BW",logged:{wt:bw[1],reps:inner,done:true}};
+    let k=inner.match(/^(\d+(?:\.\d+)?)\s*[x×]\s*(\d+)$/i);
     if(k)return{presc:m[1].trim(),logged:{wt:k[1],reps:k[2],done:true}};
     k=inner.match(/^(\d+)$/);if(k)return{presc:m[1].trim(),logged:{wt:"",reps:k[1],done:true}};
     return{presc:load,logged:null}}
@@ -901,7 +903,9 @@ function parseLogged(load,repsCell){
 }
 function cellValue(set,v){
   const p=set.load||"";if(!v||!v.done)return p;
-  const wt=String(v.wt||"").trim(),reps=String(v.reps||"").trim();
+  const wt=String(v.wt||"").trim().replace(/^\+/,""),reps=String(v.reps||"").trim();
+  // Bodyweight exercises: a number in the weight box is ADDED weight → "BW+25 (8)". No number → "BW (8)".
+  if(/^BW$/i.test(p.trim()))return +wt?`BW+${wt} (${reps})`:`BW (${reps})`;
   const inner=wt&&reps?`${wt}x${reps}`:(wt||reps);
   if(!p)return wt&&reps?`${wt}x${reps}`:(wt||`(${reps})`);
   return `${p} (${inner})`;
