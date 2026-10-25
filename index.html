@@ -169,6 +169,7 @@ section{display:grid;gap:12px;padding-block:18px}
 .st .nm{font-weight:600;line-height:1.2}
 .st .nt{font-size:13px;color:var(--muted)}
 .st>div{min-width:0}
+.circ-desc{margin:0;color:var(--muted);line-height:1.5;max-width:65ch}
 .tframe-wrap{border-radius:16px;overflow:hidden;border:1px solid var(--line);background:#000}
 .tframe{display:block;width:100%;height:clamp(440px,calc(100dvh - 230px),640px);border:0}
 .timerband{display:grid;gap:10px;padding:18px;border-radius:var(--r);background:var(--accent);color:var(--accent-ink)}
@@ -559,7 +560,8 @@ function viewCircuit(w,d){
    <section>
     ${(()=>{const u=LIVE?d.timer:TEAM.timerBase+w.week+"/";
       if(!u)return `<div class="timerband"><div class="big">${esc(d.summary.split(" · ").slice(1).join(" · ")||d.summary)}</div><div class="small">${T("timerNote")}</div></div>`;
-      return `<div class="tframe-wrap"><iframe class="tframe" src="${esc(u)}" title="${T("circuit")} timer" allow="screen-wake-lock; autoplay; fullscreen"></iframe></div>
+      const cd=(S.circDesc||{})[String(u).split("?")[0]]||"";
+      return `<p class="circ-desc" id="circDesc" ${cd?"":"hidden"}>${esc(cd)}</p><div class="tframe-wrap"><iframe class="tframe" src="${esc(u)}" title="${T("circuit")} timer" allow="screen-wake-lock; autoplay; fullscreen"></iframe></div>
       <div class="small muted" style="text-align:center">${T("timerBelow")} · <a href="${esc(u)}" target="_blank" rel="noopener">${T("fullScreen")}</a></div>`})()}
     ${Object.entries(groups).map(([g,list])=>`<div class="card pod">
       <div class="ph"><b>${g==="Stations"?"Stations":"Pod "+g}</b><span class="chip">${esc(String(list[0][0].rounds).split("\n")[0])}${/^\d+$/.test(list[0][0].rounds)?" rounds":""}</span></div>
@@ -722,6 +724,10 @@ function timerHtml(w,d){const t=wtGet(w,d);
   return `<div class="wtimer run" id="wtimer" data-start="${t.start}">⏱ ${fmtClock(Date.now()-t.start)}</div>`}
 function updateTimer(){const el=document.getElementById("wtimer");if(!el||VIEW.name!=="workout")return;el.outerHTML=timerHtml(VIEW.w,VIEW.d)}
 setInterval(()=>{const el=document.getElementById("wtimer");if(el&&el.dataset.start)updateTimer()},1000);
+/* The embedded circuit timer sends its explanation of the workout; show it above the timer (and remember it). */
+window.addEventListener("message",e=>{const m=e.data;if(!m||!m.dbspeedTimer||typeof m.desc!=="string")return;
+  S.circDesc=S.circDesc||{};if(m.url)S.circDesc[m.url]=m.desc.slice(0,800);save();
+  const el=document.getElementById("circDesc");if(el){el.textContent=m.desc;el.hidden=false}});
 function queueDuration(w,d){
   if(!LIVE)return;const W=WEEKS[w-1];const day=W&&W.days.find(x=>x.day===d);if(!day||!W.tab)return;
   const rows=day.items.map(it=>it.row).filter(Boolean);if(!rows.length)return;const dayRow=Math.min(...rows)-2;if(dayRow<1)return;
