@@ -483,7 +483,7 @@ function openA2hs(){
   document.getElementById("overlay").innerHTML=`<div class="scrim" data-close></div><div class="sheet" role="dialog" aria-label="${T("a2hsTitle")}"><div class="inner wrap">
     <h2>${T("a2hsTitle")}</h2><ol class="a2hs-steps">${steps.map(x=>`<li>${x}</li>`).join("")}</ol>
     <p class="muted small" style="margin:0">${T("a2hsNote")} ${fr?"Si tu ne vois pas « Sur l\u2019écran d\u2019accueil », ouvre d\u2019abord le lien dans "+(IS_ANDROID?"Chrome":"Safari ou Chrome")+" (pas dans l\u2019app Google, Gmail, Messenger ou Discord).":"Don\u2019t see “Add to Home Screen”? Open your link in "+(IS_ANDROID?"Chrome":"Safari or Chrome")+" first (not inside the Google app, Gmail, Messenger or Discord)."}</p>
-    <button class="btn block" data-close>${T("a2hsDone")}</button></div></div>`;
+    <button class="btn block" id="a2hsGot">${T("a2hsDone")}</button></div></div>`;
 }
 function viewToday(){
   const w=WEEKS[CUR-1];const ph=phaseOf(w);
@@ -854,6 +854,7 @@ function updateCount(){if(VIEW.name!=="workout")return;const d=WEEKS[VIEW.w-1].d
   const c=document.getElementById("setCount");if(c)c.textContent=`${done} ${T("ofSets")} ${total} ${T("sets")}`;const b=document.getElementById("pbar");if(b)b.style.width=(total?done/total*100:0)+"%"}
 document.getElementById("overlay").addEventListener("click",e=>{
   const t=e.target;const p=S.profile;
+  if(t.closest("#a2hsGot")){S.a2hsHide=true;save();closeSettings();return}   // they've seen the steps: stop showing the banner on this phone
   if(t.closest("[data-close]")){closeSettings();return}
   if(t.closest("#a2hsSettings")){openA2hs();return}
   const sx=t.closest("[data-sex]");if(sx){p.sex=sx.dataset.sex;save();queueProfile();openSettings();return}
