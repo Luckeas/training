@@ -766,7 +766,7 @@ function updateCount(){if(VIEW.name!=="workout")return;const d=WEEKS[VIEW.w-1].d
 document.getElementById("overlay").addEventListener("click",e=>{
   const t=e.target;const p=S.profile;
   if(t.closest("[data-close]")){closeSettings();return}
-  const sx=t.closest("[data-sex]");if(sx){p.sex=sx.dataset.sex;save();openSettings();return}
+  const sx=t.closest("[data-sex]");if(sx){p.sex=sx.dataset.sex;save();queueProfile();openSettings();return}
   const lg=t.closest("[data-lang]");if(lg){p.lang=lg.dataset.lang;save();render();openSettings();return}
   const sk=t.closest("[data-skinpick]");if(sk){p.skin=sk.dataset.skinpick;save();render();openSettings();return}
   if(t.closest("#coachSw")){p.coach=!p.coach;save();openSettings();return}
@@ -775,7 +775,7 @@ document.getElementById("overlay").addEventListener("click",e=>{
 });
 document.getElementById("overlay").addEventListener("input",e=>{
   if(e.target.id==="pName"){S.profile.name=e.target.value;save()}
-  if(e.target.id==="pBw"){S.profile.bw=e.target.value;save()}
+  if(e.target.id==="pBw"){S.profile.bw=e.target.value;save();queueProfile()}
 });
 
 
@@ -886,6 +886,7 @@ function applyLive(data){
   S.drafts=S.drafts||{};for(const [ck,dv] of Object.entries(S.drafts)){const [tab,row,col]=ck.split("|");const f=findKey(tab,+row,+col);
     if(!f||!f.set){delete S.drafts[ck];continue}if(S.logs[f.set]?.done){delete S.drafts[ck];continue}S.logs[f.set]={wt:dv.wt,reps:dv.reps,done:false}}
   if(!S.profile.name||S.profile.name==="Alex")S.profile.name=data.athlete.name;
+  if(!S.queue.profile){if(data.athlete.sex==="men"||data.athlete.sex==="women")S.profile.sex=data.athlete.sex;if(+data.athlete.bw)S.profile.bw=String(data.athlete.bw)}
   CUR=currentWeekNum();save();
 }
 function queueSet(k){
@@ -898,6 +899,9 @@ function queueNote(n){
   S.queue[`${W.tab}|${it.row}|16`]={tab:W.tab,row:it.row,col:16,value:S.notes[n]||"",note:S.notes[n]||"",v:Date.now()};
   save();scheduleFlush(2000);
 }
+/* Sex and bodyweight are kept in the admin sheet (latest value only) so they survive a new phone or cleared browser. */
+function queueProfile(){if(!LIVE)return;const bw=parseFloat(String(S.profile.bw||"").replace(",","."));
+  S.queue.profile={profile:{sex:S.profile.sex||"",bw:bw>=60&&bw<=500?bw:""},v:Date.now()};save();scheduleFlush(2000)}
 let flushT=null,flushing=false;
 function scheduleFlush(ms){clearTimeout(flushT);flushT=setTimeout(flushQueue,ms||900);setSync("saving")}
 async function flushQueue(){
@@ -905,7 +909,7 @@ async function flushQueue(){
   flushing=true;
   try{
     const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body:JSON.stringify({t:TOKEN,d:DEVICE,writes:entries.map(([,q])=>({tab:q.tab,row:q.row,col:q.col,value:q.value}))})});
+      body:JSON.stringify({t:TOKEN,d:DEVICE,profile:(entries.find(([k])=>k==="profile")||[])[1]?.profile,writes:entries.filter(([k,q])=>k!=="profile"&&q.tab).map(([,q])=>({tab:q.tab,row:q.row,col:q.col,value:q.value}))})});
     const j=await r.json();if(!j.ok)throw new Error(j.error||"save failed");
     for(const [k,q] of entries){if(S.queue[k]&&S.queue[k].v===q.v)delete S.queue[k]}
     save();setSync(Object.keys(S.queue).length?"saving":"saved");
