@@ -379,9 +379,12 @@ const WN=n=>(WEEKS[n-1]&&WEEKS[n-1].name)||n;
 const exKey=n=>n.toLowerCase().replace(/\s+/g," ").trim();
 
 /* Best estimated 1RM per exercise before a given week */
+/* Estimated 1RM from earlier weeks only (never from today's sets), counting the reps left in the tank
+   from the prescribed RPE: a single at RPE 7 ≈ 4 reps' worth of effort, not a max. */
+function e1rmRpe(w,r,rpe){const x=parseFloat(String(rpe||"").split("-").pop());const rir=x>=5&&x<=10?10-x:0;return e1rm(w,Math.min(12,r+rir))}
 function best1rm(name,beforeWeek){let best=0;const k=exKey(name);
   for(const [key,v] of Object.entries(S.logs)){if(!v.done)continue;const [w,d,i]=key.split("|");if(beforeWeek&&+w>=beforeWeek)continue;
-    const it=WEEKS[w-1]?.days.find(x=>x.day===d)?.items[i];if(!it||exKey(it.name)!==k)continue;best=Math.max(best,e1rm(+v.wt,+v.reps))}
+    const it=WEEKS[w-1]?.days.find(x=>x.day===d)?.items[i];if(!it||exKey(it.name)!==k)continue;best=Math.max(best,e1rmRpe(+v.wt,+v.reps,it.rpe))}
   return best}
 function lastTime(name,beforeWeek){const k=exKey(name);let found=null;
   for(let w=beforeWeek-1;w>=1&&!found;w--){for(const d of WEEKS[w-1].days){d.items.forEach((it,i)=>{if(found||exKey(it.name)!==k)return;
@@ -528,7 +531,7 @@ function viewWorkout(wn,dn){
    </section></div>`;
 }
 function exCard(wn,dn,it,i){
-  const last=lastTime(it.name,wn);const rm=best1rm(it.name,wn+1);
+  const last=lastTime(it.name,wn);const rm=best1rm(it.name,wn);
   const lastTxt=last?last.sets.map(v=>`${v.wt?v.wt+"×":""}${v.reps}`).join(" · "):"";
   const ss=/super/i.test(it.rest);
   const rows=(it.sets||[]).map((s,si)=>{
@@ -742,7 +745,7 @@ function queueDuration(w,d){queueDayMark(w,d,`⏱ ${wtMins(S.timers[`${w}|${d}`]
 function finishWorkout(wn,dn){
   const tm=wtFinish(wn,dn);if(!tm)queueDayMark(wn,dn,"✓ Done");
   const d=WEEKS[wn-1].days.find(x=>x.day===dn);let sets=0,vol=0,prs=[];
-  d.items.forEach((it,i)=>{const before=best1rm(it.name,wn);let best=0;(it.sets||[]).forEach((_,s)=>{const v=S.logs[keyOf(wn,dn,i,s)];if(v?.done){sets++;vol+=(+v.wt||0)*(+v.reps||0);best=Math.max(best,e1rm(+v.wt,+v.reps))}});
+  d.items.forEach((it,i)=>{const before=best1rm(it.name,wn);let best=0;(it.sets||[]).forEach((_,s)=>{const v=S.logs[keyOf(wn,dn,i,s)];if(v?.done){sets++;vol+=(+v.wt||0)*(+v.reps||0);best=Math.max(best,e1rmRpe(+v.wt,+v.reps,it.rpe))}});
     if(best&&before&&best>before+0.5)prs.push(it.name)});
   S.days[`${wn}|${dn}`]=Date.now();save();stopRest();
   document.getElementById("overlay").innerHTML=`<div class="scrim" data-close></div><div class="sheet"><div class="inner wrap"><div class="done-panel">
