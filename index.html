@@ -692,6 +692,7 @@ const NEWBIE={
 function viewGuide(){
   const L=S.profile.lang;
   return brandBar()+`<div class="wrap guide">
+   ${a2hsBanner()}
    ${VIEW.first?`<section><div class="card" style="padding:16px;border-color:var(--accent)"><h2 style="margin:0 0 6px">${L==="fr"?"👋 Bienvenue!":"👋 Welcome!"}</h2><p class="muted" style="margin:0 0 12px">${L==="fr"?"Lis ce guide une fois (2 minutes). Ensuite, touche Aujourd'hui pour ta première séance. Tu peux revenir ici en tout temps avec l'onglet Guide.":"Read this guide once (2 minutes). Then tap Today to start your first session. You can come back here anytime from the Guide tab."}</p><button class="btn block" onclick="go({name:'today'})">${L==="fr"?"C'est parti →":"Let's go →"}</button></div></section>`:""}
    <section><div class="eyebrow">${T("guideIntro")}</div><h1>${T("guide")}</h1>
     <div class="card" style="padding:4px 16px">${RULES[L].map(([h,p],i)=>`<div class="rule"><h3><span class="idx">${i+1} · </span>${esc(h)}</h3><p class="muted">${esc(p)}</p></div>`).join("")}</div></section>
