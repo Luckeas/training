@@ -246,7 +246,9 @@ section{display:grid;gap:12px;padding-block:18px}
 /* finish overlay */
 .done-panel{display:grid;gap:14px;padding:22px;text-align:center}
 .done-panel .big{font-family:var(--display);font-weight:800;font-size:56px;line-height:.9;text-transform:uppercase;color:var(--good)}
-.done-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.done-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.wtimer{font-family:var(--display);font-weight:700;font-size:15px;letter-spacing:.04em;color:var(--muted);font-variant-numeric:tabular-nums}
+.wtimer.run{color:var(--accent,var(--fg))}
 .toast{position:fixed;left:50%;top:calc(70px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:50;background:var(--fg);color:var(--bg);padding:9px 14px;border-radius:10px;font-weight:600;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.3)}
 .loader{min-height:80vh;display:grid;place-content:center;justify-items:center;gap:20px;text-align:center}
 .ring{width:64px;height:64px;border-radius:50%;position:relative;background:conic-gradient(var(--accent) 0 28%,var(--line) 28% 100%);animation:spin 1s cubic-bezier(.6,.2,.4,.8) infinite}
@@ -307,13 +309,13 @@ const STR = {
  en:{today:"Today",program:"Program",progress:"Progress",guide:"Guide",seasonTab:"Season",seasonIntro:"Your training blocks and the dates that matter",blocks:"Training blocks",dates:"Key dates",now:"Now",weeksWord:"Weeks",week:"Week",thisWeek:"This week",start:"Start",resume:"Resume",done:"Done",notStarted:"To do",opens:"Opens",nextUp:"Next up",inDays:d=>d===0?"today":d===1?"tomorrow":`in ${d} days`,
   sets:"sets",lb:"lb",reps:"reps",target:"Target",last:"Last time",demo:"Demo",notes:"Notes (optional)",finish:"Finish workout",finished:"Workout done",volume:"Volume",setsDone:"Sets",prs:"PRs",back:"Back",rest:"Rest",skip:"Skip",restOver:"Rest done — go",superset:"Superset · go straight to the next exercise",
   circuit:"Team circuit",openTimer:"Open circuit timer",timerNote:"Coach runs this on the speaker. Everyone follows the same clock.",markCircuit:"Mark circuit done",circuitDone:"Circuit done",
-  compliance:"Sessions done",streak:"Week streak",bench1rm:"Bench est. 1RM",fromWorkouts:"Estimated from the sets you log in your workouts. Your official numbers are the ones from fitness test days.",pullups:"Pull-ups max",benchmarks:"Benchmarks",yourLevel:"You're at",toNext:"to",records:"Best lifts",noData:"Log a few sessions and your numbers show up here.",
+  compliance:"Sessions done",wtWait:"Timer starts with your first set",duration:"Time",streak:"Week streak",bench1rm:"Bench est. 1RM",fromWorkouts:"Estimated from the sets you log in your workouts. Your official numbers are the ones from fitness test days.",pullups:"Pull-ups max",benchmarks:"Benchmarks",yourLevel:"You're at",toNext:"to",records:"Best lifts",noData:"Log a few sessions and your numbers show up here.",
   settings:"Profile & settings",name:"Name",sex:"Benchmark table",women:"Women",men:"Men",bw:"Bodyweight (lb)",lang:"Language",look:"Look",coach:"Coach preview (show all 32 weeks)",restTimer:"Rest timer after each set",sample:"You're looking at sample logs so you can see the app in use.",clear:"Clear sample",close:"Close",
   rules:"How to train",season:"Season calendar",terms:"Terms",locked:"Locked until",dayNames:{upper:"Upper body",lower:"Lower body",full:"Full body",circuit:"Team circuit"},est:"est.",ofSets:"of",guideIntro:"Your coach's rules for every session.",synced:"Program updates from the team master sheet."},
  fr:{today:"Aujourd'hui",program:"Programme",progress:"Progrès",guide:"Guide",seasonTab:"Saison",seasonIntro:"Tes blocs d'entraînement et les dates importantes",blocks:"Blocs d'entraînement",dates:"Dates importantes",now:"En cours",weeksWord:"Semaines",week:"Semaine",thisWeek:"Cette semaine",start:"Commencer",resume:"Continuer",done:"Fait",notStarted:"À faire",opens:"Ouvre",nextUp:"Prochain",inDays:d=>d===0?"aujourd'hui":d===1?"demain":`dans ${d} jours`,
   sets:"séries",lb:"lb",reps:"rép.",target:"Cible",last:"Dernière fois",demo:"Démo",notes:"Notes (optionnel)",finish:"Terminer la séance",finished:"Séance terminée",volume:"Volume",setsDone:"Séries",prs:"Records",back:"Retour",rest:"Repos",skip:"Passer",restOver:"Repos fini — go",superset:"Superset · enchaîne avec le prochain exercice",
   circuit:"Circuit d'équipe",openTimer:"Ouvrir le chrono du circuit",timerNote:"Le coach le fait jouer sur le haut-parleur. Tout le monde suit le même chrono.",markCircuit:"Circuit terminé",circuitDone:"Circuit terminé",
-  compliance:"Séances faites",streak:"Semaines de suite",bench1rm:"Développé couché 1RM est.",fromWorkouts:"Estimé à partir des séries que tu notes à l\u2019entraînement. Tes chiffres officiels sont ceux des journées de tests.",pullups:"Tractions max",benchmarks:"Standards",yourLevel:"Ton niveau",toNext:"pour",records:"Meilleurs levés",noData:"Note quelques séances et tes chiffres vont apparaître ici.",
+  compliance:"Séances faites",wtWait:"Le chrono démarre à ta première série",duration:"Durée",streak:"Semaines de suite",bench1rm:"Développé couché 1RM est.",fromWorkouts:"Estimé à partir des séries que tu notes à l\u2019entraînement. Tes chiffres officiels sont ceux des journées de tests.",pullups:"Tractions max",benchmarks:"Standards",yourLevel:"Ton niveau",toNext:"pour",records:"Meilleurs levés",noData:"Note quelques séances et tes chiffres vont apparaître ici.",
   settings:"Profil et réglages",name:"Nom",sex:"Tableau de standards",women:"Femmes",men:"Hommes",bw:"Poids corporel (lb)",lang:"Langue",look:"Style",restTimer:"Chrono de repos après chaque série",coach:"Aperçu coach (voir les 32 semaines)",sample:"Ce sont des données d'exemple pour voir l'app en action.",clear:"Effacer l'exemple",close:"Fermer",
   rules:"Consignes",season:"Calendrier de saison",terms:"Termes",locked:"Disponible le",dayNames:{upper:"Haut du corps",lower:"Bas du corps",full:"Corps complet",circuit:"Circuit d'équipe"},est:"est.",ofSets:"sur",guideIntro:"Les consignes de ton coach pour chaque séance.",synced:"Le programme se met à jour depuis la feuille maîtresse de l'équipe."}
 };
@@ -515,6 +517,7 @@ function viewWorkout(wn,dn){
   return head+`<div class="wrap">
    <div class="whead"><div class="eyebrow">${T("week")} ${WN(wn)}${phaseOf(w)?" · "+esc(phaseOf(w)):""}</div><h1>${esc(dayTitle(d))}</h1>
      <div class="small muted num" id="setCount">${done} ${T("ofSets")} ${total} ${T("sets")}</div>
+     ${timerHtml(wn,dn)}
      <div class="progress"><i id="pbar" style="width:${pct}%"></i></div></div>
    <section>${d.items.map((it,i)=>exCard(wn,dn,it,i)).join("")}
      <button class="btn block" id="finish">${S.days[`${wn}|${dn}`]?T("finished")+" ✓":T("finish")}</button>
@@ -697,14 +700,40 @@ document.getElementById("restbox").addEventListener("click",e=>{if(e.target.clos
 function toast(msg,ms){document.querySelectorAll(".toast").forEach(x=>x.remove());const t=document.createElement("div");t.className="toast";t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),ms||1800)}
 
 /* ---------- finish summary ---------- */
+/* ---------- workout timer ----------
+   Starts at the first ticked set, stops at "Finish workout". If nobody taps Finish, the session
+   closes after an hour with no new set, and its time ends at the last ticked set. The duration is
+   written to the athlete's sheet, column P of that day's "Day N" row. */
+const WT_IDLE=60*60*1000;
+function wtGet(w,d){S.timers=S.timers||{};const k=`${w}|${d}`,t=S.timers[k];
+  if(t&&!t.end&&Date.now()-t.last>WT_IDLE){t.end=t.last;save();queueDuration(w,d)}return t}
+function wtTouch(w,d){S.timers=S.timers||{};const t=wtGet(w,d),now=Date.now();
+  if(!t){S.timers[`${w}|${d}`]={start:now,last:now};save();updateTimer();return}
+  if(!t.end){t.last=now;save()}}
+function wtFinish(w,d){const t=wtGet(w,d);if(t&&!t.end){t.end=Date.now();t.fin=true;save();queueDuration(w,d)}return t}
+function wtMins(t){return t?Math.max(1,Math.round(((t.end||Date.now())-t.start)/60000)):0}
+function fmtClock(ms){const s=Math.max(0,Math.floor(ms/1000)),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return (h?h+":"+String(m).padStart(2,"0"):m)+":"+String(x).padStart(2,"0")}
+function timerHtml(w,d){const t=wtGet(w,d);
+  if(!t)return `<div class="wtimer" id="wtimer">⏱ ${T("wtWait")}</div>`;
+  if(t.end)return `<div class="wtimer" id="wtimer">⏱ ${wtMins(t)} min</div>`;
+  return `<div class="wtimer run" id="wtimer" data-start="${t.start}">⏱ ${fmtClock(Date.now()-t.start)}</div>`}
+function updateTimer(){const el=document.getElementById("wtimer");if(!el||VIEW.name!=="workout")return;el.outerHTML=timerHtml(VIEW.w,VIEW.d)}
+setInterval(()=>{const el=document.getElementById("wtimer");if(el&&el.dataset.start)updateTimer()},1000);
+function queueDuration(w,d){
+  if(!LIVE)return;const W=WEEKS[w-1];const day=W&&W.days.find(x=>x.day===d);if(!day||!W.tab)return;
+  const rows=day.items.map(it=>it.row).filter(Boolean);if(!rows.length)return;const dayRow=Math.min(...rows)-2;if(dayRow<1)return;
+  const v=`⏱ ${wtMins(S.timers[`${w}|${d}`])} min`;
+  S.queue[`${W.tab}|${dayRow}|16`]={tab:W.tab,row:dayRow,col:16,value:v,v:Date.now()};save();scheduleFlush();
+}
 function finishWorkout(wn,dn){
+  const tm=wtFinish(wn,dn);
   const d=WEEKS[wn-1].days.find(x=>x.day===dn);let sets=0,vol=0,prs=[];
   d.items.forEach((it,i)=>{const before=best1rm(it.name,wn);let best=0;(it.sets||[]).forEach((_,s)=>{const v=S.logs[keyOf(wn,dn,i,s)];if(v?.done){sets++;vol+=(+v.wt||0)*(+v.reps||0);best=Math.max(best,e1rm(+v.wt,+v.reps))}});
     if(best&&before&&best>before+0.5)prs.push(it.name)});
   S.days[`${wn}|${dn}`]=Date.now();save();stopRest();
   document.getElementById("overlay").innerHTML=`<div class="scrim" data-close></div><div class="sheet"><div class="inner wrap"><div class="done-panel">
     <div class="eyebrow">${T("week")} ${WN(wn)} · ${esc(dayTitle(d))}</div><div class="big">${T("finished")}</div>
-    <div class="done-grid"><div class="stat"><b class="num">${sets}</b><span>${T("setsDone")}</span></div><div class="stat"><b class="num">${vol>=1000?(vol/1000).toFixed(1)+"k":vol}</b><span>${T("volume")} (lb)</span></div><div class="stat"><b class="num">${prs.length}</b><span>${T("prs")}</span></div></div>
+    <div class="done-grid"><div class="stat"><b class="num">${tm?wtMins(tm):"–"}</b><span>${T("duration")} (min)</span></div><div class="stat"><b class="num">${sets}</b><span>${T("setsDone")}</span></div><div class="stat"><b class="num">${vol>=1000?(vol/1000).toFixed(1)+"k":vol}</b><span>${T("volume")} (lb)</span></div><div class="stat"><b class="num">${prs.length}</b><span>${T("prs")}</span></div></div>
     ${prs.length?`<div class="callout">🏅 ${prs.map(esc).join(", ")}</div>`:""}
     <button class="btn block" data-close>${T("back")}</button></div></div></div>`;
 }
@@ -751,7 +780,7 @@ function toggleSet(row,forceDone){
       if(cand>=700||(ref>0&&cand>ref*1.6&&cand-ref>=40)){row.dataset.ok=String(cand);wt.classList.add("warn");
         toast(S.profile.lang==="fr"?`${cand} lb ? C'est bien plus que d'habitude${ref?` (${ref})`:""}. Corrige ou touche ✓ pour confirmer.`:`${cand} lb? That's way more than usual${ref?` (${ref})`:""}. Fix it, or tap ✓ to confirm.`,4500);return}}
     wt.classList.remove("warn");
-    v.wt=wt.value||(wt.placeholder&&/^\d/.test(wt.placeholder)?wt.placeholder:"");v.reps=rp.value||(/^\d/.test(rp.placeholder)?rp.placeholder:"");wt.value=v.wt;rp.value=v.reps;v.done=true;startRest(+row.dataset.rest)}
+    v.wt=wt.value||(wt.placeholder&&/^\d/.test(wt.placeholder)?wt.placeholder:"");v.reps=rp.value||(/^\d/.test(rp.placeholder)?rp.placeholder:"");wt.value=v.wt;rp.value=v.reps;v.done=true;startRest(+row.dataset.rest);{const [w0,d0]=k.split("|");wtTouch(+w0,d0)}}
   else v.done=false;
   S.logs[k]=v;keepDraft(k);save();row.classList.toggle("done",v.done);updateCount();queueSet(k);
 }
