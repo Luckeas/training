@@ -289,12 +289,13 @@ const BRANDS={
 let BRAND=null;
 function applyBrand(team){
   const k=String(team||"").toLowerCase().replace(/[^a-z]/g,"");BRAND=BRANDS[k]||null;
-  try{if(BRAND)localStorage.setItem("training-team",k);else localStorage.removeItem("training-team")}catch(e){}
+  // Remembered per athlete link, so one athlete's team never shows on another athlete's link opened on the same phone.
+  try{localStorage.removeItem("training-team");if(BRAND)localStorage.setItem("training-team-"+TOKEN,k);else localStorage.removeItem("training-team-"+TOKEN)}catch(e){}
   const r=document.documentElement.style;
   if(BRAND){r.setProperty("--accent",BRAND.accent);r.setProperty("--accent-ink",BRAND.ink)}else{r.removeProperty("--accent");r.removeProperty("--accent-ink")}
-  const ic=document.querySelector('link[rel="apple-touch-icon"]');if(ic&&BRAND)ic.href=BRAND.icon;
+  const ic=document.querySelector('link[rel="apple-touch-icon"]');if(ic)ic.href=BRAND?BRAND.icon:"apple-touch-icon.png";
 }
-try{const k=new URLSearchParams(location.search).get("b")||localStorage.getItem("training-team");if(LIVE&&k)applyBrand(k)}catch(e){}
+try{const k=new URLSearchParams(location.search).get("b")||localStorage.getItem("training-team-"+TOKEN);if(LIVE&&k)applyBrand(k)}catch(e){}
 // One random id per phone/browser. The script allows 2 devices per athlete link.
 const DEVICE = (()=>{let d="";try{d=localStorage.getItem("training-device")||""}catch(e){}
   if(!d){d=Array.from(crypto.getRandomValues(new Uint8Array(12)),b=>b.toString(16).padStart(2,"0")).join("");try{localStorage.setItem("training-device",d)}catch(e){}}
