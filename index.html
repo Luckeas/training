@@ -575,13 +575,14 @@ function viewWorkout(wn,dn){
 function exCard(wn,dn,it,i){
   const last=lastTime(it.name,wn);const rm=best1rm(it.name,wn);
   const lastTxt=last?last.sets.map(v=>`${v.wt?v.wt+"×":""}${v.reps}`).join(" · "):"";
-  const ss=/super/i.test(it.rest);
+  const dayItems=(WEEKS[wn-1]?.days.find(d=>d.day===dn)?.items)||[];
+  const ss=/super/i.test(it.rest)&&i<dayItems.length-1; // a "superset" on the last exercise has nothing to pair with
   const rows=(it.sets||[]).map((s,si)=>{
     const v=S.logs[keyOf(wn,dn,i,si)]||{};const p=pctOf(s.load);
     const sug=p&&rm?`<em>≈ ${r5(rm*p)} ${T("lb")}</em>`:"";
     const loadTxt=s.load&&s.load!=="BW"?esc(s.load.replace(" of 1RM"," 1RM")):(s.load==="BW"?"Bodyweight":"");
     const prevSet=last?.sets[si];
-    return `<div class="set ${v.done?"done":""}" data-k="${keyOf(wn,dn,i,si)}" data-rest="${restSecs(it.rest)}">
+    return `<div class="set ${v.done?"done":""}" data-k="${keyOf(wn,dn,i,si)}" data-rest="${ss||!/super/i.test(it.rest)?restSecs(it.rest):90}">
       <span class="sn">${si+1}</span>
       <div class="tg"><b>${esc(repsTarget(s.reps))} ${/^\d|–/.test(repsTarget(s.reps))?T("reps"):""}</b><span>${loadTxt}</span> ${sug}</div>
       <input id="wt-${wn}-${dn.slice(-1)}-${i}-${si}" ${/^BW\b/i.test(s.load||"")?'class="bw"':""} inputmode="decimal" aria-label="Weight set ${si+1}" placeholder="${/^BW\b/i.test(s.load||"")?(+S.profile.bw?"BW "+Math.round(+S.profile.bw):"BW"):/^\d+(\.\d+)?$/.test(s.load)?s.load:(prevSet?.wt||(p&&rm?r5(rm*p):"lb"))}" value="${esc(v.wt||"")}" data-f="wt">
@@ -590,7 +591,7 @@ function exCard(wn,dn,it,i){
   return `<article class="card ex">
     <div class="name"><div><div class="idx">${String(i+1).padStart(2,"0")}${it.type?" · "+esc(it.type).toUpperCase():""}</div><h3>${esc(it.name)}</h3></div>
       ${it.video?`<a class="demo" href="${esc(it.video)}" target="_blank" rel="noopener">${I.play}${T("demo")}</a>`:""}</div>
-    <div class="chips">${/\b(db|dbs|dumbb?ells?)\b/i.test(it.name)?`<span class="chip">${S.profile.lang==="fr"?"Poids d'un haltère":"Weight of ONE dumbbell"}</span>`:""}${it.rpe?`<span class="chip">RPE ${esc(it.rpe)}</span>`:""}<span class="chip">${T("rest")} ${esc(restLabel(it.rest))}</span>${rm?`<span class="chip">1RM ${T("est")} ${r5(rm)} ${T("lb")}</span>`:""}</div>
+    <div class="chips">${/\b(db|dbs|dumbb?ells?)\b/i.test(it.name)?`<span class="chip">${S.profile.lang==="fr"?"Poids d'un haltère":"Weight of ONE dumbbell"}</span>`:""}${it.rpe?`<span class="chip">RPE ${esc(it.rpe)}</span>`:""}<span class="chip">${T("rest")} ${esc((ss||!/super/i.test(it.rest)?restLabel(it.rest):"1–2 min"))}</span>${rm?`<span class="chip">1RM ${T("est")} ${r5(rm)} ${T("lb")}</span>`:""}</div>
     ${ss?`<div class="ssflag">${T("superset")}</div>`:""}
     ${last?`<div class="last">${T("last")} (${T("week").toLowerCase()} ${WN(last.w)}): <b class="num">${esc(lastTxt)}</b></div>`:""}
     <div class="colhead"><span>#</span><span>${T("target")}</span><span>${T("lb")}</span><span>${T("reps")}</span><span></span></div>
