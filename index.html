@@ -939,7 +939,11 @@ function viewSeason(){
 }
 
 /* ---------- live mode: read from and write to the athlete's own Google Sheet ---------- */
-function parseLogged(load,repsCell){
+/* From the week of Oct 26, 2026 on, a set only counts as logged when it is in brackets, "125 (125x3)",
+   which is how the app writes it. A plain "125" or "35x8" is the coach's prescription.
+   Earlier weeks keep the old reading, so sets athletes typed straight into the sheet still count. */
+const STRICT_FROM=new Date(2026,9,26);
+function parseLogged(load,repsCell,strict){
   load=String(load||"").trim();
   let m=load.match(/^(.*?)\s*\(([^()]*)\)\s*$/);
   if(m){const inner=m[2].trim();
@@ -948,6 +952,7 @@ function parseLogged(load,repsCell){
     if(k)return{presc:m[1].trim(),logged:{wt:k[1],reps:k[2],done:true}};
     k=inner.match(/^(\d+)$/);if(k)return{presc:m[1].trim(),logged:{wt:"",reps:k[1],done:true}};
     return{presc:load,logged:null}}
+  if(strict)return{presc:load,logged:null};
   m=load.match(/^(\d+(?:\.\d+)?)\s*[x×]\s*(\d+)$/i);if(m)return{presc:"",logged:{wt:m[1],reps:m[2],done:true}};
   // a plain number the athlete typed over the prescription, maybe with a comment ("110 💀")
   m=load.match(/^(\d+(?:\.\d+)?)\s*(?:lbs?|kg)?(?:\s+(.*))?$/i);if(m&&!/[%~]/.test(load))return{presc:"",logged:{wt:m[1],reps:repsPlaceholder(repsCell),done:true}};
@@ -959,7 +964,7 @@ function cellValue(set,v){
   // Bodyweight exercises: a number in the weight box is ADDED weight → "BW+25 (8)". No number → "BW (8)".
   if(/^BW$/i.test(p.trim()))return +wt?`BW+${wt} (${reps})`:`BW (${reps})`;
   const inner=wt&&reps?`${wt}x${reps}`:(wt||reps);
-  if(!p)return wt&&reps?`${wt}x${reps}`:(wt||`(${reps})`);
+  if(!p)return `(${inner})`;
   return `${p} (${inner})`;
 }
 function findKey(tab,row,col){
@@ -974,7 +979,7 @@ function applyLive(data){
   TEAM.name=data.athlete.name;EVENTS=[];SEASON=parsePeriod(data.period);if(SEASON)EVENTS=SEASON.events;
   WEEKS=data.weeks.filter(w=>w.days.length&&parseFloat(w.name)>=1).map((w,wi)=>({week:wi+1,name:w.name,label:w.label,date:w.date,tab:w.tab,
     days:w.days.map(d=>({day:d.day,row:d.row||0,mark:d.mark||"",summary:d.summary,circuit:!!d.circuit,timer:d.timer||null,items:d.items.map(it=>({...it,
-      sets:(it.sets||[]).map(s=>{const p=parseLogged(s.load,s.reps);return{load:p.presc,reps:s.reps,col:s.col,_logged:p.logged}})}))}))}));
+      sets:(it.sets||[]).map(s=>{const p=parseLogged(s.load,s.reps,weekDate(w)>=STRICT_FROM);return{load:p.presc,reps:s.reps,col:s.col,_logged:p.logged}})}))}))}));
   S.logs={};S.notes={};
   WEEKS.forEach(w=>w.days.forEach(d=>d.items.forEach((it,i)=>{
     if(it.note)S.notes[`${w.week}|${d.day}|${i}`]=it.note;
