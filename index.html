@@ -1052,6 +1052,24 @@ async function boot(){
   render();flushQueue();
 }
 boot();
+
+/* Self-update: iPhone home-screen apps keep an old copy of the page in memory and have no refresh
+   button. When the app opens or comes back to the front, compare this page's code with the live
+   one and reload with a fresh URL if it changed (at most once a minute, never in a loop). */
+const APP_CODE=(document.currentScript&&document.currentScript.textContent)||"";
+async function checkForUpdate(){
+  try{
+    if(!APP_CODE||!navigator.onLine)return;
+    const last=+(sessionStorage.getItem("dbs-upd")||0);if(Date.now()-last<60000)return;
+    const html=await fetch(location.pathname+"?check="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.text():"");
+    const m=html.match(/<script>([\s\S]*)<\/script>/);if(!m)return;
+    if(m[1].trim()===APP_CODE.trim())return;
+    sessionStorage.setItem("dbs-upd",String(Date.now()));
+    const u=new URL(location.href);u.searchParams.set("r",String(Date.now()));location.replace(u.toString());
+  }catch(_){}
+}
+setTimeout(checkForUpdate,3000);
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")checkForUpdate()});
 </script>
 
 </body>
