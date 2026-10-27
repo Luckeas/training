@@ -1035,6 +1035,9 @@ async function boot(){
     const r=await fetch(API_URL+"?t="+encodeURIComponent(TOKEN)+"&d="+encodeURIComponent(DEVICE));const data=await r.json();
     if(data.locked){try{localStorage.removeItem(CK)}catch(_){}
       app.innerHTML=`<div class="wrap" style="padding-block:30vh 0;display:grid;gap:12px;text-align:center"><h2>This link is already in use</h2><p class="muted">${esc(data.error)}</p></div>`;return}
+    if(data.paused){
+      const ok=/^https:\/\//.test(data.renew||"");
+      app.innerHTML=`<div class="wrap" style="padding-block:28vh 0;display:grid;gap:12px;text-align:center"><h2>Your membership is paused</h2><p class="muted">Your program and everything you've logged are saved. Restart your membership and this same link works again.</p>${ok?`<a class="btn" href="${esc(data.renew)}" target="_blank" rel="noopener">Restart my membership</a>`:""}<p class="muted small">Votre abonnement est en pause. Votre programme et vos données sont sauvegardés.</p></div>`;return}
     if(data.error&&/not active/i.test(data.error)){try{localStorage.removeItem(CK)}catch(_){}
       app.innerHTML=`<div class="wrap" style="padding-block:30vh 0;display:grid;gap:12px;text-align:center"><h2>This link is no longer active</h2><p class="muted">Contact your coach to get access to your program.</p></div>`;return}
     if(data.error)throw new Error(data.error);
