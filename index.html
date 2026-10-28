@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#121315">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -775,7 +776,7 @@ function timerHtml(w,d){const t=wtGet(w,d);
 function updateTimer(){const el=document.getElementById("wtimer");if(!el||VIEW.name!=="workout")return;el.outerHTML=timerHtml(VIEW.w,VIEW.d)}
 setInterval(()=>{const el=document.getElementById("wtimer");if(el&&el.dataset.start)updateTimer()},1000);
 /* The embedded circuit timer sends its explanation of the workout; show it above the timer (and remember it). */
-window.addEventListener("message",e=>{const m=e.data;if(!m||!m.dbspeedTimer||typeof m.desc!=="string")return;
+window.addEventListener("message",e=>{const f=document.querySelector("iframe.tframe");if(!f||e.source!==f.contentWindow)return;const m=e.data;if(!m||!m.dbspeedTimer||typeof m.desc!=="string")return;
   S.circDesc=S.circDesc||{};if(m.url)S.circDesc[m.url]=m.desc.slice(0,800);save();
   const el=document.getElementById("circDesc");if(el){el.textContent=m.desc;el.hidden=false}});
 /* Finished workouts are marked in the athlete's sheet (column P of the "Day N" row): "⏱ 58 min" or "✓ Done".
