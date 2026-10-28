@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<title>Privacy · DB Speed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eceef1;--card:#ffffff;--fg:#15171a;--muted:#5e636b;--line:#d9dce1;--accent:#d43b1f;
+  --display:"Barlow Condensed","Arial Narrow","Helvetica Neue",Arial,sans-serif;--body:"Barlow","Helvetica Neue",Arial,sans-serif;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#121315;--card:#1b1d20;--fg:#f3efe6;--muted:#9b9a93;--line:#2c2f34;--accent:#e5482b;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 var(--body);
+  padding:max(28px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 48px max(16px,env(safe-area-inset-left))}
+main{max-width:640px;margin:0 auto;display:grid;gap:20px}
+.brand{font-family:var(--display);font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:15px;color:var(--accent)}
+h1,h2{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.03em;line-height:1.05;margin:0;text-wrap:balance}
+h1{font-size:40px}
+h2{font-size:22px;margin-bottom:10px}
+section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 20px 8px}
+ul{margin:0;padding:0;list-style:none;display:grid;gap:12px}
+li b{display:block;font-weight:600}
+.sig{color:var(--muted);font-size:14px;margin:14px 0 12px}
+a{color:var(--accent)}
+.meta{color:var(--muted);font-size:14px;margin:0}
+nav{display:flex;gap:16px;font-size:14px}
+</style>
+</head>
+<body>
+<main>
+  <div>
+    <div class="brand">DB Speed</div>
+    <h1>Privacy</h1>
+    <p class="meta">Last updated: October 27, 2026 · <a href="#fr">Français</a></p>
+  </div>
+
+  <section lang="en">
+    <h2>Privacy at DB Speed</h2>
+    <ul>
+      <li><b>What I collect</b>Your name, email, sex, bodyweight and the workouts you log. Payments go through Stripe; I never see your card number.</li>
+      <li><b>Why</b>To build and coach your program, and for billing.</li>
+      <li><b>Who sees it</b>Only me. It's stored with Google, Stripe and Skool, which may keep it outside Québec. No selling, no ads, no tracking.</li>
+      <li><b>How long</b>Deleted a year after you stop training with me. Payment records are kept 6 years for taxes.</li>
+      <li><b>Your rights</b>Ask me anytime to see, fix or delete your info at <a href="mailto:hello@dbspeed.app">hello@dbspeed.app</a>. Not happy with my answer? You can contact Québec's Commission d'accès à l'information.</li>
+    </ul>
+    <p class="sig">Martin Shih, responsible for your personal information</p>
+  </section>
+
+  <section lang="fr" id="fr">
+    <h2>Confidentialité chez DB Speed</h2>
+    <ul>
+      <li><b>Ce que je recueille</b>Votre nom, courriel, sexe, poids et les entraînements que vous inscrivez. Les paiements passent par Stripe; je ne vois jamais votre numéro de carte.</li>
+      <li><b>Pourquoi</b>Pour créer et encadrer votre programme, et pour la facturation.</li>
+      <li><b>Qui y a accès</b>Moi seulement. Les données sont conservées chez Google, Stripe et Skool, qui peuvent les garder à l'extérieur du Québec. Aucune vente, aucune pub, aucun suivi.</li>
+      <li><b>Combien de temps</b>Supprimées un an après la fin de votre entraînement avec moi. Les registres de paiement sont gardés 6 ans pour l'impôt.</li>
+      <li><b>Vos droits</b>Demandez-moi en tout temps de voir, corriger ou supprimer vos renseignements à <a href="mailto:hello@dbspeed.app">hello@dbspeed.app</a>. Pas satisfait de ma réponse? Vous pouvez contacter la Commission d'accès à l'information du Québec.</li>
+    </ul>
+    <p class="sig">Martin Shih, responsable de vos renseignements personnels</p>
+  </section>
+</main>
+</body>
+</html>
