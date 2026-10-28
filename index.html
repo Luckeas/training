@@ -932,7 +932,7 @@ function viewSeason(){
    <section><h2>${T("blocks")}</h2>
     <div class="card" style="padding:4px 14px">${runs.filter(r=>r.focus!=="—").map(r=>{const cur=now&&now.n>=r.from&&now.n<=r.to,past=now&&now.n>r.to;
       return `<div class="ev ${past?"past":""}" style="grid-template-columns:12px 1fr auto;align-items:center"><span class="dot" style="background:${phaseColor(r.focus)}"></span>
-        <span><b>${esc(r.focus)}</b><br><span class="muted small">${T("weeksWord")} ${r.from}${r.to>r.from?"–"+r.to:""} · ${fmtDate(r.start)} – ${fmtDate(end(r.end))}</span></span>
+        <span><b>${esc(r.focus)}</b><br><span class="muted small">${r.to>r.from?`${T("weeksWord")} ${r.from}–${r.to}`:`${T("week")} ${r.from}`} · ${fmtDate(r.start)} – ${fmtDate(end(r.end))}</span></span>
         ${cur?`<span class="state part">${T("now")}</span>`:""}</div>`}).join("")}</div></section>
    <section><h2>${T("dates")}</h2>
     <div class="card" style="padding:4px 14px">${dates.length?dates.map(([dt,n])=>{const days=Math.round((dt-TODAY)/864e5);
@@ -976,18 +976,39 @@ function findKey(tab,row,col){
     const s=d.items[i].sets.findIndex(x=>x.col===col);if(s>=0)return{set:keyOf(w.week,d.day,i,s)}}
   return null;
 }
+/* Personal week numbers: a member who joined mid-season (Copies column Q = the season week they
+   started on) sees that week as "Week 1". Earlier weeks are hidden and every number on every screen
+   counts from their start, while the dates (and so tests, deloads, events) stay the team's. */
+let START=0;
+function applyStart(start){
+  START=0;
+  const st=parseInt(start,10);
+  if(!(st>1)||!WEEKS.some(w=>parseFloat(w.name)>=st))return;   // blank, 1 or a week they don't have: season numbering
+  const off=st-1,pn=x=>String(+(parseFloat(x)-off).toFixed(2));
+  WEEKS=WEEKS.filter(w=>parseFloat(w.name)>=st).map((w,wi)=>({...w,week:wi+1,name:pn(w.name)}));
+  if(SEASON){
+    const first=SEASON.weeks.find(x=>x.n>=st);
+    SEASON.weeks=SEASON.weeks.filter(x=>x.n>=st).map(x=>({...x,n:x.n-off}));
+    if(first)SEASON.events=SEASON.events.filter(([d])=>new Date(d+"T00:00")>=first.start);
+    if(!SEASON.weeks.length)SEASON=null;
+    EVENTS=SEASON?SEASON.events:[];
+  }
+  START=st;
+}
 function applyLive(data){
   applyBrand(data.athlete.team);
   TEAM.name=data.athlete.name;EVENTS=[];SEASON=parsePeriod(data.period);if(SEASON)EVENTS=SEASON.events;
   WEEKS=data.weeks.filter(w=>w.days.length&&parseFloat(w.name)>=1).map((w,wi)=>({week:wi+1,name:w.name,label:w.label,date:w.date,tab:w.tab,
     days:w.days.map(d=>({day:d.day,row:d.row||0,mark:d.mark||"",summary:d.summary,circuit:!!d.circuit,timer:d.timer||null,items:d.items.map(it=>({...it,
       sets:(it.sets||[]).map(s=>{const p=parseLogged(s.load,s.reps,weekDate(w)>=STRICT_FROM);return{load:p.presc,reps:s.reps,col:s.col,_logged:p.logged}})}))}))}));
+  applyStart(data.athlete.start);
   S.logs={};S.notes={};
   WEEKS.forEach(w=>w.days.forEach(d=>d.items.forEach((it,i)=>{
     if(it.note)S.notes[`${w.week}|${d.day}|${i}`]=it.note;
     it.sets.forEach((s,si)=>{if(s._logged)S.logs[keyOf(w.week,d.day,i,si)]=s._logged})})));
   for(const q of Object.values(S.queue||{})){const f=findKey(q.tab,q.row,q.col);if(!f)continue;
     if(f.set&&q.log)S.logs[f.set]=q.log;if(f.note!=null&&q.note!=null)S.notes[f.note]=q.note}
+  if((S.startWeek||0)!==START){S.days={};S.timers={};S.startWeek=START}
   S.timers=S.timers||{};WEEKS.forEach(w=>w.days.forEach(d=>{const k=`${w.week}|${d.day}`,m=String(d.mark||"");
     if(/⏱|✓|done/i.test(m))S.days[k]=S.days[k]||1;
     const mm=m.match(/(\d+)\s*min/);if(mm&&!(S.timers[k]&&S.timers[k].start))S.timers[k]={start:1,end:1+ +mm[1]*60000,last:1,fin:true}}));
