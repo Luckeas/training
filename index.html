@@ -312,7 +312,7 @@ const BENCH = {
   bench:[["Entry",55,65,75,85,95,125,145,165,185,205],["Regional",70,80,90,100,110,145,165,185,205,225],["Provincial",85,95,105,115,125,165,185,205,225,245],["National",100,110,120,130,140,185,205,225,245,265],["CCWC",115,125,135,145,155,205,225,245,265,285],["NT Entry",130,140,150,160,170,225,245,265,285,305],["NT Standard",145,155,165,175,185,245,265,285,305,325],["NT Strong",160,170,180,190,200,265,285,305,325,345]],
   pullups:[["Entry",.5,.5,.5,.25,.25,7,6,5,4,3],["Regional",1,1,.5,.5,.25,12,10,9,8,6],["Provincial",3,2,1,1,.5,18,15,14,12,10],["National",4,3,2,1,1,21,18,16,15,12],["CCWC",10,8,6,4,2,24,22,20,18,15],["NT Entry",12,10,8,6,3,36,32,28,24,20],["NT Standard",18,15,12,8,4,45,40,35,30,25],["NT Strong",24,20,16,12,8,50,45,40,35,30]]
 };
-const PHASE_COLORS = {"Adaptation":"#8a8f98","Maintenance":"#5fa8d3","Active Recovery":"#9b8fd6","Prep":"#c9a227","Prep & Testing":"var(--faint)","Hypertrophy 1":"#e5482b","Hypertrophy 2":"#c2361d","Strength":"#3d7bd9","Power & Strength":"#f2b233","Power & Endurance":"#2fb7a4","Deload":"#7b7f86","Test week":"#b36ae2"};
+const PHASE_COLORS = {"Adaptation":"#8a8f98","Maintenance":"#5fa8d3","Active Recovery":"#9b8fd6","Prep":"#c9a227","Prep & Testing":"var(--faint)","Hypertrophy 1":"#e5482b","Hypertrophy 2":"#c2361d","Strength":"#3d7bd9","Power & Strength":"#f2b233","Power & Endurance":"#2fb7a4","Deload":"#7b7f86","Test week":"#b36ae2","Summer Speed":"#ff8a3d","Off-Season Prep":"#8fbf5a"};
 
 /* ---------- i18n ---------- */
 const STR = {
@@ -321,13 +321,13 @@ const STR = {
   circuit:"Team circuit",openTimer:"Open circuit timer",timerNote:"Coach runs this on the speaker. Everyone follows the same clock.",markCircuit:"Mark circuit done",circuitDone:"Circuit done",
   compliance:"Sessions done",a2hsBanner:"Add DB Speed to your home screen: one tap, opens like an app.",a2hsHow:"Show me",a2hsTitle:"Add to your home screen",a2hsBtn:"Add to home screen",a2hsDone:"Got it",a2hsNote:"From now on, open DB Speed from the home screen icon. It keeps your private link.",circHow:"Each group starts at a different station and rotates after every interval. Follow the timer.",timerBelow:"Exercises and demo videos below",fullScreen:"Full screen",wtWait:"Timer starts with your first set",duration:"Time",streak:"Week streak",bench1rm:"Bench est. 1RM",fromWorkouts:"Estimated from the sets you log in your workouts. Your official numbers are the ones from fitness test days.",pullups:"Pull-ups max",benchmarks:"Benchmarks",yourLevel:"You're at",toNext:"to",records:"Best lifts",noData:"Log a few sessions and your numbers show up here.",
   settings:"Profile & settings",name:"Name",sex:"Benchmark table",women:"Women",men:"Men",bw:"Bodyweight (lb)",lang:"Language",look:"Look",coach:"Coach preview (show all 32 weeks)",restTimer:"Rest timer after each set",sample:"You're looking at sample logs so you can see the app in use.",clear:"Clear sample",close:"Close",
-  rules:"How to train",season:"Season calendar",terms:"Terms",locked:"Locked until",dayNames:{upper:"Upper body",lower:"Lower body",full:"Full body",circuit:"Team circuit"},est:"est.",ofSets:"of",guideIntro:"Your coach's rules for every session.",synced:"Program updates from the team master sheet."},
+  rules:"How to train",season:"Season calendar",terms:"Terms",locked:"Locked until",dayNames:{upper:"Upper body",lower:"Lower body",full:"Full body",circuit:"Team circuit"},est:"est.",ofSets:"of",guideIntro:"Your coach's rules for every session.",nextSeason:"Next season",fromDate:"from",synced:"Program updates from the team master sheet."},
  fr:{today:"Aujourd'hui",program:"Programme",progress:"Progrès",guide:"Guide",seasonTab:"Saison",seasonIntro:"Tes blocs d'entraînement et les dates importantes",blocks:"Blocs d'entraînement",dates:"Dates importantes",now:"En cours",weeksWord:"Semaines",week:"Semaine",thisWeek:"Cette semaine",start:"Commencer",resume:"Continuer",done:"Fait",notStarted:"À faire",opens:"Ouvre",nextUp:"Prochain",inDays:d=>d===0?"aujourd'hui":d===1?"demain":`dans ${d} jours`,
   sets:"séries",lb:"lb",reps:"rép.",target:"Cible",last:"Dernière fois",demo:"Démo",notes:"Notes (optionnel)",finish:"Terminer la séance",finished:"Séance terminée",volume:"Volume",setsDone:"Séries",prs:"Records",back:"Retour",rest:"Repos",skip:"Passer",restOver:"Repos fini — go",superset:"Superset · enchaîne avec le prochain exercice",
   circuit:"Circuit d'équipe",openTimer:"Ouvrir le chrono du circuit",timerNote:"Le coach le fait jouer sur le haut-parleur. Tout le monde suit le même chrono.",markCircuit:"Circuit terminé",circuitDone:"Circuit terminé",
   compliance:"Séances faites",a2hsBanner:"Ajoute DB Speed à ton écran d\u2019accueil : un seul geste, comme une app.",a2hsHow:"Comment",a2hsTitle:"Ajouter à l\u2019écran d\u2019accueil",a2hsBtn:"Ajouter à l\u2019écran d\u2019accueil",a2hsDone:"Compris",a2hsNote:"Ouvre maintenant DB Speed avec l\u2019icône sur ton écran d\u2019accueil. Elle garde ton lien personnel.",circHow:"Chaque groupe commence à une station différente et change après chaque intervalle. Suis le chrono.",timerBelow:"Exercices et vidéos plus bas",fullScreen:"Plein écran",wtWait:"Le chrono démarre à ta première série",duration:"Durée",streak:"Semaines de suite",bench1rm:"Développé couché 1RM est.",fromWorkouts:"Estimé à partir des séries que tu notes à l\u2019entraînement. Tes chiffres officiels sont ceux des journées de tests.",pullups:"Tractions max",benchmarks:"Standards",yourLevel:"Ton niveau",toNext:"pour",records:"Meilleurs levés",noData:"Note quelques séances et tes chiffres vont apparaître ici.",
   settings:"Profil et réglages",name:"Nom",sex:"Tableau de standards",women:"Femmes",men:"Hommes",bw:"Poids corporel (lb)",lang:"Langue",look:"Style",restTimer:"Chrono de repos après chaque série",coach:"Aperçu coach (voir les 32 semaines)",sample:"Ce sont des données d'exemple pour voir l'app en action.",clear:"Effacer l'exemple",close:"Fermer",
-  rules:"Consignes",season:"Calendrier de saison",terms:"Termes",locked:"Disponible le",dayNames:{upper:"Haut du corps",lower:"Bas du corps",full:"Corps complet",circuit:"Circuit d'équipe"},est:"est.",ofSets:"sur",guideIntro:"Les consignes de ton coach pour chaque séance.",synced:"Le programme se met à jour depuis la feuille maîtresse de l'équipe."}
+  rules:"Consignes",season:"Calendrier de saison",terms:"Termes",locked:"Disponible le",dayNames:{upper:"Haut du corps",lower:"Bas du corps",full:"Corps complet",circuit:"Circuit d'équipe"},est:"est.",ofSets:"sur",guideIntro:"Les consignes de ton coach pour chaque séance.",nextSeason:"Saison prochaine",fromDate:"à partir du",synced:"Le programme se met à jour depuis la feuille maîtresse de l'équipe."}
 };
 const RULES = {
  en:[["Warm-up","Always warm up before training to prepare your body for exercise."],["Rest time","Heavy lifts: 4–8 min. Lighter exercises: 1–3 min. Rest longer if needed to keep sets high quality."],["Stability & positioning","Brace your core before each movement. Keep your feet planted during bench press."],["Grip & equipment","Use chalk for grip, and lifting straps when needed."],["Nutrition","Eat enough before training to support your energy and performance."],["Quality over intensity","Prioritize technique and quality reps. You don't need to go to failure on every set."]],
@@ -495,7 +495,7 @@ function viewToday(){
   const days=w.days;
   const firstOpen=days.find(d=>dayStatus(w.week,d.day)!=="done");
   const sNow=LIVE&&SEASON?seasonWeekAt(TODAY):null;
-  const bar=LIVE&&SEASON?SEASON.weeks.map(x=>`<i class="${sNow&&x.n<sNow.n?"past":""} ${sNow&&x.n===sNow.n?"now":""}" style="background:${phaseColor(x.focus||"")}" title="Week ${x.n}"></i>`).join(""):WEEKS.map(x=>`<i class="${x.week<CUR?"past":""} ${x.week===CUR?"now":""}" style="background:${phaseColor(phaseOf(x))}" title="Week ${WN(x.week)}"></i>`).join("");
+  const bar=LIVE&&SEASON?SEASON.weeks.map(x=>`<i class="${sNow&&x.n<sNow.n?"past":""} ${sNow&&x.n===sNow.n?"now":""}" style="background:${phaseColor(x.focus||"")}" title="Week ${x.n}"></i>`).join("")+`<i title="Next season"></i>`.repeat(nextSeasonSlots()):WEEKS.map(x=>`<i class="${x.week<CUR?"past":""} ${x.week===CUR?"now":""}" style="background:${phaseColor(phaseOf(x))}" title="Week ${WN(x.week)}"></i>`).join("");
   return brandBar()+`
   <div class="wrap">
    ${S.sample?`<div style="padding-top:12px"><div class="banner"><span>${T("sample")}</span><button id="clearSample">${T("clear")}</button></div></div>`:""}
@@ -504,8 +504,8 @@ function viewToday(){
      <div class="eyebrow">${T("week")} · ${fmtDate(weekDate(w))}</div>
      <div class="row"><div class="bigweek num">${LIVE?esc(w.name):String(w.week).padStart(2,"0")}</div>
        <div style="display:grid;gap:8px;padding-bottom:6px">${ph?`<span class="phase"><span class="dot" style="background:${phaseColor(ph)}"></span>${esc(ph)}</span>`:""}
-       <span class="muted small">${T("week")} ${sNow?sNow.n:w.week} / ${LIVE&&SEASON?SEASON.weeks.length:WEEKS.length}</span></div></div>
-     <div class="weekbar" aria-hidden="true" style="grid-template-columns:repeat(${LIVE&&SEASON?SEASON.weeks.length:WEEKS.length},1fr)">${bar}</div>
+       <span class="muted small">${T("week")} ${sNow?sNow.n:w.week} / ${totalWeeks()}</span></div></div>
+     <div class="weekbar" aria-hidden="true" style="grid-template-columns:repeat(${totalWeeks()},1fr)">${bar}</div>
      ${nextEv?`<div class="next">${I.chev}<span>${T("nextUp")}: <b>${esc(nextEv[1])}</b> · ${fmtDate(nextEv[0],true)} · ${T("inDays")(Math.round((nextEv[0]-TODAY)/864e5))}</span></div>`:""}
    </div>
    <section>
@@ -527,7 +527,7 @@ function dayCard(wn,d,featured){
 /* ---------- PROGRAM ---------- */
 function viewProgram(){
   return brandBar()+`<div class="wrap"><section>
-   <div class="eyebrow">${LIVE?"":TEAM.season+" · "}${LIVE&&SEASON?SEASON.weeks.length:WEEKS.length} ${T("week").toLowerCase()}s</div>
+   <div class="eyebrow">${LIVE?"":TEAM.season+" · "}${totalWeeks()} ${T("week").toLowerCase()}s</div>
    <h1>${T("program")}</h1>
    <div class="legend">${Object.entries(PHASE_COLORS).filter(([k])=>!LIVE||(SEASON&&SEASON.weeks.some(w=>w.focus===k))).map(([k,v])=>`<span><i class="dot" style="background:${v}"></i>${k}</span>`).join("")}</div>
    <div class="weeks">${WEEKS.map(w=>{const ok=unlocked(w.week);const ph=phaseOf(w);
@@ -918,8 +918,9 @@ function viewSeason(){
   const S0=SEASON||teamSeason();if(!S0||!S0.weeks.length)return brandBar()+`<div class="wrap"><section><h1>${T("seasonTab")}</h1><p class="muted">No season plan yet.</p></section></div>`;
   const now=(()=>{let h=null;for(const w of S0.weeks)if(w.start<=TODAY)h=w;return h})();
   const runs=[];S0.weeks.forEach(w=>{const f=w.focus||"—";const last=runs[runs.length-1];if(last&&last.focus===f&&last.to===w.n-1){last.to=w.n;last.end=w.start}else runs.push({focus:f,from:w.n,to:w.n,start:w.start,end:w.start})});
-  const total=S0.weeks.length;
-  const strip=runs.map(r=>`<i style="flex:${r.to-r.from+1};background:${phaseColor(r.focus)}" title="${esc(r.focus)}"></i>`).join("");
+  const total=SEASON?Math.max(S0.weeks.length,totalWeeks()):S0.weeks.length,rest=total-S0.weeks.length;
+  const strip=runs.map(r=>`<i style="flex:${r.to-r.from+1};background:${phaseColor(r.focus)}" title="${esc(r.focus)}"></i>`).join("")+(rest>0?`<i style="flex:${rest};background:var(--line)" title="${T("nextSeason")}"></i>`:"");
+  const lastW=S0.weeks[S0.weeks.length-1],nsFrom=lastW?new Date(lastW.start.getFullYear(),lastW.start.getMonth(),lastW.start.getDate()+7):null;
   const pos=now?Math.max(0,S0.weeks.indexOf(now))/total*100:-1;
   const end=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate()+6);
   const dates=S0.events.map(([d,n])=>[new Date(d+"T00:00"),n]);
@@ -933,7 +934,8 @@ function viewSeason(){
     <div class="card" style="padding:4px 14px">${runs.filter(r=>r.focus!=="—").map(r=>{const cur=now&&now.n>=r.from&&now.n<=r.to,past=now&&now.n>r.to;
       return `<div class="ev ${past?"past":""}" style="grid-template-columns:12px 1fr auto;align-items:center"><span class="dot" style="background:${phaseColor(r.focus)}"></span>
         <span><b>${esc(r.focus)}</b><br><span class="muted small">${r.to>r.from?`${T("weeksWord")} ${r.from}–${r.to}`:`${T("week")} ${r.from}`} · ${fmtDate(r.start)} – ${fmtDate(end(r.end))}</span></span>
-        ${cur?`<span class="state part">${T("now")}</span>`:""}</div>`}).join("")}</div></section>
+        ${cur?`<span class="state part">${T("now")}</span>`:""}</div>`}).join("")}${rest>0&&nsFrom?`<div class="ev" style="grid-template-columns:12px 1fr auto;align-items:center"><span class="dot" style="background:var(--line)"></span>
+        <span><b>${T("nextSeason")}</b><br><span class="muted small">${T("weeksWord")} ${lastW.n+1}–${total} · ${T("fromDate")} ${fmtDate(nsFrom)}</span></span></div>`:""}</div></section>
    <section><h2>${T("dates")}</h2>
     <div class="card" style="padding:4px 14px">${dates.length?dates.map(([dt,n])=>{const days=Math.round((dt-TODAY)/864e5);
       return `<div class="ev ${days<0?"past":""}"><span class="dt">${fmtDate(dt)}</span><span>${esc(n)}${days>=0&&days<=60?` <span class="muted small">· ${T("inDays")(days)}</span>`:""}</span></div>`}).join(""):`<p class="muted small">—</p>`}</div></section>
@@ -995,6 +997,15 @@ function applyStart(start){
   }
   START=st;
 }
+/* Members on personal week numbers see a full year: "Week 2 / 52". Weeks the season plan doesn't cover
+   yet (next season) show as empty slots until the coach posts them. */
+function totalWeeks(){
+  const known=LIVE&&SEASON?SEASON.weeks.length:WEEKS.length;
+  if(!START)return known;
+  const cur=parseFloat((WEEKS[CUR-1]||{}).name)||1;
+  return 52*Math.max(1,Math.ceil(Math.max(known,cur)/52));
+}
+const nextSeasonSlots=()=>Math.max(0,totalWeeks()-(LIVE&&SEASON?SEASON.weeks.length:WEEKS.length));
 function applyLive(data){
   applyBrand(data.athlete.team);
   TEAM.name=data.athlete.name;EVENTS=[];SEASON=parsePeriod(data.period);if(SEASON)EVENTS=SEASON.events;
