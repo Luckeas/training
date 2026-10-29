@@ -59,6 +59,8 @@ input.warn{border-color:var(--amber,#f2b233)!important;box-shadow:0 0 0 2px rgba
 .top .wrap{display:flex;align-items:center;gap:12px;padding-block:12px}
 .teamlogo{width:40px;height:40px;border-radius:10px;object-fit:contain;background:#fff;flex:none;margin-right:10px;box-shadow:0 0 0 1px var(--line)}
 .loader .teamlogo{width:150px;height:150px;border-radius:22px;margin:0 0 8px}
+.dbmark{display:block;flex:none}
+.loader .dbmark{margin:0 0 8px}
 .brand{font-family:var(--display);font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:15px}
 .brand small{display:block;font-family:var(--body);font-weight:500;letter-spacing:0;text-transform:none;color:var(--muted);font-size:12px}
 .spacer{flex:1}
@@ -288,6 +290,12 @@ const BRANDS={
   mcgill:{logo:"logos/mcgill.png",icon:"logos/mcgill-icon.png",accent:"#e0202f",ink:"#fff"},
   dbz:{logo:"logos/dbz.png",icon:"logos/dbz-icon.png",accent:"#d7191f",ink:"#fff"}};
 let BRAND=null;
+// DB Speed logo (the lane seal): "DB" in lane lines inside a red circle with a cream bar. Shown when the athlete has no team brand.
+// Under 48 px it uses two lines per letter instead of three so it stays readable.
+function dbMark(px){const sm=px<48,o=sm?[0,19]:[0,13,26],w=sm?11:8.5,rh=sm?9:7;
+  const D=k=>`M${14+k} ${40+k}H44A${60-k} ${60-k} 0 0 1 44 ${160-k}H${14+k}Z`;
+  const B=k=>{const r=30-k/2;return `M${112+k} ${40+k}H150A${r} ${r} 0 0 1 150 100A${r} ${r} 0 0 1 150 ${160-k}H${112+k}Z`};
+  return `<svg class="dbmark" width="${px}" height="${px}" viewBox="0 0 200 200" role="img" aria-label="DB Speed"><circle cx="100" cy="100" r="94" fill="#e5482b"/><path transform="translate(100 92) scale(.62) translate(-97 -100)" fill="none" stroke="#121315" stroke-width="${w}" stroke-linejoin="round" d="${o.map(k=>D(k)+B(k)).join("")}"/><rect x="58" y="150" width="84" height="${rh}" fill="#f3efe6"/></svg>`}
 function applyBrand(team){
   const k=String(team||"").toLowerCase().replace(/[^a-z]/g,"");BRAND=BRANDS[k]||null;
   // Remembered per athlete link, so one athlete's team never shows on another athlete's link opened on the same phone.
@@ -454,7 +462,7 @@ document.getElementById("tabs").addEventListener("click",e=>{const b=e.target.cl
 
 function topbar(inner){return `<header class="top"><div class="wrap">${inner}</div></header>`}
 function brandBar(){const ini=(S.profile.name||"?").trim().slice(0,1).toUpperCase();
-  return topbar(`${BRAND?`<img class="teamlogo" src="${BRAND.logo}" alt="">`:""}<div class="brand">${LIVE?esc(TEAM.name)+"'s Program":TEAM.name+" Gym"}<small>${LIVE?'<span id="sync" class="sync">Synced with your sheet</span>':TEAM.season}</small></div><div class="spacer"></div><button class="avatar" id="openSettings" aria-label="${T("settings")}">${esc(ini)}</button>`)}
+  return topbar(`${BRAND?`<img class="teamlogo" src="${BRAND.logo}" alt="">`:dbMark(40)}<div class="brand">${LIVE?esc(TEAM.name)+"'s Program":TEAM.name+" Gym"}<small>${LIVE?'<span id="sync" class="sync">Synced with your sheet</span>':TEAM.season}</small></div><div class="spacer"></div><button class="avatar" id="openSettings" aria-label="${T("settings")}">${esc(ini)}</button>`)}
 
 /* ---------- TODAY ---------- */
 /* ---------- add to home screen ----------
@@ -1062,7 +1070,7 @@ function setSync(st){const el=document.getElementById("sync");if(!el)return;el.d
 window.addEventListener("online",()=>flushQueue());
 async function boot(){
   if(!LIVE){render();return}
-  app.innerHTML=`<div class="loader">${BRAND?`<img class="teamlogo" src="${BRAND.logo}" alt="">`:""}<div class="ring" aria-hidden="true"><i></i></div><div class="eyebrow">Loading your program…</div></div>`;
+  app.innerHTML=`<div class="loader">${BRAND?`<img class="teamlogo" src="${BRAND.logo}" alt="">`:dbMark(120)}<div class="ring" aria-hidden="true"><i></i></div><div class="eyebrow">Loading your program…</div></div>`;
   const CK=KEY+"-cache";
   try{
     const r=await fetch(API_URL+"?t="+encodeURIComponent(TOKEN)+"&d="+encodeURIComponent(DEVICE));const data=await r.json();
