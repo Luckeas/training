@@ -11,14 +11,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#121315;--card:#1b1d20;--raised:#23262a;--fg:#f3efe6;--muted:#9b9a93;--line:#2c2f34;--accent:#e5482b;--accent-ink:#fff;
+:root{--bg:#121315;--card:#1b1d20;--raised:#23262a;--fg:#f3efe6;--muted:#9b9a93;--line:#2c2f34;--accent:#d64124;--accent-ink:#fff;--accent-text:#ee6146;
   --display:"Barlow Condensed","Arial Narrow","Helvetica Neue",Arial,sans-serif;--body:"Barlow","Helvetica Neue",Arial,sans-serif;color-scheme:dark}
-@media (prefers-color-scheme:light){:root{--bg:#eceef1;--card:#ffffff;--raised:#f5f6f8;--fg:#15171a;--muted:#5e636b;--line:#d9dce1;--accent:#d43b1f;color-scheme:light}}
+@media (prefers-color-scheme:light){:root{--bg:#eceef1;--card:#ffffff;--raised:#f5f6f8;--fg:#15171a;--muted:#5e636b;--line:#d9dce1;--accent:#d43b1f;--accent-text:#b02f14;color-scheme:light}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 var(--body);
   padding:max(28px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 48px max(16px,env(safe-area-inset-left))}
 main{max-width:720px;margin:0 auto;display:grid;gap:24px}
-.brand{font-family:var(--display);font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:15px;color:var(--accent)}
+.brand{font-family:var(--display);font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:15px;color:var(--accent-text)}
 h1{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.02em;line-height:1;font-size:clamp(40px,9vw,60px);margin:6px 0 10px;text-wrap:balance}
 .lead{color:var(--muted);margin:0;max-width:52ch}
 .plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
@@ -30,7 +30,7 @@ h1{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-sp
 .price{font-family:var(--display);font-weight:800;font-size:40px;line-height:1;white-space:nowrap}
 .price small{font-family:var(--body);font-weight:500;font-size:15px;color:var(--muted);margin-left:4px}
 .note{color:var(--muted);font-size:14px}
-.save{align-self:flex-start;font-family:var(--display);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:13px;padding:3px 9px;border-radius:999px;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)}
+.save{align-self:flex-start;font-family:var(--display);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:13px;padding:3px 9px;border-radius:999px;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent-text)}
 .save.muted{background:var(--raised);color:var(--muted)}
 .btn{margin-top:auto;display:flex;align-items:center;justify-content:center;border-radius:12px;padding:14px 16px;font-family:var(--display);font-weight:800;font-size:17px;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;white-space:nowrap;background:var(--raised);color:var(--fg);border:1px solid var(--line)}
 .plan.pick .btn{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
@@ -42,7 +42,7 @@ h1{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-sp
 .steps{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;display:grid;gap:12px}
 .steps h2{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.03em;font-size:22px;margin:0}
 .steps ol{margin:0;padding-left:22px;display:grid;gap:8px}
-.steps li::marker{color:var(--accent);font-family:var(--display);font-weight:800}
+.steps li::marker{color:var(--accent-text);font-family:var(--display);font-weight:800}
 footer{color:var(--muted);font-size:14px;display:flex;flex-wrap:wrap;gap:6px 16px}
 footer a{color:var(--muted)}
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px}

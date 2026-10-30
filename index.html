@@ -22,8 +22,9 @@ html{padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}body
    Skins are the coach's three visual options; each skin is a complete explicit palette. */
 :root{
   --bg:#121315; --surface:#1b1d20; --raised:#24272b; --line:#30343a;
-  --fg:#f3efe6; --muted:#9b9a93; --faint:#64666b;
-  --accent:#e5482b; --accent-ink:#fff; --blue:#3d7bd9; --amber:#f2b233; --good:#43c08a;
+  --fg:#f3efe6; --muted:#9b9a93; --faint:#8e8f92;
+  --accent:#d64124; --accent-ink:#fff; --accent-text:#ee6146; --blue:#5089e2; --amber:#f2b233; --good:#43c08a; --good-ink:#06150e;
+  --rest:#376fcb; --rest-ink:#fff; --rest-btn:rgba(0,0,0,.18);
   --display:"Barlow Condensed","Arial Narrow","Helvetica Neue",Arial,sans-serif;
   --body:"Barlow","Helvetica Neue",Arial,sans-serif;
   --r:14px;
@@ -31,15 +32,23 @@ html{padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}body
 }
 :root[data-skin="daylight"]{
   --bg:#eceef1; --surface:#ffffff; --raised:#f4f5f7; --line:#d9dce1;
-  --fg:#15171a; --muted:#5e636b; --faint:#9aa0a8;
-  --accent:#d43b1f; --accent-ink:#fff; --blue:#1f5fbf; --amber:#b7790a; --good:#1c8c5a;
+  --fg:#15171a; --muted:#5e636b; --faint:#676c73;
+  --accent:#d43b1f; --accent-ink:#fff; --accent-text:#b93216; --blue:#1f5fbf; --amber:#8c5c07; --good:#167a4d; --good-ink:#fff;
+  --rest:#1f5fbf; --rest-ink:#fff; --rest-btn:rgba(0,0,0,.18);
   color-scheme:light;
 }
 :root[data-skin="lake"]{
   --bg:#0a1c26; --surface:#102a37; --raised:#163646; --line:#22485a;
-  --fg:#e9f2f2; --muted:#93b0b6; --faint:#5d7c85;
-  --accent:#f2b233; --accent-ink:#1a1405; --blue:#4fb3c8; --amber:#f2b233; --good:#5fd39a;
+  --fg:#e9f2f2; --muted:#93b0b6; --faint:#83a1aa;
+  --accent:#f2b233; --accent-ink:#1a1405; --accent-text:#f2b233; --blue:#4fb3c8; --amber:#f2b233; --good:#5fd39a; --good-ink:#06150e;
+  --rest:#4fb3c8; --rest-ink:#06181f; --rest-btn:rgba(255,255,255,.28);
   color-scheme:dark;
+}
+/* --accent fills buttons, --accent-text is the same hue tuned for text on this skin. Team accents arrive through --accent, so derive it. */
+@supports (color:oklch(from red l c h)){
+  :root{--accent-text:oklch(from var(--accent) max(l,.7) c h)}
+  :root[data-skin="daylight"]{--accent-text:oklch(from var(--accent) min(l,.54) c h)}
+  :root[data-skin="lake"]{--accent-text:oklch(from var(--accent) max(l,.76) c h)}
 }
 *{box-sizing:border-box}
 html,body{background:var(--bg);color:var(--fg)}
@@ -109,9 +118,9 @@ section{display:grid;gap:12px;padding-block:18px}
 .daycard .s{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .daycard>div{min-width:0}
 .state{font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:4px 8px;border-radius:6px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
-.state.done{background:var(--good);border-color:var(--good);color:#06150e}
+.state.done{background:var(--good);border-color:var(--good);color:var(--good-ink)}
 .state.part{border-color:var(--amber);color:var(--amber)}
-.daycard.circuit .dn{color:var(--accent)}
+.daycard.circuit .dn{color:var(--accent-text)}
 .daycard.featured{border-color:var(--accent)}
 
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:12px;padding:14px 18px;font-family:var(--display);font-weight:800;font-size:18px;letter-spacing:.08em;text-transform:uppercase;background:var(--accent);color:var(--accent-ink);text-decoration:none}
@@ -126,7 +135,8 @@ section{display:grid;gap:12px;padding-block:18px}
 .wk .n{font-family:var(--display);font-weight:800;font-size:30px;line-height:1}
 .wk .l{font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:.04em;font-size:16px}
 .wk .d{font-size:12px;color:var(--muted)}
-.wk.locked{opacity:.45}
+.wk.locked{background:transparent}
+.wk.locked .n,.wk.locked .l{color:var(--muted)}
 .wk.current{border-color:var(--accent)}
 .pips{display:flex;gap:4px}
 .pips i{width:8px;height:8px;border-radius:50%;background:var(--line)}
@@ -155,7 +165,7 @@ section{display:grid;gap:12px;padding-block:18px}
 .set input::placeholder{color:var(--faint);font-weight:500}
 .chk{height:44px;border-radius:10px;border:1px solid var(--line);background:var(--raised);display:grid;place-items:center;color:var(--faint)}
 .chk svg{width:20px;height:20px}
-.set.done .chk{background:var(--good);border-color:var(--good);color:#06150e}
+.set.done .chk{background:var(--good);border-color:var(--good);color:var(--good-ink)}
 .set.done input{border-color:color-mix(in srgb,var(--good) 60%,var(--line))}
 .set input.rng::placeholder{font-size:13px;letter-spacing:0}
 .set input.bw::placeholder{font-size:13px;letter-spacing:0}
@@ -170,7 +180,7 @@ section{display:grid;gap:12px;padding-block:18px}
 .pod .ph b{font-family:var(--display);font-weight:800;font-size:20px;letter-spacing:.06em;text-transform:uppercase}
 .st{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}
 .st:last-child{border-bottom:0}
-.st .p{font-family:var(--display);font-weight:800;font-size:18px;color:var(--accent)}
+.st .p{font-family:var(--display);font-weight:800;font-size:18px;color:var(--accent-text)}
 .st .nm{font-weight:600;line-height:1.2}
 .st .nt{font-size:13px;color:var(--muted)}
 .st>div{min-width:0}
@@ -184,12 +194,12 @@ section{display:grid;gap:12px;padding-block:18px}
 /* rest timer */
 .rest{position:fixed;left:0;right:0;bottom:calc(64px + env(safe-area-inset-bottom,0px));z-index:24;pointer-events:none}
 .rest .inner{max-width:540px;margin:0 auto;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));padding-bottom:10px}
-.restbox{pointer-events:auto;display:grid;grid-template-columns:auto 1fr auto auto;gap:12px;align-items:center;padding:10px 12px;border-radius:14px;background:var(--blue);color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.restbox{pointer-events:auto;display:grid;grid-template-columns:auto 1fr auto auto;gap:12px;align-items:center;padding:10px 12px;border-radius:14px;background:var(--rest);color:var(--rest-ink);box-shadow:0 10px 30px rgba(0,0,0,.35)}
 .restbox .clock{font-family:var(--display);font-weight:800;font-size:34px;line-height:1;font-variant-numeric:tabular-nums;min-width:74px}
 .restbox .lbl{font-family:var(--display);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:13px;line-height:1.1}
-.restbox button{border:0;border-radius:9px;padding:8px 10px;background:rgba(255,255,255,.18);color:#fff;font-family:var(--display);font-weight:700;letter-spacing:.06em}
-.restbox.over{background:var(--good);color:#06150e}
-.restbox.over button{background:rgba(0,0,0,.15);color:#06150e}
+.restbox button{border:0;border-radius:9px;padding:8px 10px;background:var(--rest-btn);color:var(--rest-ink);font-family:var(--display);font-weight:700;letter-spacing:.06em}
+.restbox.over{background:var(--good);color:var(--good-ink)}
+.restbox.over button{background:rgba(0,0,0,.15);color:var(--good-ink)}
 
 /* progress view */
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -224,7 +234,7 @@ section{display:grid;gap:12px;padding-block:18px}
 .ev{display:grid;grid-template-columns:70px 1fr;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
 .ev:last-child{border-bottom:0}
 .ev .dt{font-family:var(--display);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.ev.past{opacity:.45}
+.ev.past{color:var(--muted)}
 .legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--muted)}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 
@@ -259,7 +269,7 @@ section{display:grid;gap:12px;padding-block:18px}
 .done-panel .big{font-family:var(--display);font-weight:800;font-size:56px;line-height:.9;text-transform:uppercase;color:var(--good)}
 .done-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .wtimer{font-family:var(--display);font-weight:700;font-size:15px;letter-spacing:.04em;color:var(--muted);font-variant-numeric:tabular-nums}
-.wtimer.run{color:var(--accent,var(--fg))}
+.wtimer.run{color:var(--accent-text)}
 .toast{position:fixed;left:50%;top:calc(70px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:50;background:var(--fg);color:var(--bg);padding:9px 14px;border-radius:10px;font-weight:600;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.3)}
 .loader{min-height:80vh;display:grid;place-content:center;justify-items:center;gap:20px;text-align:center}
 .ring{width:64px;height:64px;border-radius:50%;position:relative;background:conic-gradient(var(--accent) 0 28%,var(--line) 28% 100%);animation:spin 1s cubic-bezier(.6,.2,.4,.8) infinite}

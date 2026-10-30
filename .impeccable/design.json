@@ -1,0 +1,433 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-30T15:18:55+00:00",
+  "title": "Design System: DB Speed",
+  "extensions": {
+    "colorMeta": {
+      "accent": {
+        "role": "primary",
+        "displayName": "Finish-Line Red",
+        "canonical": "#d64124",
+        "tonalRamp": [
+          "oklch(15% 0.052 33)",
+          "oklch(26% 0.090 33)",
+          "oklch(37% 0.128 33)",
+          "oklch(48% 0.166 33)",
+          "oklch(59% 0.177 33)",
+          "oklch(71% 0.135 33)",
+          "oklch(83% 0.094 33)",
+          "oklch(95% 0.052 33)"
+        ]
+      },
+      "accent-text": {
+        "role": "primary",
+        "displayName": "Red Text",
+        "canonical": "#ee6146",
+        "tonalRamp": [
+          "oklch(15% 0.049 33)",
+          "oklch(26% 0.085 33)",
+          "oklch(37% 0.121 33)",
+          "oklch(48% 0.157 33)",
+          "oklch(59% 0.167 33)",
+          "oklch(71% 0.127 33)",
+          "oklch(83% 0.088 33)",
+          "oklch(95% 0.049 33)"
+        ]
+      },
+      "accent-ink": {
+        "role": "primary",
+        "displayName": "Button White",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15% 0.000 90)",
+          "oklch(26% 0.000 90)",
+          "oklch(37% 0.000 90)",
+          "oklch(48% 0.000 90)",
+          "oklch(59% 0.000 90)",
+          "oklch(71% 0.000 90)",
+          "oklch(83% 0.000 90)",
+          "oklch(95% 0.000 90)"
+        ]
+      },
+      "rest": {
+        "role": "secondary",
+        "displayName": "Rest Blue",
+        "canonical": "#376fcb",
+        "tonalRamp": [
+          "oklch(15% 0.042 260)",
+          "oklch(26% 0.073 260)",
+          "oklch(37% 0.104 260)",
+          "oklch(48% 0.135 260)",
+          "oklch(59% 0.143 260)",
+          "oklch(71% 0.110 260)",
+          "oklch(83% 0.076 260)",
+          "oklch(95% 0.042 260)"
+        ]
+      },
+      "rest-ink": {
+        "role": "secondary",
+        "displayName": "Rest Ink",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15% 0.000 90)",
+          "oklch(26% 0.000 90)",
+          "oklch(37% 0.000 90)",
+          "oklch(48% 0.000 90)",
+          "oklch(59% 0.000 90)",
+          "oklch(71% 0.000 90)",
+          "oklch(83% 0.000 90)",
+          "oklch(95% 0.000 90)"
+        ]
+      },
+      "blue": {
+        "role": "secondary",
+        "displayName": "Signal Blue",
+        "canonical": "#5089e2",
+        "tonalRamp": [
+          "oklch(15% 0.040 259)",
+          "oklch(26% 0.070 259)",
+          "oklch(37% 0.099 259)",
+          "oklch(48% 0.129 259)",
+          "oklch(59% 0.137 259)",
+          "oklch(71% 0.104 259)",
+          "oklch(83% 0.072 259)",
+          "oklch(95% 0.040 259)"
+        ]
+      },
+      "amber": {
+        "role": "tertiary",
+        "displayName": "Target Amber",
+        "canonical": "#f2b233",
+        "tonalRamp": [
+          "oklch(15% 0.041 80)",
+          "oklch(26% 0.072 80)",
+          "oklch(37% 0.102 80)",
+          "oklch(48% 0.133 80)",
+          "oklch(59% 0.141 80)",
+          "oklch(71% 0.108 80)",
+          "oklch(83% 0.075 80)",
+          "oklch(95% 0.041 80)"
+        ]
+      },
+      "good": {
+        "role": "tertiary",
+        "displayName": "Result Green",
+        "canonical": "#43c08a",
+        "tonalRamp": [
+          "oklch(15% 0.037 161)",
+          "oklch(26% 0.064 161)",
+          "oklch(37% 0.092 161)",
+          "oklch(48% 0.119 161)",
+          "oklch(59% 0.126 161)",
+          "oklch(71% 0.097 161)",
+          "oklch(83% 0.067 161)",
+          "oklch(95% 0.037 161)"
+        ]
+      },
+      "good-ink": {
+        "role": "tertiary",
+        "displayName": "Green Ink",
+        "canonical": "#06150e",
+        "tonalRamp": [
+          "oklch(15% 0.007 163)",
+          "oklch(26% 0.012 163)",
+          "oklch(37% 0.018 163)",
+          "oklch(48% 0.023 163)",
+          "oklch(59% 0.024 163)",
+          "oklch(71% 0.018 163)",
+          "oklch(83% 0.013 163)",
+          "oklch(95% 0.007 163)"
+        ]
+      },
+      "bg": {
+        "role": "neutral",
+        "displayName": "Scoreboard Black",
+        "canonical": "#121315",
+        "tonalRamp": [
+          "oklch(15% 0.001 264)",
+          "oklch(26% 0.002 264)",
+          "oklch(37% 0.003 264)",
+          "oklch(48% 0.004 264)",
+          "oklch(59% 0.004 264)",
+          "oklch(71% 0.003 264)",
+          "oklch(83% 0.002 264)",
+          "oklch(95% 0.001 264)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Panel Charcoal",
+        "canonical": "#1b1d20",
+        "tonalRamp": [
+          "oklch(15% 0.002 258)",
+          "oklch(26% 0.003 258)",
+          "oklch(37% 0.004 258)",
+          "oklch(48% 0.006 258)",
+          "oklch(59% 0.006 258)",
+          "oklch(71% 0.005 258)",
+          "oklch(83% 0.003 258)",
+          "oklch(95% 0.002 258)"
+        ]
+      },
+      "raised": {
+        "role": "neutral",
+        "displayName": "Raised Graphite",
+        "canonical": "#24272b",
+        "tonalRamp": [
+          "oklch(15% 0.002 256)",
+          "oklch(26% 0.004 256)",
+          "oklch(37% 0.006 256)",
+          "oklch(48% 0.008 256)",
+          "oklch(59% 0.008 256)",
+          "oklch(71% 0.006 256)",
+          "oklch(83% 0.004 256)",
+          "oklch(95% 0.002 256)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#30343a",
+        "tonalRamp": [
+          "oklch(15% 0.003 258)",
+          "oklch(26% 0.006 258)",
+          "oklch(37% 0.008 258)",
+          "oklch(48% 0.010 258)",
+          "oklch(59% 0.011 258)",
+          "oklch(71% 0.009 258)",
+          "oklch(83% 0.006 258)",
+          "oklch(95% 0.003 258)"
+        ]
+      },
+      "fg": {
+        "role": "neutral",
+        "displayName": "Cream",
+        "canonical": "#f3efe6",
+        "tonalRamp": [
+          "oklch(15% 0.003 87)",
+          "oklch(26% 0.006 87)",
+          "oklch(37% 0.009 87)",
+          "oklch(48% 0.011 87)",
+          "oklch(59% 0.012 87)",
+          "oklch(71% 0.009 87)",
+          "oklch(83% 0.006 87)",
+          "oklch(95% 0.003 87)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Weathered Grey",
+        "canonical": "#9b9a93",
+        "tonalRamp": [
+          "oklch(15% 0.003 100)",
+          "oklch(26% 0.005 100)",
+          "oklch(37% 0.007 100)",
+          "oklch(48% 0.009 100)",
+          "oklch(59% 0.009 100)",
+          "oklch(71% 0.007 100)",
+          "oklch(83% 0.005 100)",
+          "oklch(95% 0.003 100)"
+        ]
+      },
+      "faint": {
+        "role": "neutral",
+        "displayName": "Dim Grey",
+        "canonical": "#8e8f92",
+        "tonalRamp": [
+          "oklch(15% 0.001 271)",
+          "oklch(26% 0.002 271)",
+          "oklch(37% 0.003 271)",
+          "oklch(48% 0.004 271)",
+          "oklch(59% 0.004 271)",
+          "oklch(71% 0.003 271)",
+          "oklch(83% 0.002 271)",
+          "oklch(95% 0.001 271)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The week number on Today."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Page titles."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Section headings."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "All reading text."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Eyebrows, field labels, tabs and status tags."
+      }
+    },
+    "shadows": [
+      {
+        "name": "floating-panel",
+        "value": "0 10px 30px rgba(0,0,0,.35)",
+        "purpose": "The rest timer."
+      },
+      {
+        "name": "toast",
+        "value": "0 8px 24px rgba(0,0,0,.3)",
+        "purpose": "Brief confirmations."
+      }
+    ],
+    "motion": [
+      {
+        "name": "progress",
+        "value": "width .3s",
+        "purpose": "The workout progress bar."
+      },
+      {
+        "name": "switch",
+        "value": "left .2s",
+        "purpose": "Toggle thumb travel."
+      },
+      {
+        "name": "loader",
+        "value": "1s cubic-bezier(.6,.2,.4,.8) infinite",
+        "purpose": "The loading ring. Transitions and animations are disabled under reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "app-narrow",
+        "value": "370px"
+      },
+      {
+        "name": "join-stack",
+        "value": "620px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The main action on a screen.",
+      "html": "<button class=\"ds-btn-primary\">Start</button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;border-radius:12px;padding:14px 18px;font-family:var(--display,'Barlow Condensed',sans-serif);font-weight:800;font-size:18px;letter-spacing:.08em;text-transform:uppercase;border:0;background:#d64124;color:#fff}.ds-btn-primary:focus-visible{outline:2px solid #5089e2;outline-offset:2px;}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary actions beside or below a primary button.",
+      "html": "<button class=\"ds-btn-ghost\">Close</button>",
+      "css": ".ds-btn-ghost{display:inline-flex;align-items:center;justify-content:center;border-radius:12px;padding:14px 18px;font-family:var(--display,'Barlow Condensed',sans-serif);font-weight:800;font-size:18px;letter-spacing:.08em;text-transform:uppercase;background:#24272b;color:#f3efe6;border:1px solid #30343a}.ds-btn-ghost:focus-visible{outline:2px solid #5089e2;outline-offset:2px;}"
+    },
+    {
+      "name": "Set Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Weight and reps entry in a set row.",
+      "html": "<input class=\"ds-input\" value=\"125\" aria-label=\"Weight\">",
+      "css": ".ds-input{width:74px;height:44px;border-radius:10px;border:1px solid #30343a;background:#24272b;color:#f3efe6;text-align:center;font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}.ds-input:focus-visible{outline:2px solid #5089e2;outline-offset:2px;}"
+    },
+    {
+      "name": "Tab Bar",
+      "kind": "nav",
+      "refersTo": "tab",
+      "description": "Fixed bottom navigation with five tabs.",
+      "html": "<nav class=\"ds-tabs\"><a class=\"ds-tab ds-on\" aria-current=\"page\">Today</a><a class=\"ds-tab\">Program</a><a class=\"ds-tab\">Progress</a></nav>",
+      "css": ".ds-tabs{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:#1b1d20;border-top:1px solid #30343a}.ds-tab{padding:10px 4px 12px;text-align:center;color:#8e8f92;font-family:var(--display,'Barlow Condensed',sans-serif);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase}.ds-tab.ds-on{color:#f3efe6}"
+    },
+    {
+      "name": "Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Small facts such as sets or rest time.",
+      "html": "<span class=\"ds-chip\">3 sets</span>",
+      "css": ".ds-chip{display:inline-flex;font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;background:#24272b;color:#9b9a93;border:1px solid #30343a}"
+    },
+    {
+      "name": "Day Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "A training day with its status tag.",
+      "html": "<div class=\"ds-card\"><b class=\"ds-dn\">1</b><div><div class=\"ds-t\">Upper body</div><div class=\"ds-s\">Press, row, core</div></div><span class=\"ds-state\">Done</span></div>",
+      "css": ".ds-card{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:14px;background:#1b1d20;border:1px solid #30343a;border-radius:14px;color:#f3efe6}.ds-dn{font-family:var(--display,'Barlow Condensed',sans-serif);font-weight:800;font-size:34px;line-height:1}.ds-t{font-family:var(--display,'Barlow Condensed',sans-serif);font-weight:700;font-size:20px;text-transform:uppercase;letter-spacing:.03em}.ds-s{font-size:13px;color:#9b9a93}.ds-state{font-family:var(--display,'Barlow Condensed',sans-serif);font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:4px 8px;border-radius:6px;background:#43c08a;color:#06150e}"
+    },
+    {
+      "name": "Season Bar",
+      "kind": "custom",
+      "description": "The signature strip of weekly cells, with the current week outlined.",
+      "html": "<div class=\"ds-bar\"><i></i><i></i><i></i><i></i><i></i><i class=\"ds-now\"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>",
+      "css": ".ds-bar{display:grid;grid-template-columns:repeat(16,1fr);gap:2px}.ds-bar i{height:8px;border-radius:2px;background:#30343a}.ds-bar i.ds-now{background:#d64124;outline:2px solid #f3efe6;outline-offset:1px}"
+    },
+    {
+      "name": "Rest Timer",
+      "kind": "custom",
+      "description": "The docked timer that floats above the tab bar.",
+      "html": "<div class=\"ds-rest\"><b>1:24</b><span>Rest</span><button>Skip</button></div>",
+      "css": ".ds-rest{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:10px 12px;border-radius:14px;background:#376fcb;color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.35)}.ds-rest b{font-family:var(--display,'Barlow Condensed',sans-serif);font-weight:800;font-size:34px;line-height:1;font-variant-numeric:tabular-nums}.ds-rest span{font-family:var(--display,'Barlow Condensed',sans-serif);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:13px}.ds-rest button{border:0;border-radius:9px;padding:8px 10px;background:rgba(0,0,0,.18);color:#fff}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Race Scoreboard",
+    "overview": "DB Speed reads like the board at a regatta finish: dark, loud where it counts, and legible from a distance. The week number is the biggest thing on the Today screen, the season is a bar of 32 lit cells, and a logged set turns green like a result going up. An athlete between sets should get what they need in one glance, with a sweaty thumb, without reading a sentence.\n\nThe system is dense but calm. Condensed uppercase type carries the numbers and labels, a plain humanist body carries the sentences, and everything sits in one phone-width column. Colour is rationed and means something: red says what is current or what to press, green says done, amber says caution or target, blue says rest and focus.\n\nDepth is flat and firm. Surfaces separate by tone and a thin border, and controls feel solid rather than floating. The join and privacy pages share the same fonts, palette and card language, so the public pages and the app read as one product.",
+    "keyCharacteristics": [
+      "Numbers are the heroes: condensed, heavy, tabular.",
+      "One phone-width column with a sticky top bar and fixed bottom tabs.",
+      "Flat tonal layers with hairline borders.",
+      "One accent per screen, with colour used for status rather than decoration.",
+      "Uppercase condensed labels for structure, sentence-case Barlow for reading."
+    ],
+    "rules": [
+      {
+        "name": "The One Accent Rule",
+        "body": "Each screen has a single accent colour: Finish-Line Red, or the team's accent when one applies. Never add a second brand colour.",
+        "section": "colors"
+      },
+      {
+        "name": "The Fill And Text Rule",
+        "body": "A colour used as a fill and as text needs both roles to pass 4.5:1. Use accent or rest for fills and accent-text or blue for text.",
+        "section": "colors"
+      },
+      {
+        "name": "The Colour Means Status Rule",
+        "body": "Green, amber and blue always carry their meaning. Never use them to decorate.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Numbers Rule",
+        "body": "Every number that changes or lines up in a column uses tabular figures.",
+        "section": "typography"
+      },
+      {
+        "name": "The Two Voices Rule",
+        "body": "Condensed uppercase labels and counts. Barlow explains. Never set a sentence in uppercase condensed type.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat-And-Firm Rule",
+        "body": "Cards and buttons never cast a shadow at rest. If it does not float over content, it stays flat. Selection is shown with a border or a 1px ring, not with lift.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do make the number the largest thing on any screen that has a key number.",
+      "Do keep all text contrast at 4.5:1 or better, in all three skins and with team accents, and tap targets at 44px or larger.",
+      "Do keep every app screen within the 540px single column.",
+      "Do use the stylesheet's colour variables, so skins and team accents keep working.",
+      "Do check new work in French too, since it runs longer in uppercase condensed labels.",
+      "Do switch off motion for people who ask for reduced motion, as the app does today."
+    ],
+    "donts": [
+      "Don't add a second accent colour or use status colours as decoration.",
+      "Don't put shadows on cards or buttons.",
+      "Don't use a font other than Barlow and Barlow Condensed.",
+      "Don't make Lake or Daylight the design reference. Scoreboard is the system.",
+      "Don't add a colour swap other than the team accent.",
+      "Don't dim text with opacity. Show locked or past items with Weathered Grey instead."
+    ]
+  }
+}
