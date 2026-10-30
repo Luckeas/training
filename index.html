@@ -349,7 +349,7 @@ const STR = {
 };
 const RULES = {
  en:[["Warm-up","Always warm up before training to prepare your body for exercise."],["Rest time","Heavy lifts: 4–8 min. Lighter exercises: 1–3 min. Rest longer if needed to keep sets high quality."],["Stability & positioning","Brace your core before each movement. Keep your feet planted during bench press."],["Grip & equipment","Use chalk for grip, and lifting straps when needed."],["Nutrition","Eat enough before training to support your energy and performance."],["Quality over intensity","Prioritize technique and quality reps. You don't need to go to failure on every set."]],
- fr:[["Échauffement","Échauffez-vous avant chaque séance pour préparer votre corps à l'effort."],["Temps de repos","Exercices lourds : 4 à 8 min. Exercices légers : 1 à 3 min. Prenez plus de repos au besoin pour garder des séries de qualité."],["Stabilité et posture","Contractez vos abdominaux avant chaque mouvement. Gardez les pieds bien ancrés au développé couché."],["Prise et équipement","Utilisez de la magnésie pour la prise et des sangles au besoin."],["Alimentation","Mangez suffisamment avant l'entraînement pour soutenir votre énergie et votre performance."],["Qualité avant intensité","Privilégiez la technique et des répétitions de qualité. Pas besoin d'aller à l'échec à chaque série."]]
+ fr:[["Échauffement","Échauffe-toi avant chaque séance pour préparer ton corps à l'effort."],["Temps de repos","Exercices lourds : 4 à 8 min. Exercices légers : 1 à 3 min. Prends plus de repos au besoin pour garder des séries de qualité."],["Stabilité et posture","Contracte tes abdominaux avant chaque mouvement. Garde les pieds bien ancrés au développé couché."],["Prise et équipement","Utilise de la magnésie pour la prise et des sangles au besoin."],["Alimentation","Mange suffisamment avant l'entraînement pour soutenir ton énergie et ta performance."],["Qualité avant intensité","Privilégie la technique et des répétitions de qualité. Pas besoin d'aller à l'échec à chaque série."]]
 };
 const TERMS = [["AMRAP","As many reps as possible with good form. “AMRAP 40s” = as many as possible in 40 seconds."],["Conti","Continuous: pull-ups until you need to dead hang or pause."],["Drop set","Do the reps, reduce the weight, then go again right away."],["% of 1RM","Percent of your best single rep. The app suggests a weight once it knows your bench or squat."],["RPE","How hard the set felt, 1–10. RPE 8 ≈ 2 reps left in the tank."]];
 
@@ -708,15 +708,15 @@ const NEWBIE={
   ["Technique first","Never grind a rep with bad form. Stop the set one rep early if your form breaks down."],
   ["Missed a day?","Just do the next session. Don't try to double up."],
   ["Pain, not effort?","Stop that exercise and message your coach."]],
- fr:[["RPE : l'effort d'une série","RPE 6 = encore 4 répétitions possibles. RPE 7 = 3. RPE 8 = 2. Choisissez une charge qui correspond au RPE indiqué."],
-  ["Choisir sa charge","Commencez léger à la première série. Si c'était plus facile que le RPE, augmentez un peu à la suivante. La semaine suivante, repartez où vous avez terminé."],
-  ["Charges suggérées","Les chiffres gris et « ≈ lb » viennent de vos meilleures séries notées, donc au début ils peuvent être un peu légers. Si vous vous sentez fort (ou si votre test dit que vous l'êtes), allez plus lourd. Les chiffres s'ajustent à mesure que vous notez."],
-  ["Lire un exercice","Touchez le nom pour voir la vidéo. « x10-12 » = 10 à 12 répétitions par série. Le repos est en minutes. Inscrivez la charge et les répétitions réellement faites."],
-  ["Haltères","Inscrivez le poids d'UN haltère, pas les deux additionnés. Deux de 40 = inscrivez 40."],
-  ["Tractions","Pas encore capable ? Utilisez un élastique ou la machine assistée. Ça compte. Inscrivez vos répétitions."],
-  ["La technique d'abord","Ne forcez jamais une répétition avec une mauvaise technique. Arrêtez la série une répétition plus tôt si la forme se dégrade."],
-  ["Séance manquée ?","Passez simplement à la suivante. Ne doublez pas."],
-  ["Douleur (pas l'effort) ?","Arrêtez cet exercice et écrivez à votre coach."]]};
+ fr:[["RPE : l'effort d'une série","RPE 6 = encore 4 répétitions possibles. RPE 7 = 3. RPE 8 = 2. Choisis une charge qui correspond au RPE indiqué."],
+  ["Choisir sa charge","Commence léger à la première série. Si c'était plus facile que le RPE, augmente un peu à la suivante. La semaine suivante, repars où tu as terminé."],
+  ["Charges suggérées","Les chiffres gris et « ≈ lb » viennent de tes meilleures séries notées, donc au début ils peuvent être un peu légers. Si tu te sens fort (ou si ton test dit que tu l'es), va plus lourd. Les chiffres s'ajustent à mesure que tu notes."],
+  ["Lire un exercice","Touche le nom pour voir la vidéo. « x10-12 » = 10 à 12 répétitions par série. Le repos est en minutes. Inscris la charge et les répétitions réellement faites."],
+  ["Haltères","Inscris le poids d'UN haltère, pas les deux additionnés. Deux de 40 = inscris 40."],
+  ["Tractions","Pas encore capable ? Utilise un élastique ou la machine assistée. Ça compte. Inscris tes répétitions."],
+  ["La technique d'abord","Ne force jamais une répétition avec une mauvaise technique. Arrête la série une répétition plus tôt si la forme se dégrade."],
+  ["Séance manquée ?","Passe simplement à la suivante. Ne double pas."],
+  ["Douleur (pas l'effort) ?","Arrête cet exercice et écris à ton coach."]]};
 function viewGuide(){
   const L=S.profile.lang;
   return brandBar()+`<div class="wrap guide">
@@ -724,7 +724,7 @@ function viewGuide(){
    ${VIEW.first?`<section><div class="card" style="padding:16px;border-color:var(--accent)"><h2 style="margin:0 0 6px">${L==="fr"?"👋 Bienvenue!":"👋 Welcome!"}</h2><p class="muted" style="margin:0 0 12px">${L==="fr"?"Lis ce guide une fois (2 minutes). Ensuite, touche Aujourd'hui pour ta première séance. Tu peux revenir ici en tout temps avec l'onglet Guide.":"Read this guide once (2 minutes). Then tap Today to start your first session. You can come back here anytime from the Guide tab."}</p><button class="btn block" onclick="go({name:'today'})">${L==="fr"?"C'est parti →":"Let's go →"}</button></div></section>`:""}
    <section><div class="eyebrow">${T("guideIntro")}</div><h1>${T("guide")}</h1>
     <div class="card" style="padding:4px 16px">${RULES[L].map(([h,p],i)=>`<div class="rule"><h3><span class="idx">${i+1} · </span>${esc(h)}</h3><p class="muted">${esc(p)}</p></div>`).join("")}</div></section>
-   <section><details class="card newbie" style="padding:4px 16px" open><summary><h2 style="display:inline">${L==="fr"?"Nouveau au gym ? Commencez ici":"New to the gym? Start here"}</h2></summary>
+   <section><details class="card newbie" style="padding:4px 16px" open><summary><h2 style="display:inline">${L==="fr"?"Nouveau au gym ? Commence ici":"New to the gym? Start here"}</h2></summary>
     ${NEWBIE[L].map(([h,p])=>`<div class="rule"><h3>${esc(h)}</h3><p class="muted">${esc(p)}</p></div>`).join("")}</details></section>
    <section ${LIVE?"hidden":""}><h2>${T("season")}</h2>
     <div class="weekbar" style="height:auto">${WEEKS.map(x=>`<i style="height:18px;background:${phaseColor(phaseOf(x))}" class="${x.week===CUR?"now":""}"></i>`).join("")}</div>
@@ -1088,7 +1088,7 @@ async function boot(){
       app.innerHTML=`<div class="wrap" style="padding-block:30vh 0;display:grid;gap:12px;text-align:center"><h2>This link is already in use</h2><p class="muted">${esc(data.error)}</p></div>`;return}
     if(data.paused){
       const ok=/^https:\/\//.test(data.renew||"");
-      app.innerHTML=`<div class="wrap" style="padding-block:28vh 0;display:grid;gap:12px;text-align:center"><h2>Your membership is paused</h2><p class="muted">Your program and everything you've logged are saved. Restart your membership and this same link works again.</p>${ok?`<a class="btn" href="${esc(data.renew)}" target="_blank" rel="noopener">Restart my membership</a>`:""}<p class="muted small">Votre abonnement est en pause. Votre programme et vos données sont sauvegardés.</p></div>`;return}
+      app.innerHTML=`<div class="wrap" style="padding-block:28vh 0;display:grid;gap:12px;text-align:center"><h2>Your membership is paused</h2><p class="muted">Your program and everything you've logged are saved. Restart your membership and this same link works again.</p>${ok?`<a class="btn" href="${esc(data.renew)}" target="_blank" rel="noopener">Restart my membership</a>`:""}<p class="muted small">Ton abonnement est en pause. Ton programme et tes données sont sauvegardés.</p></div>`;return}
     if(data.error&&/not active/i.test(data.error)){try{localStorage.removeItem(CK)}catch(_){}
       app.innerHTML=`<div class="wrap" style="padding-block:30vh 0;display:grid;gap:12px;text-align:center"><h2>This link is no longer active</h2><p class="muted">Contact your coach to get access to your program.</p></div>`;return}
     if(data.error)throw new Error(data.error);
@@ -1101,7 +1101,7 @@ async function boot(){
   }
   if(!WEEKS.length){
     const nm=esc((S.profile&&S.profile.name)||"");
-    app.innerHTML=`<div class="wrap" style="padding-block:28vh 0;display:grid;gap:12px;text-align:center"><div class="eyebrow">You're all set${nm?", "+nm:""}</div><h2>Your program starts Monday</h2><p class="muted">Week 1 appears here on the first Monday of your program. Add this page to your home screen so it's one tap away.</p><p class="muted small">Votre programme commence lundi. La semaine 1 apparaîtra ici.</p></div>`;
+    app.innerHTML=`<div class="wrap" style="padding-block:28vh 0;display:grid;gap:12px;text-align:center"><div class="eyebrow">You're all set${nm?", "+nm:""}</div><h2>Your program starts Monday</h2><p class="muted">Week 1 appears here on the first Monday of your program. Add this page to your home screen so it's one tap away.</p><p class="muted small">Ton programme commence lundi. La semaine 1 apparaîtra ici.</p></div>`;
     return}
   render();flushQueue();
 }

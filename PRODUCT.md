@@ -52,7 +52,7 @@ Built and coached by Martin Shih: Team Canada Premier world champion and kinesio
 
 - Keep the current look: dark scoreboard theme, Barlow fonts, one red accent.
 - Logo: the DB Speed lane seal.
-- French uses vous on public pages and tu in personal messages.
+- French uses tu everywhere inside the app, which is a private coaching space, and in personal messages. Public pages (join/fr, privacy) keep vous.
 - Martin writes in the first person on the privacy page.
 
 ## Evidence on Hand
