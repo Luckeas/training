@@ -853,6 +853,8 @@ function queueDayMark(w,d,value){
 }
 function queueDuration(w,d){queueDayMark(w,d,`⏱ ${wtMins(S.timers[`${w}|${d}`])} min`)}
 function finishWorkout(wn,dn){
+  // Demo: the sample days are already done, so re-finishing one still celebrates (and buzzes) for the preview.
+  if(!LIVE&&S.days[`${wn}|${dn}`]){delete S.days[`${wn}|${dn}`];if(S.timers)delete S.timers[`${wn}|${dn}`]}
   const fresh=IS_MEMBER()&&!S.days[`${wn}|${dn}`],dgBefore=fresh?dragonData():null;
   const tm=wtFinish(wn,dn);if(!tm)queueDayMark(wn,dn,"✓ Done");
   const d=WEEKS[wn-1].days.find(x=>x.day===dn);let sets=0,vol=0,prs=[];
@@ -1003,7 +1005,7 @@ function openDragon(){
 /* A short buzz. Android: the vibration API. iPhone has no vibration API for web apps, but iOS 18+ plays its
    haptic tick when a switch control is toggled, so we toggle a hidden one inside the tap. Older iPhones: silent. */
 function buzz(pattern){
-  try{if(navigator.vibrate&&!IS_IOS){navigator.vibrate(pattern||[35,50,70]);return}}catch(e){}
+  try{if(navigator.vibrate&&!IS_IOS){navigator.vibrate(pattern||[70,60,140]);return}}catch(e){}
   try{const l=document.createElement("label"),i=document.createElement("input");i.type="checkbox";i.setAttribute("switch","");l.appendChild(i);
     l.style.cssText="position:fixed;left:-200px;top:0;opacity:0;pointer-events:none";document.body.appendChild(l);l.click();setTimeout(()=>l.remove(),400)}catch(e){}
 }
