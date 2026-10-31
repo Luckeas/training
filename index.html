@@ -882,11 +882,11 @@ let ATHLETE_TEAM="";
 const IS_MEMBER=()=>!LIVE||/^(skool general|individual)/i.test(ATHLETE_TEAM);
 const DG_STAGES=[
   {k:"egg",xp:0,en:"Dragon egg",fr:"Œuf de dragon"},
-  {k:"hatch",xp:10,en:"Hatchling",fr:"Nouveau-né",s:.6,head:1.28,wing:0,horn:.35,spikes:1,arm:.8},
-  {k:"baby",xp:100,en:"Baby dragon",fr:"Bébé dragon",s:.7,head:1.18,wing:.45,horn:.55,spikes:2,arm:.85},
-  {k:"young",xp:300,en:"Young dragon",fr:"Jeune dragon",s:.8,head:1.08,wing:.7,horn:.75,spikes:3,arm:.95},
-  {k:"adult",xp:700,en:"Adult dragon",fr:"Dragon adulte",s:.9,head:1,wing:.9,horn:.9,spikes:4,arm:1.1},
-  {k:"racing",xp:1300,en:"Racing dragon",fr:"Dragon de course",s:1,head:1,wing:1.08,horn:1,spikes:5,arm:1.25,band:true,paddle:true}];
+  {k:"hatch",xp:10,en:"Hatchling",fr:"Nouveau-né",s:.6,head:1.28,wing:0,horn:.35,spikes:1,arm:.8,teeth:0},
+  {k:"baby",xp:100,en:"Baby dragon",fr:"Bébé dragon",s:.68,head:1.2,wing:.4,horn:.5,spikes:2,arm:.85,teeth:0},
+  {k:"young",xp:300,en:"Young dragon",fr:"Jeune dragon",s:.82,head:1.08,wing:.9,horn:.85,spikes:3,arm:1,teeth:1,tail:1.1},
+  {k:"adult",xp:700,en:"Adult dragon",fr:"Dragon adulte",s:.95,head:1,wing:1.3,horn:1.2,spikes:5,arm:1.3,teeth:2,tail:1.25,claws:true,brows:true},
+  {k:"racing",xp:1300,en:"Racing dragon",fr:"Dragon de course",s:1,head:1,wing:1.3,horn:1.2,spikes:5,arm:1.35,teeth:2,tail:1.25,claws:true,brows:true,band:true,paddle:true}];
 const DG_MEDAL_XP=500;   // after Racing dragon: one medal every 500 XP, so it keeps growing season after season
 let DPREV=null;          // demo only: preview a stage or mood
 function dgStageOf(xp){let i=0;DG_STAGES.forEach((s,j)=>{if(xp>=s.xp)i=j});return i}
@@ -933,7 +933,10 @@ function dragonSVG(st,mood,o){
     :mood==="sleepy"?`<ellipse cx="100" cy="117" rx="5" ry="6.5" fill="#6e1a0e"/>`
     :mood==="asleep"?`<path d="M96 116 H104" stroke="#6e1a0e" stroke-width="3" stroke-linecap="round"/>`
     :`<path d="M93 114 Q100 120 107 114" fill="none" stroke="#6e1a0e" stroke-width="3" stroke-linecap="round"/>`;
-  const horn=(x,f)=>`<g transform="translate(${x} 66) scale(${f*g.horn} ${g.horn}) translate(${-x} -66)"><path d="M${x-7} 68 Q${x-10} 46 ${x-18} 36 Q${x+2} 44 ${x+7} 64 Z" fill="${C}"/></g>`;
+  const ty=mood==="happy"?113:mood==="sleepy"?111:mood==="asleep"?116:114.5,th=g.teeth===1?4.5:7;
+  const teeth=g.teeth?[94,106].map(x=>`<path d="M${x-2.6} ${ty-.5} L${x} ${ty+th} L${x+2.6} ${ty-.5} Z" fill="#fff" stroke="#e6d6bd" stroke-width=".8" stroke-linejoin="round"/>`).join(""):"";
+  const brows=g.brows&&mood!=="asleep"?`<path d="M78 77 Q85 73 92 76 M108 76 Q115 73 122 77" stroke="${DK}" stroke-width="3.2" fill="none" stroke-linecap="round"/>`:"";
+  const horn=(x,f)=>`<g transform="translate(${x} 68) rotate(${f*(g.horn-.5)*22}) scale(${f*(.55+.35*g.horn)} ${g.horn}) translate(${-x} -66)"><path d="M${x-7} 68 Q${x-10} 46 ${x-18} 36 Q${x+2} 44 ${x+7} 64 Z" fill="${C}"/></g>`;
   const paddle=g.paddle?`<g><path d="M150 84 L130 178" stroke="#6b4a2f" stroke-width="6" stroke-linecap="round"/><path d="M142 82 L158 86" stroke="#6b4a2f" stroke-width="6" stroke-linecap="round"/><path d="M126 160 C118 176 116 192 122 198 C130 198 138 186 140 166 Z" fill="${AM}" stroke="#b07c12" stroke-width="2"/></g>`:"";
   const band=g.band?`<path d="M67 80 Q100 62 133 80 L132 89 Q100 72 68 89 Z" fill="${C}"/><path d="M68 85 Q100 68 132 85" stroke="${R}" stroke-width="2" fill="none"/><path d="M131 82 L146 76 L143 86 Z M131 84 L144 92 L134 92 Z" fill="${C}"/>`:"";
   const n=Math.min(o.medals||0,3);
@@ -942,13 +945,13 @@ function dragonSVG(st,mood,o){
   const sparks=mood==="happy"?`<g fill="${AM}"><path d="M40 70 l3 8 8 3-8 3-3 8-3-8-8-3 8-3z"/><path d="M164 92 l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></g>`:"";
   const low=mood==="asleep"?4:0;
   const body=`<g transform="translate(0 ${low})">
-    <path d="M128 162 C152 182 176 176 178 150" fill="none" stroke="${R}" stroke-width="15" stroke-linecap="round"/><path d="M168 154 L178 132 L190 156 Z" fill="${AM}"/>
+    <g transform="translate(128 162) scale(${g.tail||1}) translate(-128 -162)"><path d="M128 162 C152 182 176 176 178 150" fill="none" stroke="${R}" stroke-width="15" stroke-linecap="round"/><path d="M168 154 L178 132 L190 156 Z" fill="${AM}"/></g>
     ${wing}<g transform="translate(200 0) scale(-1 1)">${wing}</g>
     <ellipse cx="100" cy="150" rx="${38+g.arm*4}" ry="38" fill="${R}"/>
     <ellipse cx="100" cy="156" rx="26" ry="28" fill="${C}"/>
     <path d="M80 146 H120 M77 157 H123 M80 168 H120" stroke="#e6d6bd" stroke-width="3.5" stroke-linecap="round"/>
     <ellipse cx="80" cy="186" rx="14" ry="7.5" fill="${D}"/><ellipse cx="120" cy="186" rx="14" ry="7.5" fill="${D}"/>
-    <g fill="${C}"><circle cx="72" cy="188" r="2.4"/><circle cx="79" cy="190" r="2.4"/><circle cx="121" cy="190" r="2.4"/><circle cx="128" cy="188" r="2.4"/></g>
+    ${g.claws?`<g fill="${C}"><path d="M68 186 l-3 6 6-1z M76 189 l-1 6 5-3z M84 189 l1 6 4-4z M116 189 l-1 6 5-2z M124 189 l1 6 4-4z M132 186 l3 6-6-1z"/></g>`:`<g fill="${C}"><circle cx="72" cy="188" r="2.4"/><circle cx="79" cy="190" r="2.4"/><circle cx="121" cy="190" r="2.4"/><circle cx="128" cy="188" r="2.4"/></g>`}
     ${paddle}
     <ellipse cx="${64-g.arm*3}" cy="150" rx="${8*g.arm}" ry="${14*g.arm}" fill="#d8401f" transform="rotate(24 ${64-g.arm*3} 150)"/>
     <ellipse cx="${136+g.arm*3}" cy="${g.paddle?140:150}" rx="${8*g.arm}" ry="${14*g.arm}" fill="#d8401f" transform="rotate(${g.paddle?-40:-24} ${136+g.arm*3} 150)"/>
@@ -960,7 +963,7 @@ function dragonSVG(st,mood,o){
       <ellipse cx="100" cy="108" rx="21" ry="13" fill="#ef6a4f"/>
       <ellipse cx="93" cy="104" rx="2.6" ry="2" fill="#6e1a0e"/><ellipse cx="107" cy="104" rx="2.6" ry="2" fill="#6e1a0e"/>
       <circle cx="73" cy="104" r="5.5" fill="#ff9a80" opacity=".75"/><circle cx="127" cy="104" r="5.5" fill="#ff9a80" opacity=".75"/>
-      ${eye(86)}${eye(114)}${mouth}
+      ${eye(86)}${eye(114)}${mouth}${teeth}${brows}
     </g></g>`;
   const shell=st===1?`<path d="M58 170 L67 160 L75 169 L84 157 L92 168 L100 156 L108 168 L116 157 L125 169 L133 160 L142 170 C142 188 124 198 100 198 C76 198 58 188 58 170 Z" fill="${C}"/><path d="M62 180 Q100 170 138 180" stroke="${R}" stroke-width="4" fill="none" opacity=".8"/>`:"";
   return `<svg class="dgsvg" width="${px}" height="${px}" viewBox="0 0 200 200" role="img" aria-label="${esc(dgName(st))}">
