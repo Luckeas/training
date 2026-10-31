@@ -987,7 +987,7 @@ function openDragon(){
   const nextTxt=d.next?(fr?`${d.toNext} XP avant : ${d.next.fr}`:`${d.toNext} XP to ${d.next.en}`):(fr?`${d.toNext} XP avant la prochaine médaille`:`${d.toNext} XP to the next medal`);
   const prev=LIVE?"":`<div class="card" style="padding:12px;display:grid;gap:8px"><div class="eyebrow">Preview (demo only)</div>
     <div class="dg-prev">${DG_STAGES.map((s,i)=>`<button data-dprev-xp="${s.xp}">${esc(s.en)}</button>`).join("")}<button data-dprev-xp="2400">+ 2 medals</button></div>
-    <div class="dg-prev">${["awake","happy","sleepy","asleep"].map(m=>`<button data-dprev-mood="${m}">${m}</button>`).join("")}<button data-dprev-cele>▶ Finish workout</button><button data-dprev-grow>▶ Grow</button><button data-dprev-clear>Real data</button></div></div>`;
+    <div class="dg-prev">${["awake","happy","sleepy","asleep"].map(m=>`<button data-dprev-mood="${m}">${m}</button>`).join("")}<button data-dprev-cele>▶ Finish workout</button><button data-dprev-grow>▶ Grow</button><button data-dprev-clear>Real data</button><button data-dprev-buzz>📳 Test buzz</button></div></div>`;
   document.getElementById("overlay").innerHTML=`<div class="scrim" data-close></div><div class="sheet" role="dialog" aria-label="${fr?"Ton dragon":"Your dragon"}"><div class="inner wrap">
    <div style="display:flex;justify-content:space-between;align-items:center"><h2>${fr?"Ton dragon":"Your dragon"}</h2><button class="btn ghost" data-close style="padding:8px 12px;font-size:14px">${T("close")}</button></div>
    <div style="display:grid;justify-items:center;gap:6px;text-align:center">${dragonSVG(d.st,d.mood,{px:180,medals:d.medals})}
@@ -1089,6 +1089,8 @@ document.getElementById("overlay").addEventListener("click",e=>{
   if(!LIVE){const x=t.closest("[data-dprev-xp]"),m=t.closest("[data-dprev-mood]");
     if(x){DPREV=Object.assign(DPREV||{},{xp:+x.dataset.dprevXp});if(!DPREV.mood)DPREV.mood="awake";render();openDragon();return}
     if(m){DPREV=Object.assign(DPREV||{xp:dragonData().xp},{mood:m.dataset.dprevMood});render();openDragon();return}
+    if(t.closest("[data-dprev-buzz]")){let r="no vibration API";try{if(navigator.vibrate)r=navigator.vibrate(400)?"sent":"blocked"}catch(e){r="error"}
+      toast(r==="sent"?"Buzz sent ✓ (if you felt nothing, check the phone's vibration settings)":r==="blocked"?"This browser blocked the buzz":"This browser can't buzz ("+r+"). Open the link in Chrome.",5000);return}
     if(t.closest("[data-dprev-clear]")){DPREV=null;render();openDragon();return}
     if(t.closest("[data-dprev-cele]")||t.closest("[data-dprev-grow]")){const a=dragonData();const grow=!!t.closest("[data-dprev-grow]");
       const b=grow?{...a,st:Math.max(0,a.st-1),xp:a.xp-10,pct:80,medals:a.medals,streak:a.streak}:{...a,xp:a.xp-10,pct:Math.max(0,a.pct-12)};buzz();
