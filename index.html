@@ -793,6 +793,7 @@ function openSettings(){
    <div class="field"><label>${T("lang")}</label><div class="seg"><button data-lang="en" aria-pressed="${p.lang==="en"}">English</button><button data-lang="fr" aria-pressed="${p.lang==="fr"}">Français</button></div></div>
    <div class="field"><label>${T("look")}</label><div class="skins">${SKINS.map(([k,n,c])=>`<button class="skin" data-skinpick="${k}" aria-pressed="${p.skin===k}"><span class="sw" style="background:${c[0]}"><span></span><span style="background:${c[1]}"></span></span><b>${n}</b></button>`).join("")}</div></div>
    ${STANDALONE?"":`<button class="btn ghost block" id="a2hsSettings">📲 ${T("a2hsBtn")}</button>`}
+   <div class="toggle"><span>${S.profile.lang==="fr"?"Sons":"Sounds"}</span><button class="switch" role="switch" id="soundSw" aria-checked="${!p.soundOff}" aria-label="Sounds"></button></div>
    <div class="toggle"><span>${T("restTimer")}</span><button class="switch" role="switch" id="restSw" aria-checked="${!p.restOff}" aria-label="${T("restTimer")}"></button></div>
    <div class="toggle" ${LIVE?"hidden":""}><span>${T("coach")}</span><button class="switch" role="switch" id="coachSw" aria-checked="${p.coach}" aria-label="${T("coach")}"></button></div>
    ${S.sample?`<div class="banner"><span>${T("sample")}</span><button id="clearSample2">${T("clear")}</button></div>`:""}
@@ -861,7 +862,7 @@ function finishWorkout(wn,dn){
   d.items.forEach((it,i)=>{const before=best1rm(it.name,wn);let best=0;(it.sets||[]).forEach((_,s)=>{const v=S.logs[keyOf(wn,dn,i,s)];if(v?.done){sets++;vol+=(+v.wt||0)*(+v.reps||0);best=Math.max(best,e1rmRpe(+v.wt,+v.reps,it.rpe))}});
     if(best&&before&&best>before+0.5)prs.push(it.name)});
   S.days[`${wn}|${dn}`]=Date.now();save();stopRest();
-  const dg=fresh?dragonCelebration(dgBefore,dragonData()):"";if(fresh)buzz();
+  const dg=fresh?dragonCelebration(dgBefore,dragonData()):"";if(fresh){buzz();chime(dragonData().st>dgBefore.st||dragonData().medals>dgBefore.medals?"grow":"done")}
   document.getElementById("overlay").innerHTML=`<div class="scrim" data-close></div><div class="sheet"><div class="inner wrap"><div class="done-panel">
     ${dg}<div class="eyebrow">${T("week")} ${WN(wn)} · ${esc(dayTitle(d))}</div><div class="big">${T("finished")}</div>
     <div class="done-grid"><div class="stat"><b class="num">${tm?wtMins(tm):"–"}</b><span>${T("duration")} (min)</span></div><div class="stat"><b class="num">${sets}</b><span>${T("setsDone")}</span></div><div class="stat"><b class="num">${vol>=1000?(vol/1000).toFixed(1)+"k":vol}</b><span>${T("volume")} (lb)</span></div><div class="stat"><b class="num">${prs.length}</b><span>${T("prs")}</span></div></div>
@@ -1009,6 +1010,20 @@ function buzz(pattern){
   try{const l=document.createElement("label"),i=document.createElement("input");i.type="checkbox";i.setAttribute("switch","");l.appendChild(i);
     l.style.cssText="position:fixed;left:-200px;top:0;opacity:0;pointer-events:none";document.body.appendChild(l);l.click();setTimeout(()=>l.remove(),400)}catch(e){}
 }
+/* Our own little chime, made in code (no audio file): a quick rising "pa-ping!" when a workout is done,
+   a longer sparkle when the dragon grows. Plays at media volume; off with Profile & settings → Sounds. */
+let AC=null;
+function chime(kind){
+  if(S.profile.soundOff)return;
+  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==="suspended")AC.resume();
+    const t0=AC.currentTime+.02,out=AC.createGain();out.gain.value=.22;out.connect(AC.destination);
+    const note=(f,at,len,vol)=>{[["sine",1,1],["triangle",2,.18]].forEach(([type,mult,g])=>{const o=AC.createOscillator(),e=AC.createGain();
+      o.type=type;o.frequency.value=f*mult;e.gain.setValueAtTime(0,t0+at);e.gain.linearRampToValueAtTime(vol*g,t0+at+.006);
+      e.gain.exponentialRampToValueAtTime(.0001,t0+at+len);o.connect(e);e.connect(out);o.start(t0+at);o.stop(t0+at+len+.05)})};
+    if(kind==="grow"){[[784,0],[988,.09],[1175,.18],[1568,.27],[1976,.40]].forEach(([f,at],i)=>note(f,at,i===4?.9:.35,i===4?1:.8))}
+    else{note(880,0,.18,.7);note(1319,.085,.55,1);note(2637,.09,.35,.12)}
+  }catch(e){}
+}
 function burstHtml(){const cs=["#e5482b","#f2b233","#f3efe6","#43c08a"];return `<div class="burst" aria-hidden="true">${Array.from({length:18},(_,i)=>{const a=i/18*Math.PI*2,r=80+(i%3)*24;return `<i style="--x:${Math.round(Math.cos(a)*r)}px;--y:${Math.round(Math.sin(a)*r-20)}px;--c:${cs[i%4]};--d:${i%2?.05:0}s"></i>`}).join("")}</div>`}
 /* The top of the "Workout done" sheet: the dragon hops, XP flies up, the bar fills; a new stage pops in. */
 function dragonCelebration(b,a){
@@ -1049,7 +1064,7 @@ app.addEventListener("click",e=>{
   if(t.closest("#clearSample")){S.logs={};S.notes={};S.days={};S.sample=false;save();toast("Sample cleared");render();return}
   const chk=t.closest("[data-check]");if(chk){toggleSet(chk.closest(".set"));return}
   if(t.closest("#finish")){finishWorkout(VIEW.w,VIEW.d);return}
-  if(t.closest("#circuitDone")){const k=`${VIEW.w}|${VIEW.d}`;if(S.days[k]){delete S.days[k];queueDayMark(VIEW.w,VIEW.d,"")}else{const b=IS_MEMBER()?dragonData():null;S.days[k]=Date.now();queueDayMark(VIEW.w,VIEW.d,"✓ Done");if(b){buzz();toast(`+${dragonData().xp-b.xp} XP 🐉`)}}save();render();return}
+  if(t.closest("#circuitDone")){const k=`${VIEW.w}|${VIEW.d}`;if(S.days[k]){delete S.days[k];queueDayMark(VIEW.w,VIEW.d,"")}else{const b=IS_MEMBER()?dragonData():null;S.days[k]=Date.now();queueDayMark(VIEW.w,VIEW.d,"✓ Done");if(b){buzz();chime();toast(`+${dragonData().xp-b.xp} XP 🐉`)}}save();render();return}
   if(t.closest("#dragonCard")){openDragon();return}
 });
 app.addEventListener("input",e=>{
@@ -1093,13 +1108,14 @@ document.getElementById("overlay").addEventListener("click",e=>{
       toast(r==="sent"?"Buzz sent ✓ (if you felt nothing, check the phone's vibration settings)":r==="blocked"?"This browser blocked the buzz":"This browser can't buzz ("+r+"). Open the link in Chrome.",5000);return}
     if(t.closest("[data-dprev-clear]")){DPREV=null;render();openDragon();return}
     if(t.closest("[data-dprev-cele]")||t.closest("[data-dprev-grow]")){const a=dragonData();const grow=!!t.closest("[data-dprev-grow]");
-      const b=grow?{...a,st:Math.max(0,a.st-1),xp:a.xp-10,pct:80,medals:a.medals,streak:a.streak}:{...a,xp:a.xp-10,pct:Math.max(0,a.pct-12)};buzz();
+      const b=grow?{...a,st:Math.max(0,a.st-1),xp:a.xp-10,pct:80,medals:a.medals,streak:a.streak}:{...a,xp:a.xp-10,pct:Math.max(0,a.pct-12)};buzz();chime(grow?"grow":"done");
       document.getElementById("overlay").innerHTML=`<div class="scrim" data-close></div><div class="sheet"><div class="inner wrap"><div class="done-panel">${dragonCelebration(b,a)}<div class="big">${T("finished")}</div><button class="btn block" data-close>${T("back")}</button></div></div></div>`;animateXp();return}}
   if(t.closest("#a2hsSettings")){openA2hs();return}
   const sx=t.closest("[data-sex]");if(sx){p.sex=sx.dataset.sex;save();queueProfile();openSettings();return}
   const lg=t.closest("[data-lang]");if(lg){p.lang=lg.dataset.lang;save();render();openSettings();return}
   const sk=t.closest("[data-skinpick]");if(sk){p.skin=sk.dataset.skinpick;save();render();openSettings();return}
   if(t.closest("#coachSw")){p.coach=!p.coach;save();openSettings();return}
+  if(t.closest("#soundSw")){p.soundOff=!p.soundOff;save();if(!p.soundOff)chime();openSettings();return}
   if(t.closest("#restSw")){p.restOff=!p.restOff;if(p.restOff)stopRest();save();openSettings();return}
   if(t.closest("#clearSample2")){S.logs={};S.notes={};S.days={};S.sample=false;save();toast("Sample cleared");openSettings();return}
 });
