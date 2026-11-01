@@ -647,6 +647,25 @@ function viewWorkout(wn,dn){
    </section></div>`;
 }
 const CORE_LOADED=/cable|pallof|woodchop|landmine|plate|weight|med ?ball|\bdbs?\b|dumbb?ell|\bkbs?\b|kettle|barbell|carry|sandbag|backpack|machine|hyper|pull-?through|\brow\b|russian/i;
+/* Pre-filled weight box, in order: bodyweight exercise → "BW 128"; a number in the sheet ("110", "+15 lb") →
+   that number; a % of 1RM with a logged history → % × est. max, rounded to 5; no number or % → what was lifted
+   on the same set last time; otherwise empty. (Last time used to beat the %, so a heavy single could show on a set of 5.)
+   Sets done to max (Max, AMRAP, conti, or a time like 40s) never pre-fill reps: the athlete types what they got. */
+const isToMax=r=>/\d+\s*(?:s|sec|secs|seconds?)\b|amrap|\bmax\b|conti/i.test(String(r||""));
+function wtPick(s,p,rm,prevSet){
+  const L=String(s.load||"").trim();
+  if(/^BW\b/i.test(L))return +S.profile.bw?"BW "+Math.round(+S.profile.bw):"BW";
+  const m=L.match(/^\+?\s*(\d+(?:\.\d+)?)\s*(?:lbs?)?$/i);if(m)return m[1];
+  if(p&&rm)return String(r5(rm*p));
+  if(prevSet&&prevSet.wt)return String(prevSet.wt);
+  return "lb";
+}
+function repsPick(s){
+  if(/conti/i.test(s.reps))return "conti";
+  if(isToMax(s.reps))return "max";
+  return repsRange(s.reps)||repsPlaceholder(s.reps)||"—";
+}
+function setOf(k){const [w,d,i,s]=k.split("|");return WEEKS[w-1]?.days.find(x=>x.day===d)?.items[i]?.sets[s]}
 function exCard(wn,dn,it,i){
   const last=lastTime(it.name,wn,dn);const bst=bestSet(it.name,wn,dn);const rm=bst?bst.e:0;
   const lastTxt=last?last.sets.map(v=>`${v.wt?v.wt+"×":""}${v.reps}`).join(" · "):"";
@@ -666,8 +685,8 @@ function exCard(wn,dn,it,i){
     return `<div class="set ${v.done?"done":""}" data-k="${keyOf(wn,dn,i,si)}" data-rest="${ss||!/super/i.test(it.rest)?restSecs(it.rest):90}">
       <span class="sn">${si+1}</span>
       <div class="tg"><b>${esc(repsTarget(s.reps))} ${/^[\d–+\s]+$/.test(repsTarget(s.reps))?T("reps"):""}</b><span>${loadTxt}</span> ${sug}</div>
-      ${noWt?`<span class="nowt" aria-hidden="true">—</span>`:`<input id="wt-${wn}-${dn.slice(-1)}-${i}-${si}" ${/^BW\b/i.test(s.load||"")?'class="bw"':""} inputmode="decimal" aria-label="Weight set ${si+1}" placeholder="${/^BW\b/i.test(s.load||"")?(+S.profile.bw?"BW "+Math.round(+S.profile.bw):"BW"):/^\d+(\.\d+)?$/.test(s.load)?s.load:(prevSet?.wt||(p&&rm?r5(rm*p):"lb"))}" value="${esc(v.wt||"")}" data-f="wt">`}
-      <input id="rp-${wn}-${dn.slice(-1)}-${i}-${si}" inputmode="numeric" aria-label="Reps set ${si+1}" ${repsRange(s.reps)?'class="rng"':""} placeholder="${/conti/i.test(s.reps)?(prevSet?.reps||"conti"):/amrap|max/i.test(s.reps)?(prevSet?.reps||"max"):repsRange(s.reps)||repsPlaceholder(s.reps)||"—"}" value="${esc(v.reps||"")}" data-f="reps">
+      ${noWt?`<span class="nowt" aria-hidden="true">—</span>`:`<input id="wt-${wn}-${dn.slice(-1)}-${i}-${si}" ${/^BW\b/i.test(s.load||"")?'class="bw"':""} inputmode="decimal" aria-label="Weight set ${si+1}" placeholder="${esc(wtPick(s,p,rm,prevSet))}" value="${esc(v.wt||"")}" data-f="wt">`}
+      <input id="rp-${wn}-${dn.slice(-1)}-${i}-${si}" inputmode="numeric" aria-label="Reps set ${si+1}" ${repsRange(s.reps)?'class="rng"':""} placeholder="${esc(repsPick(s))}" value="${esc(v.reps||"")}" data-f="reps">
       <button class="chk" aria-label="Complete set ${si+1}" data-check>${I.check}</button></div>`}).join("");
   return `<article class="card ex">
     <div class="name"><div><div class="idx">${String(i+1).padStart(2,"0")}${it.type?" · "+esc(it.type).toUpperCase():""}</div><h3>${esc(it.name)}</h3></div>
@@ -980,6 +999,7 @@ function toggleSet(row,forceDone){
   const k=row.dataset.k;const v=S.logs[k]||{};
   const wt=row.querySelector('[data-f="wt"]')||{value:"",placeholder:"",classList:{add(){},remove(){}}},rp=row.querySelector('[data-f="reps"]');
   if(forceDone||!v.done){if(v.done)return;
+    {const st=setOf(k);if(st&&isToMax(st.reps)&&rp&&!rp.value){rp.focus();toast(S.profile.lang==="fr"?"Écris combien de reps tu as fait.":"Type how many reps you got.",2600);return}}
     const cand=+(wt.value||(wt.placeholder&&/^\d/.test(wt.placeholder)?wt.placeholder:0));
     if(cand>0&&row.dataset.ok!==String(cand)){const ref=usualWeight(k);
       if(cand>=700||(ref>0&&cand>ref*1.6&&cand-ref>=40)){row.dataset.ok=String(cand);wt.classList.add("warn");
