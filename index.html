@@ -277,6 +277,7 @@ section{display:grid;gap:12px;padding-block:18px}
 @keyframes spin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.ring{animation-duration:3s!important}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.nowt{display:grid;place-items:center;color:var(--faint);font-size:15px}
 .chip.faintchip{opacity:.75;font-weight:400}
 /* finish celebration */
 .done-panel{position:relative}
@@ -626,6 +627,9 @@ function exCard(wn,dn,it,i){
   const lastTxt=last?last.sets.map(v=>`${v.wt?v.wt+"×":""}${v.reps}`).join(" · "):"";
   const dayItems=(WEEKS[wn-1]?.days.find(d=>d.day===dn)?.items)||[];
   const ss=/super/i.test(it.rest)&&i<dayItems.length-1; // a "superset" on the last exercise has nothing to pair with
+  // Core / ab exercises get no weight box (athletes found it confusing), unless the coach prescribed a
+  // load (a number or % of 1RM) or the athlete has logged a weight on this exercise before.
+  const noWt=/^(core|abs?)$/i.test(String(it.type||"").trim())&&!(it.sets||[]).some(s=>/\d/.test(s.load||""))&&!bst&&!(last&&last.sets.some(v=>+v.wt));
   const rows=(it.sets||[]).map((s,si)=>{
     const v=S.logs[keyOf(wn,dn,i,si)]||{};const p=pctOf(s.load);
     const sug=p&&rm?`<em>≈ ${r5(rm*p)} ${T("lb")}</em>`:"";
@@ -633,8 +637,8 @@ function exCard(wn,dn,it,i){
     const prevSet=last?.sets[si];
     return `<div class="set ${v.done?"done":""}" data-k="${keyOf(wn,dn,i,si)}" data-rest="${ss||!/super/i.test(it.rest)?restSecs(it.rest):90}">
       <span class="sn">${si+1}</span>
-      <div class="tg"><b>${esc(repsTarget(s.reps))} ${/^\d|–/.test(repsTarget(s.reps))?T("reps"):""}</b><span>${loadTxt}</span> ${sug}</div>
-      <input id="wt-${wn}-${dn.slice(-1)}-${i}-${si}" ${/^BW\b/i.test(s.load||"")?'class="bw"':""} inputmode="decimal" aria-label="Weight set ${si+1}" placeholder="${/^BW\b/i.test(s.load||"")?(+S.profile.bw?"BW "+Math.round(+S.profile.bw):"BW"):/^\d+(\.\d+)?$/.test(s.load)?s.load:(prevSet?.wt||(p&&rm?r5(rm*p):"lb"))}" value="${esc(v.wt||"")}" data-f="wt">
+      <div class="tg"><b>${esc(repsTarget(s.reps))} ${/^[\d–+\s]+$/.test(repsTarget(s.reps))?T("reps"):""}</b><span>${loadTxt}</span> ${sug}</div>
+      ${noWt?`<span class="nowt" aria-hidden="true">—</span>`:`<input id="wt-${wn}-${dn.slice(-1)}-${i}-${si}" ${/^BW\b/i.test(s.load||"")?'class="bw"':""} inputmode="decimal" aria-label="Weight set ${si+1}" placeholder="${/^BW\b/i.test(s.load||"")?(+S.profile.bw?"BW "+Math.round(+S.profile.bw):"BW"):/^\d+(\.\d+)?$/.test(s.load)?s.load:(prevSet?.wt||(p&&rm?r5(rm*p):"lb"))}" value="${esc(v.wt||"")}" data-f="wt">`}
       <input id="rp-${wn}-${dn.slice(-1)}-${i}-${si}" inputmode="numeric" aria-label="Reps set ${si+1}" ${repsRange(s.reps)?'class="rng"':""} placeholder="${/conti/i.test(s.reps)?(prevSet?.reps||"conti"):/amrap|max/i.test(s.reps)?(prevSet?.reps||"max"):repsRange(s.reps)||repsPlaceholder(s.reps)||"—"}" value="${esc(v.reps||"")}" data-f="reps">
       <button class="chk" aria-label="Complete set ${si+1}" data-check>${I.check}</button></div>`}).join("");
   return `<article class="card ex">
@@ -643,7 +647,7 @@ function exCard(wn,dn,it,i){
     <div class="chips">${/\b(db|dbs|dumbb?ells?)\b/i.test(it.name)?`<span class="chip">${S.profile.lang==="fr"?"Poids d'un haltère":"Weight of ONE dumbbell"}</span>`:""}${it.rpe?`<span class="chip">RPE ${esc(it.rpe)}</span>`:""}<span class="chip">${T("rest")} ${esc((ss||!/super/i.test(it.rest)?restLabel(it.rest):"1–2 min"))}</span>${bst?`<span class="chip">${T("bestSet")} <b class="num">${bst.wt}×${bst.reps}</b></span><span class="chip faintchip">${T("est1rm")} ${r5(rm)} ${T("lb")}</span>`:""}</div>
     ${ss?`<div class="ssflag">${T("superset")}</div>`:""}
     ${last?`<div class="last">${T("last")} (${last.w===wn?T("thisWeekLc"):T("week").toLowerCase()+" "+WN(last.w)}, ${esc(dayLabel(last.day))}): <b class="num">${esc(lastTxt)}</b></div>`:""}
-    <div class="colhead"><span>#</span><span>${T("target")}</span><span>${T("lb")}</span><span>${T("reps")}</span><span></span></div>
+    <div class="colhead"><span>#</span><span>${T("target")}</span><span>${noWt?"":T("lb")}</span><span>${T("reps")}</span><span></span></div>
     <div class="sets">${rows}</div>
     <input class="note" id="note-${wn}-${dn.slice(-1)}-${i}" placeholder="${T("notes")}" value="${esc(S.notes[`${wn}|${dn}|${i}`]||"")}" data-note="${wn}|${dn}|${i}">
   </article>`;
@@ -791,11 +795,12 @@ function startRest(secs){
   if(S.profile.restOff)secs=0;
   const el=document.getElementById("rest"),box=document.getElementById("restbox");
   clearInterval(restT);if(!secs){el.hidden=true;return}
-  restEnd=Date.now()+secs*1000;el.hidden=false;
+  restEnd=Date.now()+secs*1000;el.hidden=false;delete box.dataset.rang;audioUnlock();
   const tick=()=>{const left=Math.round((restEnd-Date.now())/1000);const over=left<=0;
     box.className="restbox"+(over?" over":"");
     const a=Math.abs(left);box.innerHTML=`<span class="clock">${over?"+":""}${Math.floor(a/60)}:${String(a%60).padStart(2,"0")}</span><span class="lbl">${over?T("restOver"):T("rest")}</span><button data-add>+15s</button><button data-skip>${T("skip")}</button>`;
-    if(left===0&&navigator.vibrate)try{navigator.vibrate([200,100,200])}catch(e){}
+    if(left>0)delete box.dataset.rang;
+    if(left<=0&&left>-5&&!box.dataset.rang){box.dataset.rang="1";try{if(navigator.vibrate)navigator.vibrate([200,100,200,100,300])}catch(e){}chime("rest")}
     if(left<-90)stopRest()};
   tick();restT=setInterval(tick,500);
 }
@@ -860,6 +865,9 @@ function buzz(pattern){
 /* Our own chime, made in code (no audio file): a quick rising "pa-ping" when a workout is done, a longer
    rising sparkle when there's a PR. Media volume; off with Profile & settings → Sounds. */
 let AC=null;
+/* Phones only allow sound after a tap: ticking a set wakes the audio so the rest timer can ring later. */
+function audioUnlock(){if(S.profile.soundOff)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==="suspended")AC.resume();
+  const o=AC.createOscillator(),g=AC.createGain();g.gain.value=0;o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+.01)}catch(e){}}
 function chime(kind){
   if(S.profile.soundOff)return;
   try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==="suspended")AC.resume();
@@ -868,6 +876,7 @@ function chime(kind){
       o.type=type;o.frequency.value=f*mult;e.gain.setValueAtTime(0,t0+at);e.gain.linearRampToValueAtTime(vol*g,t0+at+.006);
       e.gain.exponentialRampToValueAtTime(.0001,t0+at+len);o.connect(e);e.connect(out);o.start(t0+at);o.stop(t0+at+len+.05)})};
     if(kind==="pr"){[[784,0],[988,.09],[1175,.18],[1568,.27],[1976,.40]].forEach(([f,at],i)=>note(f,at,i===4?.9:.35,i===4?1:.8))}
+    else if(kind==="rest"){note(1047,0,.25,.9);note(1047,.32,.25,.9);note(1568,.64,.6,1)}
     else{note(880,0,.18,.7);note(1319,.085,.55,1);note(2637,.09,.35,.12)}
   }catch(e){}
 }
@@ -936,7 +945,7 @@ function usualWeight(key){const [w0,d0,i0]=key.split("|");const it0=WEEKS[w0-1]?
   return m}
 function toggleSet(row,forceDone){
   const k=row.dataset.k;const v=S.logs[k]||{};
-  const wt=row.querySelector('[data-f="wt"]'),rp=row.querySelector('[data-f="reps"]');
+  const wt=row.querySelector('[data-f="wt"]')||{value:"",placeholder:"",classList:{add(){},remove(){}}},rp=row.querySelector('[data-f="reps"]');
   if(forceDone||!v.done){if(v.done)return;
     const cand=+(wt.value||(wt.placeholder&&/^\d/.test(wt.placeholder)?wt.placeholder:0));
     if(cand>0&&row.dataset.ok!==String(cand)){const ref=usualWeight(k);
