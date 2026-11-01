@@ -377,7 +377,7 @@ const TERMS = [["AMRAP","As many reps as possible with good form. “AMRAP 40s�
 const KEY=LIVE?"training-app-live-"+TOKEN:"immortals-app-v1";
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s&&s.v===1)return s}catch(e){}return null}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
-let S = load() || {v:1,profile:{name:"Alex",sex:"men",bw:168,lang:"en",skin:"scoreboard",coach:false},logs:{},notes:{},days:{},sample:!LIVE,seeded:LIVE,queue:{}};
+let S = load() || {v:1,profile:{name:"Alex",sex:"men",bw:168,lang:/^fr/i.test(navigator.language||"")?"fr":"en",skin:"scoreboard",coach:false},logs:{},notes:{},days:{},sample:!LIVE,seeded:LIVE,queue:{}};
 S.queue=S.queue||{};
 const T = k => STR[S.profile.lang][k];
 
@@ -609,7 +609,7 @@ function viewWeek(n){
 /* ---------- WORKOUT ---------- */
 function viewWorkout(wn,dn){
   const w=WEEKS[wn-1];const d=w.days.find(x=>x.day===dn);
-  const head=topbar(`<button class="back" id="backWeek" data-week="${wn}">‹ ${T("week")} ${WN(wn)}</button><div class="spacer"></div><span class="eyebrow">${esc(dn)}</span>`);
+  const head=topbar(`<button class="back" id="backWeek" data-week="${wn}">‹ ${T("week")} ${WN(wn)}</button><div class="spacer"></div><span class="eyebrow">${esc(dayLabel(dn))}</span>`);
   if(isCircuit(d))return head+viewCircuit(w,d);
   let total=0,done=0;d.items.forEach((it,i)=>(it.sets||[]).forEach((_,s)=>{total++;if(S.logs[keyOf(wn,dn,i,s)]?.done)done++}));
   const pct=total?Math.round(done/total*100):0;
@@ -622,6 +622,7 @@ function viewWorkout(wn,dn){
      <button class="btn block" id="finish">${S.days[`${wn}|${dn}`]?T("finished")+" ✓":T("finish")}</button>
    </section></div>`;
 }
+const CORE_LOADED=/cable|pallof|woodchop|landmine|plate|weight|med ?ball|\bdbs?\b|dumbb?ell|\bkbs?\b|kettle|barbell|carry|sandbag|backpack|machine|hyper|pull-?through|\brow\b|russian/i;
 function exCard(wn,dn,it,i){
   const last=lastTime(it.name,wn,dn);const bst=bestSet(it.name,wn,dn);const rm=bst?bst.e:0;
   const lastTxt=last?last.sets.map(v=>`${v.wt?v.wt+"×":""}${v.reps}`).join(" · "):"";
@@ -629,7 +630,10 @@ function exCard(wn,dn,it,i){
   const ss=/super/i.test(it.rest)&&i<dayItems.length-1; // a "superset" on the last exercise has nothing to pair with
   // Core / ab exercises get no weight box (athletes found it confusing), unless the coach prescribed a
   // load (a number or % of 1RM) or the athlete has logged a weight on this exercise before.
-  const noWt=/^(core|abs?)$/i.test(String(it.type||"").trim())&&!(it.sets||[]).some(s=>/\d/.test(s.load||""))&&!bst&&!(last&&last.sets.some(v=>+v.wt));
+  // Loaded core work (carries, cable/Pallof, landmine, plates, med ball, Db/Kb…) keeps its box, and so does any
+  // core exercise with something in its load cell (to force a box, type e.g. "Plate" there).
+  const noWt=/^(core|abs?)$/i.test(String(it.type||"").trim())&&!CORE_LOADED.test(it.name)
+    &&(it.sets||[]).every(s=>!String(s.load||"").trim()||/^BW$/i.test(String(s.load).trim()))&&!bst&&!(last&&last.sets.some(v=>+v.wt));
   const rows=(it.sets||[]).map((s,si)=>{
     const v=S.logs[keyOf(wn,dn,i,si)]||{};const p=pctOf(s.load);
     const sug=p&&rm?`<em>≈ ${r5(rm*p)} ${T("lb")}</em>`:"";
@@ -865,6 +869,7 @@ function buzz(pattern){
 /* Our own chime, made in code (no audio file): a quick rising "pa-ping" when a workout is done, a longer
    rising sparkle when there's a PR. Media volume; off with Profile & settings → Sounds. */
 let AC=null;
+try{if(navigator.audioSession)navigator.audioSession.type="ambient"}catch(e){}
 /* Phones only allow sound after a tap: ticking a set wakes the audio so the rest timer can ring later. */
 function audioUnlock(){if(S.profile.soundOff)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==="suspended")AC.resume();
   const o=AC.createOscillator(),g=AC.createGain();g.gain.value=0;o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+.01)}catch(e){}}
@@ -931,7 +936,9 @@ app.addEventListener("click",e=>{
   const bw=t.closest("#backWeek");if(bw){stopRest();go({name:"program",week:+bw.dataset.week});return}
   if(t.closest("#openSettings")){openSettings();return}
   if(t.closest("#clearSample")){S.logs={};S.notes={};S.days={};S.sample=false;save();toast("Sample cleared");render();return}
-  const chk=t.closest("[data-check]");if(chk){toggleSet(chk.closest(".set"));return}
+  // Typing reps then tapping ✓: leaving the reps box already completed the set a moment ago, so this tap
+  // must not undo it (it used to tick and untick in one go).
+  const chk=t.closest("[data-check]");if(chk){const row=chk.closest(".set");if(Date.now()-(+row.dataset.auto||0)<1500){row.dataset.auto="";return}toggleSet(row);return}
   if(t.closest("#finish")){finishWorkout(VIEW.w,VIEW.d);return}
   if(t.closest("#circuitDone")){const k=`${VIEW.w}|${VIEW.d}`;if(S.days[k]){delete S.days[k];queueDayMark(VIEW.w,VIEW.d,"")}else{S.days[k]=Date.now();queueDayMark(VIEW.w,VIEW.d,"✓ Done");buzz();chime()}save();render();return}
 });
@@ -959,7 +966,8 @@ function toggleSet(row,forceDone){
 // Typing the reps (and leaving the box) completes the set and starts the rest timer.
 app.addEventListener("change",e=>{
   if(e.target.dataset.f!=="reps"||!e.target.value)return;
-  toggleSet(e.target.closest(".set"),true);
+  const row=e.target.closest(".set");const was=!!(S.logs[row.dataset.k]||{}).done;
+  toggleSet(row,true);if(!was&&(S.logs[row.dataset.k]||{}).done)row.dataset.auto=String(Date.now());
 });
 function updateCount(){if(VIEW.name!=="workout")return;const d=WEEKS[VIEW.w-1].days.find(x=>x.day===VIEW.d);let total=0,done=0;
   d.items.forEach((it,i)=>(it.sets||[]).forEach((_,s)=>{total++;if(S.logs[keyOf(VIEW.w,VIEW.d,i,s)]?.done)done++}));
