@@ -404,7 +404,9 @@ const T = k => STR[S.profile.lang][k];
 /* ---------- dates & weeks ---------- */
 const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
 function weekDate(w){const [m,d]=String(w.date||"").split(" ");const mi=MONTHS.indexOf(m);return new Date(mi>=7?2026:2027,mi,+d)}
-const TODAY=(()=>{const d=new Date();d.setHours(0,0,0,0);return d})();
+// Today's date. Recomputed when the app comes back to the front, so an app left open since Sunday moves to Monday's week.
+const todayDate=()=>{const d=new Date();d.setHours(0,0,0,0);return d};
+let TODAY=todayDate();
 let WEEKS=PROGRAM.weeks;
 function currentWeekNum(){let n=LIVE?(WEEKS.length||1):1;let dated=false;for(const w of WEEKS){const d=weekDate(w);if(!isNaN(d)){dated=true;if(d<=TODAY)n=w.week}}return n}
 let CUR=currentWeekNum();
@@ -1307,7 +1309,7 @@ function showProgram(){
 function blockScreen(html){BLOCKED=html;REFRESHING=false;CACHE=null;try{localStorage.removeItem(CK)}catch(_){}
   try{stopRest()}catch(_){}document.getElementById("overlay").innerHTML="";render()}
 /* Everything the screen is drawn from, to tell whether the latest program changed anything. */
-function screenSig(){try{return JSON.stringify([WEEKS,S.logs,S.notes,S.days,S.timers,SEASON,START,CUR,TEAM.name,S.profile.name,S.profile.sex,S.profile.bw,BRAND&&BRAND.logo])}catch(e){return String(Math.random())}}
+function screenSig(){try{return JSON.stringify([TODAY.getTime(),WEEKS,S.logs,S.notes,S.days,S.timers,SEASON,START,CUR,TEAM.name,S.profile.name,S.profile.sex,S.profile.bw,BRAND&&BRAND.logo])}catch(e){return String(Math.random())}}
 /* Wait until the athlete isn't typing in a box (or has left it alone for 10 s), so a refresh never closes
    the keyboard mid-number. */
 let lastTyped=0;
@@ -1322,6 +1324,7 @@ function applyFresh(data){
   const v=VIEW,tabOf=n=>(WEEKS[n-1]||{}).tab;
   const wTab=v.name==="workout"?tabOf(v.w):(v.name==="program"&&v.week?tabOf(v.week):null);
   const before=screenSig();
+  TODAY=todayDate();
   applyLive(data);
   if(wTab){const n=(WEEKS.find(w=>w.tab===wTab)||{}).week;
     if(v.name==="workout")VIEW=n&&WEEKS[n-1].days.some(d=>d.day===v.d)?{...v,w:n}:{name:"today"};
@@ -1329,37 +1332,69 @@ function applyFresh(data){
   if(screenSig()===before&&JSON.stringify(VIEW)===JSON.stringify(v))return;
   const y=window.scrollY;showProgram();window.scrollTo(0,y);
 }
+/* READY: the program (or "starts Monday") is on screen, so a refresh can update it. lastFetch: when the
+   program was last asked for. */
+let READY=false,lastFetch=0;
+async function fetchProgram(){
+  lastFetch=Date.now();let data;
+  try{const r=await fetch(API_URL+"?t="+encodeURIComponent(TOKEN)+"&d="+encodeURIComponent(DEVICE));data=await r.json()}
+  catch(e){data={error:(e&&e.message)||"Check your connection and try again.",network:true}}
+  return data&&typeof data==="object"?data:{error:"Check your connection and try again."};
+}
+/* Locked, paused or inactive link: close the app with the message. */
+function blocked(data){
+  if(data.locked){blockScreen(msgScreen("30vh",`<h2>This link is already in use</h2><p class="muted">${esc(data.error)}</p>`));return true}
+  if(data.paused){
+    const ok=/^https:\/\//.test(data.renew||"");
+    blockScreen(msgScreen("28vh",`<h2>Your membership is paused</h2><p class="muted">Your program and everything you've logged are saved. Restart your membership and this same link works again.</p>${ok?`<a class="btn" href="${esc(data.renew)}" target="_blank" rel="noopener">Restart my membership</a>`:""}<p class="muted small">Ton abonnement est en pause. Ton programme et tes données sont sauvegardés.</p>`));return true}
+  if(data.error&&/not active/i.test(data.error)){blockScreen(msgScreen("30vh",`<h2>This link is no longer active</h2><p class="muted">Contact your coach to get access to your program.</p>`));return true}
+  return false;
+}
+const usable=d=>!d.error&&d.athlete&&Array.isArray(d.weeks);
+/* Put the latest program on the screen in place of what's showing (once they're not typing), then send saves. */
+function swapIn(data,failMsg){
+  whenIdle(()=>{
+    const old=CACHE;
+    try{applyFresh(data);saveCache(data)}
+    catch(e){try{if(old){applyLive(old);showProgram()}}catch(_){}if(failMsg)toast(failMsg)}
+    REFRESHING=false;flushQueue();
+  });
+}
 async function boot(){
   if(!LIVE){render();return}
   let shown=false,cached=null;
   try{cached=JSON.parse(localStorage.getItem(CK)||"null")}catch(_){}
   if(cached&&cached.athlete&&Array.isArray(cached.weeks)){try{applyLive(cached);CACHE=cached;showProgram();shown=true}catch(e){shown=false}}
   if(!shown){CACHE=null;app.innerHTML=`<div class="loader">${BRAND?`<img class="teamlogo" src="${BRAND.logo}" alt="">`:dbMark(120)}<div class="ring" aria-hidden="true"><i></i></div><div class="eyebrow">Loading your program…</div></div>`}
+  else READY=true;
   REFRESHING=true;
-  let data;
-  try{const r=await fetch(API_URL+"?t="+encodeURIComponent(TOKEN)+"&d="+encodeURIComponent(DEVICE));data=await r.json()}
-  catch(e){data={error:(e&&e.message)||"Check your connection and try again.",network:true}}
-  if(!data||typeof data!=="object")data={error:"Check your connection and try again."};
-  if(data.locked){blockScreen(msgScreen("30vh",`<h2>This link is already in use</h2><p class="muted">${esc(data.error)}</p>`));return}
-  if(data.paused){
-    const ok=/^https:\/\//.test(data.renew||"");
-    blockScreen(msgScreen("28vh",`<h2>Your membership is paused</h2><p class="muted">Your program and everything you've logged are saved. Restart your membership and this same link works again.</p>${ok?`<a class="btn" href="${esc(data.renew)}" target="_blank" rel="noopener">Restart my membership</a>`:""}<p class="muted small">Ton abonnement est en pause. Ton programme et tes données sont sauvegardés.</p>`));return}
-  if(data.error&&/not active/i.test(data.error)){blockScreen(msgScreen("30vh",`<h2>This link is no longer active</h2><p class="muted">Contact your coach to get access to your program.</p>`));return}
-  if(data.error||!data.athlete||!Array.isArray(data.weeks)){
+  const data=await fetchProgram();
+  if(blocked(data))return;
+  if(!usable(data)){
     REFRESHING=false;
     if(!shown){app.innerHTML=cantLoad(data.error);return}
     toast("Offline: showing your last saved program");flushQueue();return}
   if(!shown){
     try{applyLive(data)}catch(e){REFRESHING=false;app.innerHTML=cantLoad(e.message);return}
-    saveCache(data);REFRESHING=false;if(showProgram())flushQueue();return}
-  whenIdle(()=>{
-    const old=CACHE;
-    try{applyFresh(data);saveCache(data)}
-    catch(e){try{applyLive(old);showProgram()}catch(_){}toast("Offline: showing your last saved program")}
-    REFRESHING=false;flushQueue();
-  });
+    saveCache(data);REFRESHING=false;READY=true;if(showProgram())flushQueue();return}
+  swapIn(data,"Offline: showing your last saved program");
 }
 boot();
+/* Coming back to the app (a home-screen app left open since Sunday, say) after more than 5 minutes away:
+   fetch the latest program the same quiet way, so nobody has to close and reopen the app for a new week.
+   A save that's already on its way finishes first, so the program fetched includes it. */
+const RETURN_REFRESH_MS=5*60*1000;
+async function refreshOnReturn(){
+  if(!LIVE||!READY||BLOCKED||REFRESHING||document.visibilityState!=="visible"||Date.now()-lastFetch<RETURN_REFRESH_MS)return;
+  REFRESHING=true;
+  for(let i=0;flushing&&i<150;i++)await new Promise(r=>setTimeout(r,200));
+  const data=await fetchProgram();
+  if(blocked(data))return;
+  if(!usable(data)){REFRESHING=false;flushQueue();return}   // offline: keep what's on screen
+  swapIn(data,"");
+}
+document.addEventListener("visibilitychange",refreshOnReturn);
+window.addEventListener("pageshow",e=>{if(e.persisted)refreshOnReturn()});
 
 /* Self-update: iPhone home-screen apps keep an old copy of the page in memory and have no refresh
    button. When the app opens or comes back to the front, compare this page's code with the live
