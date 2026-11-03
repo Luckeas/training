@@ -395,6 +395,10 @@ function load(){try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s&&
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 let S = load() || {v:1,profile:{name:"Alex",sex:"men",bw:168,lang:/^fr/i.test(navigator.language||"")?"fr":"en",skin:"scoreboard",coach:false},logs:{},notes:{},days:{},sample:!LIVE,seeded:LIVE,queue:{}};
 S.queue=S.queue||{};
+/* Fast open: BLOCKED holds the full-screen message once the server says this link is locked, paused or
+   inactive; REFRESHING is true while the latest program is being fetched (saves wait until it's in);
+   CACHE is the last program received from the server, kept up to date with what's been saved since. */
+let BLOCKED="",REFRESHING=false,CACHE=null;
 const T = k => STR[S.profile.lang][k];
 
 /* ---------- dates & weeks ---------- */
@@ -978,6 +982,7 @@ function finishWorkout(wn,dn){
 
 /* ---------- render & events ---------- */
 function render(){
+  if(BLOCKED){app.innerHTML=BLOCKED;document.getElementById("tabs").innerHTML="";return}
   document.documentElement.setAttribute("data-skin",S.profile.skin);
   document.documentElement.lang=S.profile.lang;
   const v=VIEW;let html="";
@@ -1250,12 +1255,16 @@ function queueProfile(){if(!LIVE)return;const bw=parseFloat(String(S.profile.bw|
 let flushT=null,flushing=false;
 function scheduleFlush(ms){clearTimeout(flushT);flushT=setTimeout(flushQueue,ms||900);setSync("saving")}
 async function flushQueue(){
-  if(!LIVE||flushing)return;const entries=Object.entries(S.queue||{});if(!entries.length){setSync("saved");return}
+  // While the latest program is loading, saves wait: a save that landed before that load finished could
+  // make a just-logged set vanish from the screen. They go out right after it (see boot).
+  if(!LIVE||flushing||REFRESHING||BLOCKED)return;const entries=Object.entries(S.queue||{});if(!entries.length){setSync("saved");return}
   flushing=true;
   try{
+    const profile=(entries.find(([k])=>k==="profile")||[])[1]?.profile,writes=entries.filter(([k,q])=>k!=="profile"&&q.tab).map(([,q])=>({tab:q.tab,row:q.row,col:q.col,value:q.value}));
     const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body:JSON.stringify({t:TOKEN,d:DEVICE,profile:(entries.find(([k])=>k==="profile")||[])[1]?.profile,writes:entries.filter(([k,q])=>k!=="profile"&&q.tab).map(([,q])=>({tab:q.tab,row:q.row,col:q.col,value:q.value}))})});
+      body:JSON.stringify({t:TOKEN,d:DEVICE,profile,writes})});
     const j=await r.json();if(!j.ok)throw new Error(j.error||"save failed");
+    patchCache(writes,profile);
     for(const [k,q] of entries){if(S.queue[k]&&S.queue[k].v===q.v)delete S.queue[k]}
     save();setSync(Object.keys(S.queue).length?"saving":"saved");
     if(Object.keys(S.queue).length)scheduleFlush();
@@ -1265,32 +1274,90 @@ async function flushQueue(){
 function setSync(st){const el=document.getElementById("sync");if(!el)return;el.dataset.s=st;
   el.textContent=st==="saving"?"Saving…":st==="offline"?"Offline, will sync":"Saved to your sheet ✓"}
 window.addEventListener("online",()=>flushQueue());
+/* Fast open. The app keeps a copy of the last program it received (and patches it with every set that's
+   saved since), so it opens on that copy straight away instead of waiting for Google, which often takes
+   several seconds. The latest program is fetched at the same time; if anything changed, the screen updates
+   quietly (never while the athlete is typing). Locked, paused or inactive links still close the app as soon
+   as the server says so. The very first open on a phone has no copy yet and waits, as before. */
+const CK=KEY+"-cache";
+const msgScreen=(pad,inner)=>`<div class="wrap" style="padding-block:${pad} 0;display:grid;gap:12px;text-align:center">${inner}</div>`;
+const cantLoad=m=>msgScreen("30vh",`<h2>Can't load your program</h2><p class="muted">${esc(m||"Check your connection and try again.")}</p><button class="btn" onclick="location.reload()">Try again</button>`);
+function saveCache(d){CACHE=d;try{localStorage.setItem(CK,JSON.stringify(d))}catch(e){}}
+/* A save went through: write it into the kept copy the way the sheet now shows it, so the next open
+   shows it right away. */
+function patchCache(writes,profile){
+  if(!CACHE||!Array.isArray(CACHE.weeks))return;
+  for(const w of writes||[]){const W=CACHE.weeks.find(x=>x.tab===w.tab);if(!W)continue;
+    const v=String(w.value==null?"":w.value).replace(/^'/,"");
+    if(w.col===16){const d=W.days.find(x=>x.row===w.row);if(d){d.mark=v;continue}}
+    for(const d of W.days){const it=d.items.find(x=>x.row===w.row);if(!it)continue;
+      if(w.col===16)it.note=v;else{const st=(it.sets||[]).find(x=>x.col===w.col);if(st)st.load=v}
+      break}}
+  if(profile&&CACHE.athlete){if(profile.sex==="men"||profile.sex==="women")CACHE.athlete.sex=profile.sex;if(+profile.bw)CACHE.athlete.bw=+profile.bw}
+  saveCache(CACHE);
+}
+/* The program, or "starts Monday" while no week has been released yet. */
+function showProgram(){
+  if(!WEEKS.length){
+    const nm=esc((S.profile&&S.profile.name)||"");document.getElementById("tabs").innerHTML="";
+    app.innerHTML=msgScreen("28vh",`<div class="eyebrow">You're all set${nm?", "+nm:""}</div><h2>Your program starts Monday</h2><p class="muted">Week 1 appears here on the first Monday of your program. Add this page to your home screen so it's one tap away.</p><p class="muted small">Ton programme commence lundi. La semaine 1 apparaîtra ici.</p>`);
+    return false}
+  render();return true;
+}
+function blockScreen(html){BLOCKED=html;REFRESHING=false;CACHE=null;try{localStorage.removeItem(CK)}catch(_){}
+  try{stopRest()}catch(_){}document.getElementById("overlay").innerHTML="";render()}
+/* Everything the screen is drawn from, to tell whether the latest program changed anything. */
+function screenSig(){try{return JSON.stringify([WEEKS,S.logs,S.notes,S.days,S.timers,SEASON,START,CUR,TEAM.name,S.profile.name,S.profile.sex,S.profile.bw,BRAND&&BRAND.logo])}catch(e){return String(Math.random())}}
+/* Wait until the athlete isn't typing in a box (or has left it alone for 10 s), so a refresh never closes
+   the keyboard mid-number. */
+let lastTyped=0;
+app.addEventListener("focusin",()=>{lastTyped=Date.now()});app.addEventListener("input",()=>{lastTyped=Date.now()},true);
+function whenIdle(fn){
+  const busy=()=>{const a=document.activeElement;return !!a&&app.contains(a)&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)&&Date.now()-lastTyped<10000};
+  if(!busy()){fn();return}
+  const t=setInterval(()=>{if(!busy()){clearInterval(t);fn()}},400);
+}
+/* Swap in the latest program, staying on the same week and day, and redraw only if something changed. */
+function applyFresh(data){
+  const v=VIEW,tabOf=n=>(WEEKS[n-1]||{}).tab;
+  const wTab=v.name==="workout"?tabOf(v.w):(v.name==="program"&&v.week?tabOf(v.week):null);
+  const before=screenSig();
+  applyLive(data);
+  if(wTab){const n=(WEEKS.find(w=>w.tab===wTab)||{}).week;
+    if(v.name==="workout")VIEW=n&&WEEKS[n-1].days.some(d=>d.day===v.d)?{...v,w:n}:{name:"today"};
+    else VIEW=n?{...v,week:n}:{name:"program"}}
+  if(screenSig()===before&&JSON.stringify(VIEW)===JSON.stringify(v))return;
+  const y=window.scrollY;showProgram();window.scrollTo(0,y);
+}
 async function boot(){
   if(!LIVE){render();return}
-  app.innerHTML=`<div class="loader">${BRAND?`<img class="teamlogo" src="${BRAND.logo}" alt="">`:dbMark(120)}<div class="ring" aria-hidden="true"><i></i></div><div class="eyebrow">Loading your program…</div></div>`;
-  const CK=KEY+"-cache";
-  try{
-    const r=await fetch(API_URL+"?t="+encodeURIComponent(TOKEN)+"&d="+encodeURIComponent(DEVICE));const data=await r.json();
-    if(data.locked){try{localStorage.removeItem(CK)}catch(_){}
-      app.innerHTML=`<div class="wrap" style="padding-block:30vh 0;display:grid;gap:12px;text-align:center"><h2>This link is already in use</h2><p class="muted">${esc(data.error)}</p></div>`;return}
-    if(data.paused){
-      const ok=/^https:\/\//.test(data.renew||"");
-      app.innerHTML=`<div class="wrap" style="padding-block:28vh 0;display:grid;gap:12px;text-align:center"><h2>Your membership is paused</h2><p class="muted">Your program and everything you've logged are saved. Restart your membership and this same link works again.</p>${ok?`<a class="btn" href="${esc(data.renew)}" target="_blank" rel="noopener">Restart my membership</a>`:""}<p class="muted small">Ton abonnement est en pause. Ton programme et tes données sont sauvegardés.</p></div>`;return}
-    if(data.error&&/not active/i.test(data.error)){try{localStorage.removeItem(CK)}catch(_){}
-      app.innerHTML=`<div class="wrap" style="padding-block:30vh 0;display:grid;gap:12px;text-align:center"><h2>This link is no longer active</h2><p class="muted">Contact your coach to get access to your program.</p></div>`;return}
-    if(data.error)throw new Error(data.error);
-    try{localStorage.setItem(CK,JSON.stringify(data))}catch(e){}
-    applyLive(data);
-  }catch(e){
-    let cached=null;try{cached=JSON.parse(localStorage.getItem(CK)||"null")}catch(_){}
-    if(!cached){app.innerHTML=`<div class="wrap" style="padding-block:30vh 0;display:grid;gap:12px;text-align:center"><h2>Can't load your program</h2><p class="muted">${esc(e.message||"Check your connection and try again.")}</p><button class="btn" onclick="location.reload()">Try again</button></div>`;return}
-    applyLive(cached);toast("Offline: showing your last saved program");
-  }
-  if(!WEEKS.length){
-    const nm=esc((S.profile&&S.profile.name)||"");
-    app.innerHTML=`<div class="wrap" style="padding-block:28vh 0;display:grid;gap:12px;text-align:center"><div class="eyebrow">You're all set${nm?", "+nm:""}</div><h2>Your program starts Monday</h2><p class="muted">Week 1 appears here on the first Monday of your program. Add this page to your home screen so it's one tap away.</p><p class="muted small">Ton programme commence lundi. La semaine 1 apparaîtra ici.</p></div>`;
-    return}
-  render();flushQueue();
+  let shown=false,cached=null;
+  try{cached=JSON.parse(localStorage.getItem(CK)||"null")}catch(_){}
+  if(cached&&cached.athlete&&Array.isArray(cached.weeks)){try{applyLive(cached);CACHE=cached;showProgram();shown=true}catch(e){shown=false}}
+  if(!shown){CACHE=null;app.innerHTML=`<div class="loader">${BRAND?`<img class="teamlogo" src="${BRAND.logo}" alt="">`:dbMark(120)}<div class="ring" aria-hidden="true"><i></i></div><div class="eyebrow">Loading your program…</div></div>`}
+  REFRESHING=true;
+  let data;
+  try{const r=await fetch(API_URL+"?t="+encodeURIComponent(TOKEN)+"&d="+encodeURIComponent(DEVICE));data=await r.json()}
+  catch(e){data={error:(e&&e.message)||"Check your connection and try again.",network:true}}
+  if(!data||typeof data!=="object")data={error:"Check your connection and try again."};
+  if(data.locked){blockScreen(msgScreen("30vh",`<h2>This link is already in use</h2><p class="muted">${esc(data.error)}</p>`));return}
+  if(data.paused){
+    const ok=/^https:\/\//.test(data.renew||"");
+    blockScreen(msgScreen("28vh",`<h2>Your membership is paused</h2><p class="muted">Your program and everything you've logged are saved. Restart your membership and this same link works again.</p>${ok?`<a class="btn" href="${esc(data.renew)}" target="_blank" rel="noopener">Restart my membership</a>`:""}<p class="muted small">Ton abonnement est en pause. Ton programme et tes données sont sauvegardés.</p>`));return}
+  if(data.error&&/not active/i.test(data.error)){blockScreen(msgScreen("30vh",`<h2>This link is no longer active</h2><p class="muted">Contact your coach to get access to your program.</p>`));return}
+  if(data.error||!data.athlete||!Array.isArray(data.weeks)){
+    REFRESHING=false;
+    if(!shown){app.innerHTML=cantLoad(data.error);return}
+    toast("Offline: showing your last saved program");flushQueue();return}
+  if(!shown){
+    try{applyLive(data)}catch(e){REFRESHING=false;app.innerHTML=cantLoad(e.message);return}
+    saveCache(data);REFRESHING=false;if(showProgram())flushQueue();return}
+  whenIdle(()=>{
+    const old=CACHE;
+    try{applyFresh(data);saveCache(data)}
+    catch(e){try{applyLive(old);showProgram()}catch(_){}toast("Offline: showing your last saved program")}
+    REFRESHING=false;flushQueue();
+  });
 }
 boot();
 
