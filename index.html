@@ -659,7 +659,7 @@ const CORE_LOADED=/cable|pallof|woodchop|landmine|plate|weight|med ?ball|\bdbs?\
 const isToMax=r=>/\d+\s*(?:s|sec|secs|seconds?)\b|amrap|\bmax\b|conti/i.test(String(r||""));
 function wtPick(s,p,rm,prevSet){
   const L=String(s.load||"").trim();
-  if(/^BW\b/i.test(L))return +S.profile.bw?"BW "+Math.round(+S.profile.bw):"BW";
+  if(/^BW\b/i.test(L))return "BW";
   const m=L.match(/^\+?\s*(\d+(?:\.\d+)?)\s*(?:lbs?)?$/i);if(m)return m[1];
   if(p&&rm)return String(r5(rm*p));
   if(prevSet&&prevSet.wt)return String(prevSet.wt);
@@ -1020,6 +1020,8 @@ function toggleSet(row,forceDone){
   const k=row.dataset.k;const v=S.logs[k]||{};
   const wt=row.querySelector('[data-f="wt"]')||{value:"",placeholder:"",classList:{add(){},remove(){}}},rp=row.querySelector('[data-f="reps"]');
   if(forceDone||!v.done){if(v.done)return;
+    // Bodyweight exercises: the weight box is ADDED weight only. A number near their bodyweight means they typed their bodyweight.
+    {const st=setOf(k),bw=+S.profile.bw;if(st&&/^BW$/i.test(String(st.load||"").trim())&&bw&&+wt.value>=bw*.75){wt.value="";wt.focus();toast(S.profile.lang==="fr"?"Cette case est pour le poids ajouté seulement. Laisse-la vide pour le poids du corps.":"That box is for added weight only. Leave it empty for bodyweight.",3500);return}}
     {const st=setOf(k);if(st&&isToMax(st.reps)&&rp&&!rp.value){rp.focus();toast(S.profile.lang==="fr"?"Écris combien de reps tu as fait.":"Type how many reps you got.",2600);return}}
     const cand=+(wt.value||(wt.placeholder&&/^\d/.test(wt.placeholder)?wt.placeholder:0));
     if(cand>0&&row.dataset.ok!==String(cand)){const ref=usualWeight(k);
@@ -1143,6 +1145,8 @@ function viewSeason(){
 const STRICT_FROM=new Date(2026,9,26);
 function parseLogged(load,repsCell,strict){
   load=String(load||"").trim();
+  // "(25)" saved before Nov 2 became the number -25 in the sheet: read it back as 25 reps.
+  if(/^-\d+$/.test(load))return{presc:"",logged:{wt:"",reps:load.slice(1),done:true}};
   let m=load.match(/^(.*?)\s*\(([^()]*)\)\s*$/);
   if(m&&/\|/.test(m[2])){   // drop set: "50x10 | 40x8"
     const parts=m[2].split("|").map(x=>x.trim()),one=x=>{let k=x.match(/^(\d+(?:\.\d+)?)\s*[x×]\s*(\d+)$/i);if(k)return{wt:k[1],reps:k[2]};k=x.match(/^(\d+)$/);return k?{wt:"",reps:k[1]}:null};
@@ -1168,7 +1172,8 @@ function cellValue(set,v){
   const pair=(w,r)=>w&&r?`${w}x${r}`:(w||r);
   const drops=isDrop(set)?(v.drops||[]).map(d=>d?pair(String(d.wt||"").trim().replace(/^\+/,""),String(d.reps||"").trim()):"").filter(Boolean):[];
   const inner=pair(wt,reps)+drops.map(x=>" | "+x).join("");
-  if(!p)return `(${inner})`;
+  // Reps or weight alone, e.g. "(25)": the leading ' keeps it text, or Sheets turns it into the number -25.
+  if(!p)return /^\d+(\.\d+)?$/.test(inner)?`'(${inner})`:`(${inner})`;
   return `${p} (${inner})`;
 }
 function findKey(tab,row,col){
