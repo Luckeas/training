@@ -1230,7 +1230,10 @@ function applyLive(data){
     if(it.note)S.notes[`${w.week}|${d.day}|${i}`]=it.note;
     it.sets.forEach((s,si)=>{if(s._logged)S.logs[keyOf(w.week,d.day,i,si)]=s._logged})})));
   for(const q of Object.values(S.queue||{})){const f=findKey(q.tab,q.row,q.col);if(!f)continue;
-    if(f.set&&q.log)S.logs[f.set]=q.log;if(f.note!=null&&q.note!=null)S.notes[f.note]=q.note}
+    if(f.set&&q.log){S.logs[f.set]=q.log;
+      // A set logged before the latest program arrived is sent with the latest prescription, so it never undoes a coach's edit.
+      const st=setOf(f.set);if(st)q.value=cellValue(st,q.log)}
+    if(f.note!=null&&q.note!=null)S.notes[f.note]=q.note}
   if((S.startWeek||0)!==START){S.days={};S.timers={};S.startWeek=START}
   S.timers=S.timers||{};WEEKS.forEach(w=>w.days.forEach(d=>{const k=`${w.week}|${d.day}`,m=String(d.mark||"");
     if(/⏱|✓|done/i.test(m))S.days[k]=S.days[k]||1;
@@ -1310,12 +1313,10 @@ function blockScreen(html){BLOCKED=html;REFRESHING=false;CACHE=null;try{localSto
   try{stopRest()}catch(_){}document.getElementById("overlay").innerHTML="";render()}
 /* Everything the screen is drawn from, to tell whether the latest program changed anything. */
 function screenSig(){try{return JSON.stringify([TODAY.getTime(),WEEKS,S.logs,S.notes,S.days,S.timers,SEASON,START,CUR,TEAM.name,S.profile.name,S.profile.sex,S.profile.bw,BRAND&&BRAND.logo])}catch(e){return String(Math.random())}}
-/* Wait until the athlete isn't typing in a box (or has left it alone for 10 s), so a refresh never closes
-   the keyboard mid-number. */
-let lastTyped=0;
-app.addEventListener("focusin",()=>{lastTyped=Date.now()});app.addEventListener("input",()=>{lastTyped=Date.now()},true);
+/* Wait until the athlete has left the box they're typing in (leaving it is what completes a set), so a
+   refresh never closes the keyboard or swallows a number mid-set. */
 function whenIdle(fn){
-  const busy=()=>{const a=document.activeElement;return !!a&&app.contains(a)&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)&&Date.now()-lastTyped<10000};
+  const busy=()=>{const a=document.activeElement;return !!a&&app.contains(a)&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)};
   if(!busy()){fn();return}
   const t=setInterval(()=>{if(!busy()){clearInterval(t);fn()}},400);
 }
@@ -1335,10 +1336,17 @@ function applyFresh(data){
 /* READY: the program (or "starts Monday") is on screen, so a refresh can update it. lastFetch: when the
    program was last asked for. */
 let READY=false,lastFetch=0;
+/* Gives up after 45 s, so a hanging connection can't hold back saves for long (Google normally answers in
+   2-10 s); a timeout counts as offline. */
+const FETCH_TIMEOUT_MS=45000;
 async function fetchProgram(){
-  lastFetch=Date.now();let data;
-  try{const r=await fetch(API_URL+"?t="+encodeURIComponent(TOKEN)+"&d="+encodeURIComponent(DEVICE));data=await r.json()}
-  catch(e){data={error:(e&&e.message)||"Check your connection and try again.",network:true}}
+  lastFetch=Date.now();let data,timer=null;
+  try{
+    const ac=typeof AbortController!=="undefined"?new AbortController():null;
+    if(ac)timer=setTimeout(()=>ac.abort(),FETCH_TIMEOUT_MS);
+    const r=await fetch(API_URL+"?t="+encodeURIComponent(TOKEN)+"&d="+encodeURIComponent(DEVICE),ac?{signal:ac.signal}:undefined);data=await r.json()}
+  catch(e){data={error:(e&&e.name==="AbortError")?"Check your connection and try again.":(e&&e.message)||"Check your connection and try again.",network:true}}
+  finally{if(timer)clearTimeout(timer)}
   return data&&typeof data==="object"?data:{error:"Check your connection and try again."};
 }
 /* Locked, paused or inactive link: close the app with the message. */
@@ -1388,9 +1396,15 @@ async function refreshOnReturn(){
   if(!LIVE||!READY||BLOCKED||REFRESHING||document.visibilityState!=="visible"||Date.now()-lastFetch<RETURN_REFRESH_MS)return;
   REFRESHING=true;
   for(let i=0;flushing&&i<150;i++)await new Promise(r=>setTimeout(r,200));
+  if(flushing){REFRESHING=false;lastFetch=0;return}   // a save is still on its way after 30 s: try again next time
   const data=await fetchProgram();
   if(blocked(data))return;
-  if(!usable(data)){REFRESHING=false;flushQueue();return}   // offline: keep what's on screen
+  if(!usable(data)){   // offline: keep the program on screen, move to today's week if the day changed, retry in a minute
+    lastFetch=Date.now()-RETURN_REFRESH_MS+60000;
+    whenIdle(()=>{const d=todayDate();
+      if(d.getTime()!==TODAY.getTime()&&CACHE){try{applyFresh(CACHE)}catch(_){}}
+      REFRESHING=false;flushQueue()});
+    return}
   swapIn(data,"");
 }
 document.addEventListener("visibilitychange",refreshOnReturn);
