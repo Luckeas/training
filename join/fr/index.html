@@ -23,11 +23,19 @@ h1{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-sp
 .lead{color:var(--muted);margin:0;max-width:52ch}
 .plans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 @media (max-width:620px){.plans{grid-template-columns:1fr}}
-.plan{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:10px;position:relative}
+.plan{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px 22px 22px;display:flex;flex-direction:column;gap:12px;position:relative}
+.plan-top{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:24px}
+.feat{list-style:none;margin:2px 0 4px;padding:14px 0 0;border-top:1px solid var(--line);display:grid;gap:9px;font-size:15px;line-height:1.35}
+.feat li{display:flex;gap:10px}
+.feat li::before{content:"✓";flex:none;font-weight:700;color:var(--accent-text)}
+.founding{display:flex;align-items:center;gap:12px;background:color-mix(in srgb,var(--accent) 10%,var(--card));border:1px solid color-mix(in srgb,var(--accent) 35%,var(--line));border-radius:14px;padding:12px 16px;font-size:15px}
+.founding b{font-family:var(--display);font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-text);white-space:nowrap}
+@media (max-width:620px){.founding{flex-direction:column;align-items:flex-start;gap:4px}}
+.soon{color:var(--muted);font-size:14px;margin:0}
 .plan.pick{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
 .tag{position:absolute;top:-11px;left:16px;background:var(--accent);color:var(--accent-ink);font-family:var(--display);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:12px;padding:3px 9px;border-radius:999px}
 .name{font-family:var(--display);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:15px;color:var(--muted)}
-.price{font-family:var(--display);font-weight:800;font-size:40px;line-height:1;white-space:nowrap}
+.price{font-family:var(--display);font-weight:800;font-size:52px;line-height:1;white-space:nowrap}
 .price small{font-family:var(--body);font-weight:500;font-size:15px;color:var(--muted);margin-left:4px}
 .note{color:var(--muted);font-size:14px}
 .save{align-self:flex-start;font-family:var(--display);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:13px;padding:3px 9px;border-radius:999px;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent-text)}
@@ -58,33 +66,35 @@ footer a{color:var(--muted)}
     <p class="lead">L'entraînement en gym à l'année pour les pagayeurs de bateau-dragon, dans l'application DB Speed, plus notre communauté Skool. Choisissez un forfait et tout est prêt en quelques minutes. Annulez en tout temps.</p>
   </header>
 
+  <div class="founding"><b>Membres fondateurs</b><span>Ce sont les prix des membres fondateurs, réservés aux 10 premiers membres. Inscrivez-vous maintenant et gardez votre prix.</span></div>
+
   <div class="plans">
     <div class="plan pick">
       <span class="tag">Le plus populaire</span>
-      <div class="name">Mensuel</div>
+      <div class="plan-top"><div class="name">Mensuel</div></div>
       <div class="price">140&nbsp;$<small>/ mois</small></div>
-      <div class="note">Facturé chaque mois</div>
-      <a class="btn" href="https://buy.stripe.com/fZu28s0bgc3U4tx6QCcV202" rel="noopener">Choisir</a>
+      <div class="note">Facturé chaque mois · 7 premiers jours gratuits</div>
+      <ul class="feat">
+        <li>Votre programme dans l'application DB Speed, une nouvelle semaine chaque lundi</li>
+        <li>La communauté DB Speed sur Skool</li>
+        <li>Form Check Friday : rétroaction vidéo sur vos levées</li>
+      </ul>
+      <a class="btn" href="https://buy.stripe.com/fZu28s0bgc3U4tx6QCcV202" rel="noopener">Essai gratuit</a>
     </div>
     <div class="plan">
-      <div class="name">Annuel</div>
+      <div class="plan-top"><div class="name">Annuel</div><div class="save">2 mois gratuits</div></div>
       <div class="price">1&nbsp;390&nbsp;$<small>/ an</small></div>
-      <div class="note">≈ 116&nbsp;$ par mois · économisez 290&nbsp;$</div>
-      <div class="save">2 mois gratuits</div>
-      <a class="btn" href="https://buy.stripe.com/9B69AU9LQc3Ue47a2OcV203" rel="noopener">Choisir</a>
+      <div class="note">≈ 116&nbsp;$ par mois · 7 premiers jours gratuits</div>
+      <ul class="feat">
+        <li>Tout ce qui est inclus dans le forfait mensuel</li>
+        <li>Économisez 290&nbsp;$ sur l'année</li>
+        <li>Votre prix garanti pendant 12 mois</li>
+      </ul>
+      <a class="btn" href="https://buy.stripe.com/9B69AU9LQc3Ue47a2OcV203" rel="noopener">Essai gratuit</a>
     </div>
   </div>
   <p class="fine">Prix en dollars canadiens, plus TPS/TVQ ou TVH au Canada. À l'extérieur du Canada, le paiement s'affiche en dollars américains.</p>
-
-  <section class="incl">
-    <h2>Chaque forfait comprend</h2>
-    <ul>
-      <li>✅ Votre programme dans l'application DB Speed, une nouvelle semaine chaque lundi</li>
-      <li>✅ L'accès à la communauté DB Speed sur Skool</li>
-      <li>🔜 Volets PERG, OC et mobilité à mesure qu'ils sortent cette saison, sans frais de plus</li>
-      <li>✅ Form Check Friday : rétroaction vidéo sur vos levées</li>
-    </ul>
-  </section>
+  <p class="soon">🔜 Les volets PERG, OC et mobilité arrivent cette saison, sans frais de plus.</p>
 
   <section class="steps">
     <h2>Les prochaines étapes</h2>

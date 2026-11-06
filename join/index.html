@@ -23,11 +23,19 @@ h1{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-sp
 .lead{color:var(--muted);margin:0;max-width:52ch}
 .plans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 @media (max-width:620px){.plans{grid-template-columns:1fr}}
-.plan{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:10px;position:relative}
+.plan{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px 22px 22px;display:flex;flex-direction:column;gap:12px;position:relative}
+.plan-top{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:24px}
+.feat{list-style:none;margin:2px 0 4px;padding:14px 0 0;border-top:1px solid var(--line);display:grid;gap:9px;font-size:15px;line-height:1.35}
+.feat li{display:flex;gap:10px}
+.feat li::before{content:"✓";flex:none;font-weight:700;color:var(--accent-text)}
+.founding{display:flex;align-items:center;gap:12px;background:color-mix(in srgb,var(--accent) 10%,var(--card));border:1px solid color-mix(in srgb,var(--accent) 35%,var(--line));border-radius:14px;padding:12px 16px;font-size:15px}
+.founding b{font-family:var(--display);font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-text);white-space:nowrap}
+@media (max-width:620px){.founding{flex-direction:column;align-items:flex-start;gap:4px}}
+.soon{color:var(--muted);font-size:14px;margin:0}
 .plan.pick{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
 .tag{position:absolute;top:-11px;left:16px;background:var(--accent);color:var(--accent-ink);font-family:var(--display);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:12px;padding:3px 9px;border-radius:999px}
 .name{font-family:var(--display);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:15px;color:var(--muted)}
-.price{font-family:var(--display);font-weight:800;font-size:40px;line-height:1;white-space:nowrap}
+.price{font-family:var(--display);font-weight:800;font-size:52px;line-height:1;white-space:nowrap}
 .price small{font-family:var(--body);font-weight:500;font-size:15px;color:var(--muted);margin-left:4px}
 .note{color:var(--muted);font-size:14px}
 .save{align-self:flex-start;font-family:var(--display);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:13px;padding:3px 9px;border-radius:999px;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent-text)}
@@ -58,33 +66,35 @@ footer a{color:var(--muted)}
     <p class="lead">Year-round gym training for dragon boat paddlers, in the DB Speed app, plus our Skool community. Pick a plan and you'll be set up in minutes. Cancel anytime.</p>
   </header>
 
+  <div class="founding"><b>Founding members</b><span>These are founding-member prices, for the first 10 members only. Join now and keep your price.</span></div>
+
   <div class="plans">
     <div class="plan pick">
       <span class="tag">Most popular</span>
-      <div class="name">Monthly</div>
+      <div class="plan-top"><div class="name">Monthly</div></div>
       <div class="price">$140<small>/ month</small></div>
-      <div class="note">Billed monthly</div>
-      <a class="btn" href="https://buy.stripe.com/fZu28s0bgc3U4tx6QCcV202" rel="noopener">Choose</a>
+      <div class="note">Billed monthly · first 7 days free</div>
+      <ul class="feat">
+        <li>Your program in the DB Speed app, new week every Monday</li>
+        <li>The DB Speed community on Skool</li>
+        <li>Form Check Friday: video feedback on your lifts</li>
+      </ul>
+      <a class="btn" href="https://buy.stripe.com/fZu28s0bgc3U4tx6QCcV202" rel="noopener">Start free week</a>
     </div>
     <div class="plan">
-      <div class="name">Yearly</div>
+      <div class="plan-top"><div class="name">Yearly</div><div class="save">2 months free</div></div>
       <div class="price">$1,390<small>/ year</small></div>
-      <div class="note">≈ $116 a month · save $290</div>
-      <div class="save">2 months free</div>
-      <a class="btn" href="https://buy.stripe.com/9B69AU9LQc3Ue47a2OcV203" rel="noopener">Choose</a>
+      <div class="note">≈ $116 a month · first 7 days free</div>
+      <ul class="feat">
+        <li>Everything in Monthly</li>
+        <li>Save $290 over the year</li>
+        <li>Your price locked for 12 months</li>
+      </ul>
+      <a class="btn" href="https://buy.stripe.com/9B69AU9LQc3Ue47a2OcV203" rel="noopener">Start free week</a>
     </div>
   </div>
   <p class="fine">Prices in CAD, plus GST/QST or HST in Canada. Outside Canada, checkout shows US dollars.</p>
-
-  <section class="incl">
-    <h2>Every plan includes</h2>
-    <ul>
-      <li>✅ Your program in the DB Speed app, new week every Monday</li>
-      <li>✅ Membership in the DB Speed community on Skool</li>
-      <li>🔜 PERG, OC and mobility add-ons as they launch this season, at no extra cost</li>
-      <li>✅ Form Check Friday: video feedback on your lifts</li>
-    </ul>
-  </section>
+  <p class="soon">🔜 PERG, OC and mobility add-ons are coming this season, at no extra cost.</p>
 
   <section class="steps">
     <h2>What happens next</h2>
