@@ -21,7 +21,7 @@ main{max-width:720px;margin:0 auto;display:grid;gap:24px}
 .brand{font-family:var(--display);font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:15px;color:var(--accent-text)}
 h1{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.02em;line-height:1;font-size:clamp(40px,9vw,60px);margin:6px 0 10px;text-wrap:balance}
 .lead{color:var(--muted);margin:0;max-width:52ch}
-.plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.plans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 @media (max-width:620px){.plans{grid-template-columns:1fr}}
 .plan{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:10px;position:relative}
 .plan.pick{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
@@ -59,19 +59,11 @@ footer a{color:var(--muted)}
   </header>
 
   <div class="plans">
-    <div class="plan">
-      <div class="name">Weekly</div>
-      <div class="price">$35<small>/ week</small></div>
-      <div class="note">Pay as you go</div>
-      <div class="save muted">≈ $152 / month</div>
-      <a class="btn" href="https://buy.stripe.com/8x27sM6zE1pg9NR3EqcV201" rel="noopener">Choose</a>
-    </div>
     <div class="plan pick">
       <span class="tag">Most popular</span>
       <div class="name">Monthly</div>
       <div class="price">$140<small>/ month</small></div>
       <div class="note">Billed monthly</div>
-      <div class="save">Save 8% vs weekly</div>
       <a class="btn" href="https://buy.stripe.com/fZu28s0bgc3U4tx6QCcV202" rel="noopener">Choose</a>
     </div>
     <div class="plan">
@@ -100,7 +92,7 @@ footer a{color:var(--muted)}
       <li>Check out securely with Stripe.</li>
       <li>Fill in a 1-minute form (use the same email).</li>
       <li>Your app link arrives by email. Add it to your home screen.</li>
-      <li>Join the DB Speed community on Skool: answer 3 quick questions with the same email and you're in.</li>
+      <li>Join the DB Speed community on Skool: watch for your invite email (same email) and click Join now. It's included, no extra payment.</li>
     </ol>
   </section>
 
