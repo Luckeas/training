@@ -670,6 +670,8 @@ function wtPick(s,p,rm,prevSet){
   const L=String(s.load||"").trim();
   if(/^BW\b/i.test(L))return "BW";
   const m=L.match(/^\+?\s*(\d+(?:\.\d+)?)\s*(?:lbs?|kg)?$/i);if(m)return m[1];
+  // A range like "155-165 lb": start at the low end.
+  const g=L.match(/^(\d+(?:\.\d+)?)\s*[-–]\s*\d+(?:\.\d+)?\s*(?:lbs?|kg)?$/i);if(g)return g[1];
   if(p&&rm)return String(r5(rm*p));
   if(prevSet&&prevSet.wt)return String(prevSet.wt);
   return T("lb");
