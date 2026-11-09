@@ -593,6 +593,11 @@ button.dg-say:active{transform:scale(.97)}
 @keyframes dgHintIn{0%{opacity:0;transform:scale(.3)}100%{opacity:1;transform:none}}
 @keyframes dgHintPulse{0%,100%{transform:none}50%{transform:translateY(-4px) scale(1.07)}}
 .dg-cele{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.dgweek{padding:6px 12px 8px 6px}
+.dgweek .dgtop{grid-template-columns:96px 1fr;gap:12px}
+.dgweek .dgtop .dgsvg{width:96px;height:96px}
+.dgweek .dg-say{font-size:15.5px;padding:8px 12px}
+.dgset small{display:block;font-size:12.5px;color:var(--muted);margin-top:2px;font-weight:500}
 @media (max-width:370px){.set,.colhead{grid-template-columns:22px minmax(0,1fr) 64px 54px 42px;gap:6px}.bigweek{font-size:76px}}
 </style>
 
@@ -923,6 +928,7 @@ function viewWeek(n){
     <div class="eyebrow">${fmtDate(weekDate(w),true)}</div>
     <h1>${T("week")} ${WN(w.week)}</h1>
     ${ph?`<span class="phase" style="justify-self:start"><span class="dot" style="background:${phaseColor(ph)}"></span>${esc(ph)}</span>`:""}
+    ${dragonWeekCard()}
     ${w.days.map(d=>dayCard(w.week,d,false)).join("")}
   </section></div>`;
 }
@@ -1145,6 +1151,7 @@ function openSettings(){
    ${STANDALONE?"":`<button class="btn ghost block" id="a2hsSettings">📲 ${T("a2hsBtn")}</button>`}
    <div class="toggle"><span>${T("sounds")}</span><button class="switch" role="switch" id="soundSw" aria-checked="${!p.soundOff}" aria-label="${T("sounds")}"></button></div>
    <div class="toggle"><span>${T("restTimer")}</span><button class="switch" role="switch" id="restSw" aria-checked="${!p.restOff}" aria-label="${T("restTimer")}"></button></div>
+   ${dgSettingsRow()}
    <div class="toggle" ${LIVE?"hidden":""}><span>${T("coach")}</span><button class="switch" role="switch" id="coachSw" aria-checked="${p.coach}" aria-label="${T("coach")}"></button></div>
    ${S.sample?`<div class="banner"><span>${T("sample")}</span><button id="clearSample2">${T("clear")}</button></div>`:""}
   </div></div>`;
@@ -1290,7 +1297,12 @@ function finishWorkout(wn,dn){
    a short week uses one and the streak survives. The dragon never shrinks. */
 let DRAGON=null,DPREV=null;
 const DG_DEMO=!LIVE&&/[?&]dragon\b/i.test(location.search);
-const dragonOn=()=>LIVE?!!DRAGON:DG_DEMO;
+/* dragonAvail: switched on for this athlete. dragonOn: also not hidden in settings (S.profile.dgOff, this device only).
+   Hidden means the app is exactly as before; XP comes from the logs, so he is still grown when shown again. */
+const dragonAvail=()=>LIVE?!!DRAGON:DG_DEMO;
+const dragonOn=()=>dragonAvail()&&!(S.profile&&S.profile.dgOff);
+function dgSettingsRow(){if(!dragonAvail())return "";const fr=dgFr(),off=!!S.profile.dgOff;
+  return `<div class="toggle dgset"><span>${fr?"Dibi, ton dragon":"Dibi, your dragon"}<small>${fr?"Il continue de grandir quand il est caché.":"He keeps growing while hidden."}</small></span><button class="switch" role="switch" id="dgSw" aria-checked="${!off}" aria-label="${fr?"Dibi, ton dragon":"Dibi, your dragon"}"></button></div>`}
 function setDragon(v){v=String(v==null?"":v).trim();if(!v||/^(no|non|off|false|0)$/i.test(v)){DRAGON=null;return}
   const m=v.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
   const nm=v.replace(/\d{4}-\d{1,2}-\d{1,2}/,"").replace(/\b(yes|oui)\b/gi,"").replace(/[^A-Za-zÀ-ÿ' -]/g," ").trim().split(/\s+/)[0]||"";
@@ -1561,6 +1573,11 @@ function dragonCard(){
     <button class="dginfo" id="dragonCard" aria-label="${fr?"Ton dragon : statistiques":"Your dragon: stats"}"><div class="dgrow"><div><div class="eyebrow">${fr?"Dibi · ton dragon":"Dibi · your dragon"}</div><div class="dgname">${esc(dgName(d.st))}</div></div>
      ${d.st?`<div class="dgmeta"><span>🔥 <b>${d.streak}</b> ${dgStreakTxt(d.streak)}</span>${d.freezes?`<span>🧊 <b>${d.freezes}</b></span>`:""}${d.medals?`<span>🏅 <b>${d.medals}</b></span>`:""}</div>`:""}</div>
      ${d.st?`<div class="xpbar"><i style="width:${d.pct}%"></i></div><div class="dgnext">${esc(dgNextTxt(d))}<span class="dgmore">${fr?"Stats":"Stats"} ›</span></div>`:`<div class="dgnext">${fr?"Ta prochaine séance le fait éclore.":"Your next workout hatches it."}<span class="dgmore">${fr?"Stats":"Stats"} ›</span></div>`}</button></div></section>`;
+}
+/* Program tab, week page: Dibi with the day's quote under the week title (tap him or the quote for emotes). */
+function dragonWeekCard(){
+  if(!dragonOn())return "";dgFont();const d=dragonData(),fr=dgFr(),st=dgStoicNow();
+  return `<div class="dgcard dgweek"><div class="dgtop"><button class="dg-hello dg-tapme" data-dgtap aria-label="${fr?"Flatter ton dragon":"Pet your dragon"}">${dragonSVG(d.st,st&&d.st?"stoic":d.mood,{px:96,medals:d.medals,stoic:st})}${dgHint("card")}</button><button class="dg-say" data-dgtap>${dgSayHtml(d)}</button></div></div>`;
 }
 function openDragon(){
   dgFont();if(DG_DEMO)Object.keys(DG_FONTS).forEach(f=>{if(!dgFontsIn[f]){dgFontsIn[f]=1;const l=document.createElement("link");l.rel="stylesheet";l.href=`https://fonts.googleapis.com/css2?family=${DG_FONTS[f]}&display=swap`;document.head.appendChild(l)}});
@@ -1875,6 +1892,7 @@ document.getElementById("overlay").addEventListener("click",e=>{
   const lg=t.closest("[data-lang]");if(lg){p.lang=lg.dataset.lang;save();render();openSettings();return}
   const sk=t.closest("[data-skinpick]");if(sk){p.skin=sk.dataset.skinpick;save();render();openSettings();return}
   if(t.closest("#coachSw")){p.coach=!p.coach;save();openSettings();return}
+  if(t.closest("#dgSw")){p.dgOff=!p.dgOff;save();render();openSettings();return}
   if(t.closest("#soundSw")){p.soundOff=!p.soundOff;save();if(!p.soundOff)chime();openSettings();return}
   if(t.closest("#restSw")){p.restOff=!p.restOff;if(p.restOff)stopRest();save();openSettings();return}
   if(t.closest("#clearSample2")){S.logs={};S.notes={};S.days={};S.sample=false;save();toast("Sample cleared");openSettings();return}
