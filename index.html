@@ -334,6 +334,8 @@ section{display:grid;gap:12px;padding-block:18px}
 const PROGRAM = {"weeks":[{"week":1,"label":"Sample","date":"October 26","days":[{"day":"Day 1","summary":"Sample day","items":[{"name":"Goblet Squat","rpe":"7","rest":"2","type":"Legs","sets":[{"load":"","reps":"x10"},{"load":"","reps":"x10"},{"load":"","reps":"x10"}]},{"name":"Db Flat Press","rpe":"7","rest":"2","type":"Push","sets":[{"load":"","reps":"x10"},{"load":"","reps":"x10"},{"load":"","reps":"x10"}]},{"name":"Lat Pull-Down","rpe":"7","rest":"2","type":"Pull","sets":[{"load":"","reps":"x10"},{"load":"","reps":"x10"},{"load":"","reps":"x10"}]}]},{"day":"Day 2","summary":"Sample day","items":[{"name":"Leg Press","rpe":"7","rest":"2","type":"Legs","sets":[{"load":"","reps":"x10"},{"load":"","reps":"x10"},{"load":"","reps":"x10"}]},{"name":"Seated Cable Row","rpe":"7","rest":"2","type":"Pull","sets":[{"load":"","reps":"x10"},{"load":"","reps":"x10"},{"load":"","reps":"x10"}]},{"name":"Cable Triceps Extensions","rpe":"9","rest":"1-2","type":"Push","sets":[{"load":"","reps":"x10|x8"},{"load":"","reps":"x10|x8"},{"load":"","reps":"x10|x8"}]},{"name":"Dead Bugs","rpe":"6","rest":"1","type":"Core","sets":[{"load":"","reps":"x8 each side"},{"load":"","reps":"x8 each side"}]}]}]}]};
 const TEAM = {name:"Training", season:"Sample", timerBase:"https://luckeas.github.io/gym-timers/immortals/week-"};
 const API_URL = "https://script.google.com/macros/s/AKfycbwH9P1wdXPqAPo1tIr3hjFzJVvE0OO_EeRn2xI1jGWI0xn1sMzggLXCIA5cE2FooFslHw/exec";  // the Google script's web-app URL, once deployed
+// The phone's time zone (e.g. "Asia/Hong_Kong"), sent with each program load so weekly drops arrive at the athlete's own midnight.
+const PHONE_TZ=(()=>{try{return String(Intl.DateTimeFormat().resolvedOptions().timeZone||"").slice(0,64)}catch(e){return ""}})();
 const TOKEN = new URLSearchParams(location.search).get("t") || "";
 const LIVE = !!(API_URL && TOKEN);
 // Team branding: logo + accent colour, picked from the athlete's team (Admin → Copies column B).
@@ -1361,7 +1363,7 @@ async function fetchProgram(){
   try{
     const ac=typeof AbortController!=="undefined"?new AbortController():null;
     if(ac)timer=setTimeout(()=>ac.abort(),FETCH_TIMEOUT_MS);
-    const r=await fetch(API_URL+"?t="+encodeURIComponent(TOKEN)+"&d="+encodeURIComponent(DEVICE),ac?{signal:ac.signal}:undefined);data=await r.json()}
+    const r=await fetch(API_URL+"?t="+encodeURIComponent(TOKEN)+"&d="+encodeURIComponent(DEVICE)+(PHONE_TZ?"&tz="+encodeURIComponent(PHONE_TZ):""),ac?{signal:ac.signal}:undefined);data=await r.json()}
   catch(e){data={error:(e&&e.name==="AbortError")?"Check your connection and try again.":(e&&e.message)||"Check your connection and try again.",network:true}}
   finally{if(timer)clearTimeout(timer)}
   return data&&typeof data==="object"?data:{error:"Check your connection and try again."};
