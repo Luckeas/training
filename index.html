@@ -520,6 +520,51 @@ section{display:grid;gap:12px;padding-block:18px}
 .dg-perch .dg-hearts{top:10%}
 .dg-perch .dg-spark{display:none}
 .whead.dgw #setCount,.whead.dgw .wtimer{padding-right:96px}
+/* Today card: dragon and quote are buttons (tap = a cute burst); the info row opens the stats */
+.dgtop .dg-tapme{padding:0;border:0;background:none;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button.dg-say{font-size:16.5px}
+.dg-tapme{position:relative;display:block}
+button.dg-say{text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button.dg-say:active{transform:scale(.97)}
+.dginfo{display:grid;gap:2px;width:100%;padding:0;border:0;background:none;color:inherit;text-align:left;font:inherit;cursor:pointer}
+.dgnext{display:flex;justify-content:space-between;gap:10px}
+.dgmore{flex:none;font-family:var(--display);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:12px;color:var(--fg);opacity:.75}
+/* bounces: a jump, a spin, a wiggle, a boing (one at random each tap) */
+.dg-spin .dg-hop{animation:dgSpinJ .9s cubic-bezier(.3,1.2,.5,1)!important;transform-origin:50% 60%}
+@keyframes dgSpinJ{0%{transform:none}30%{transform:translateY(-16%) rotate(180deg)}60%{transform:translateY(-6%) rotate(340deg)}100%{transform:rotate(360deg)}}
+.dg-wiggle .dg-hop{animation:dgWig .8s ease-in-out!important;transform-origin:50% 95%}
+@keyframes dgWig{0%,100%{transform:none}15%{transform:rotate(-12deg)}30%{transform:rotate(11deg)}45%{transform:rotate(-9deg)}60%{transform:rotate(7deg)}75%{transform:rotate(-4deg)}}
+.dg-boing .dg-hop{animation:dgBoing .9s cubic-bezier(.3,1.6,.5,1)!important;transform-origin:50% 100%}
+@keyframes dgBoing{0%{transform:none}20%{transform:scale(1.25,.7)}45%{transform:translateY(-22%) scale(.85,1.2)}70%{transform:scale(1.1,.9)}100%{transform:none}}
+/* bursts */
+.dg-tapfx{position:absolute;left:50%;top:35%;width:0;height:0;pointer-events:none;z-index:6}
+.dg-tapfx i{position:absolute;left:0;top:0;font-style:normal;line-height:1;color:var(--c);opacity:0;animation:dgTapUp 1.5s cubic-bezier(.2,.7,.4,1) var(--d) forwards}
+@keyframes dgTapUp{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}15%{opacity:1}70%{opacity:1}100%{opacity:0;transform:translate(calc(var(--x) - 50%),calc(var(--y) - 50%)) rotate(var(--r)) scale(var(--s))}}
+.fx-hearts i{font-size:22px;text-shadow:0 1px 0 rgba(0,0,0,.15)}
+.fx-stars i{font-size:20px;animation-name:dgTapStar;animation-duration:1.4s}
+@keyframes dgTapStar{0%{opacity:0;transform:translate(-50%,-50%) scale(.2) rotate(0)}20%{opacity:1}60%{opacity:1;transform:translate(calc(var(--x) * .7 - 50%),calc(var(--y) * .7 - 50%)) scale(var(--s)) rotate(200deg)}100%{opacity:0;transform:translate(calc(var(--x) - 50%),calc(var(--y) - 50%)) scale(.4) rotate(360deg)}}
+.fx-notes i{font-size:22px;font-weight:700;animation-name:dgTapNote;animation-duration:1.8s}
+@keyframes dgTapNote{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}15%{opacity:1}35%{transform:translate(calc(var(--x) * .3 - 40%),calc(var(--y) * .35 - 50%)) rotate(-12deg)}65%{opacity:1;transform:translate(calc(var(--x) * .7 - 60%),calc(var(--y) * .7 - 50%)) rotate(12deg)}100%{opacity:0;transform:translate(calc(var(--x) - 50%),calc(var(--y) - 50%)) rotate(0)}}
+.fx-confetti i{width:7px;height:11px;border-radius:2px;background:var(--c);animation-name:dgTapConf;animation-duration:1.6s}
+@keyframes dgTapConf{0%{opacity:1;transform:translate(-50%,-50%) scale(.4) rotate(0)}40%{opacity:1;transform:translate(calc(var(--x) - 50%),calc(var(--y) * .8 - 50%)) rotate(calc(var(--r) * 4))}100%{opacity:0;transform:translate(calc(var(--x) * 1.15 - 50%),calc(var(--y) * .1 + 60px)) rotate(calc(var(--r) * 9))}}
+.fx-balloons i{animation-name:dgTapBalloon;animation-duration:2.4s;animation-timing-function:ease-out}
+@keyframes dgTapBalloon{0%{opacity:0;transform:translate(-50%,0) scale(.4)}15%{opacity:1}40%{transform:translate(calc(var(--x) * .5 - 40%),calc(var(--y) * .6)) rotate(-8deg)}70%{opacity:1;transform:translate(calc(var(--x) * .85 - 60%),calc(var(--y) * 1.1)) rotate(8deg)}100%{opacity:0;transform:translate(calc(var(--x) - 50%),calc(var(--y) * 1.5)) rotate(0)}}
+.fx-bubbles i{width:16px;height:16px;border-radius:50%;border:2px solid var(--c);background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.85) 0 18%,rgba(255,255,255,.08) 22%);animation-name:dgTapBub;animation-duration:1.9s}
+@keyframes dgTapBub{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}15%{opacity:1}50%{transform:translate(calc(var(--x) * .6 - 40%),calc(var(--y) * .6 - 50%)) scale(var(--s))}85%{opacity:1;transform:translate(calc(var(--x) - 60%),calc(var(--y) - 50%)) scale(var(--s))}100%{opacity:0;transform:translate(calc(var(--x) - 50%),calc(var(--y) - 50%)) scale(1.8)}}
+/* mini dragon gym behind the workout title */
+.dg-gym{margin:-6px 0 0;pointer-events:none;opacity:.92}
+.dg-gym svg{display:block;width:100%;height:auto;overflow:visible}
+.dgm{transform-box:fill-box;animation-duration:2.2s;animation-iteration-count:infinite;animation-timing-function:ease-in-out}
+.dgm-squat{transform-origin:50% 100%;animation-name:dgmSquat}
+@keyframes dgmSquat{0%,100%{transform:none}40%,58%{transform:translateY(9px) scale(1.06,.94)}}
+.dgm-pull{animation-name:dgmPull}
+@keyframes dgmPull{0%,100%{transform:none}40%,58%{transform:translateY(-20px)}}
+.dgm-arms{transform-origin:50% 0%;animation-name:dgmArms}
+@keyframes dgmArms{0%,100%{transform:none}40%,58%{transform:scaleY(.6)}}
+.dgm-press{animation-name:dgmPress}
+@keyframes dgmPress{0%,100%{transform:none}40%,58%{transform:translateY(-36px)}}
+.dgm-parms{transform-origin:50% 100%;animation-name:dgmPArms}
+@keyframes dgmPArms{0%,100%{transform:scaleY(.14)}40%,58%{transform:none}}
 @media (max-width:370px){.set,.colhead{grid-template-columns:22px minmax(0,1fr) 64px 54px 42px;gap:6px}.bigweek{font-size:76px}}
 </style>
 
@@ -862,7 +907,7 @@ function viewWorkout(wn,dn){
   let total=0,done=0;d.items.forEach((it,i)=>(it.sets||[]).forEach((_,s)=>{total++;if(S.logs[keyOf(wn,dn,i,s)]?.done)done++}));
   const pct=total?Math.round(done/total*100):0;
   return head+`<div class="wrap">
-   <div class="whead ${dragonOn()?"dgw":""}">${dragonPerch()}<div class="eyebrow">${T("week")} ${WN(wn)}${phaseOf(w)?" · "+esc(phaseOf(w)):""}</div><h1>${esc(dayTitle(d))}</h1>
+   <div class="whead ${dragonOn()?"dgw":""}">${dragonPerch()}${dragonGym(d)}<div class="eyebrow">${T("week")} ${WN(wn)}${phaseOf(w)?" · "+esc(phaseOf(w)):""}</div><h1>${esc(dayTitle(d))}</h1>
      <div class="small muted num" id="setCount">${done} ${T("ofSets")} ${total} ${T("sets")}</div>
      ${timerHtml(wn,dn)}
      <div class="progress"><i id="pbar" style="width:${pct}%"></i></div></div>
@@ -1454,11 +1499,7 @@ function dragonPerch(){
   const hol=h==="day"?"xmas":h;   // no gift scene up here, just the hat
   return `<button class="dg-perch" id="dgPerch" aria-label="${dgFr()?"Ton dragon":"Your dragon"}">${dragonSVG(d.st,d.st?"happy":"egg",{px:104,medals:d.medals,perch:true,hol})}</button>`;
 }
-function dgPerchPet(){const b=document.getElementById("dgPerch");if(!b)return;const svg=b.querySelector("svg");
-  svg.classList.remove("dg-petted","dg-knock");void svg.getBoundingClientRect();svg.classList.add(dragonData().st?"dg-petted":"dg-knock");
-  const old=b.querySelector(".dg-hearts");if(old)old.remove();
-  b.insertAdjacentHTML("beforeend",`<div class="dg-hearts">${[-22,0,22].map((x,i)=>`<i style="--x:${x}px;--d:${i*.08}s">${["❤️","💛","❤️"][i]}</i>`).join("")}</div>`);
-  dgSfx(dragonData().st?"pet":"knock");buzz([25]);setTimeout(()=>svg.classList.remove("dg-petted"),750)}
+function dgPerchPet(){const b=document.getElementById("dgPerch");if(b)dgTap(b,b.querySelector("svg"))}
 
 /* ---------- home card and the dragon sheet ---------- */
 function dgNextTxt(d){const fr=dgFr();
@@ -1468,11 +1509,11 @@ function dgNextTxt(d){const fr=dgFr();
 const dgStreakTxt=n=>dgFr()?(n>1?"semaines de suite":"semaine de suite"):"week streak";
 function dragonCard(){
   if(!dragonOn())return "";dgFont();const d=dragonData(),fr=dgFr();
-  return `<section style="padding-bottom:0"><button class="dgcard" id="dragonCard" aria-label="${fr?"Ton dragon":"Your dragon"}">
-    <div class="dgtop"><span class="dg-hello">${dragonSVG(d.st,d.mood,{px:120,medals:d.medals})}</span><div class="dg-say">${dgSayHtml(d)}</div></div>
-    <div class="dginfo"><div class="dgrow"><div><div class="eyebrow">${fr?"Ton dragon":"Your dragon"}</div><div class="dgname">${esc(dgName(d.st))}</div></div>
+  return `<section style="padding-bottom:0"><div class="dgcard">
+    <div class="dgtop"><button class="dg-hello dg-tapme" data-dgtap aria-label="${fr?"Flatter ton dragon":"Pet your dragon"}">${dragonSVG(d.st,d.mood,{px:120,medals:d.medals})}</button><button class="dg-say" data-dgtap>${dgSayHtml(d)}</button></div>
+    <button class="dginfo" id="dragonCard" aria-label="${fr?"Ton dragon : statistiques":"Your dragon: stats"}"><div class="dgrow"><div><div class="eyebrow">${fr?"Ton dragon":"Your dragon"}</div><div class="dgname">${esc(dgName(d.st))}</div></div>
      ${d.st?`<div class="dgmeta"><span>🔥 <b>${d.streak}</b> ${dgStreakTxt(d.streak)}</span>${d.freezes?`<span>🧊 <b>${d.freezes}</b></span>`:""}${d.medals?`<span>🏅 <b>${d.medals}</b></span>`:""}</div>`:""}</div>
-     ${d.st?`<div class="xpbar"><i style="width:${d.pct}%"></i></div><div class="dgnext">${esc(dgNextTxt(d))}</div>`:`<div class="dgnext">${fr?"Ta prochaine séance le fait éclore.":"Your next workout hatches it."}</div>`}</div></button></section>`;
+     ${d.st?`<div class="xpbar"><i style="width:${d.pct}%"></i></div><div class="dgnext">${esc(dgNextTxt(d))}<span class="dgmore">${fr?"Stats":"Stats"} ›</span></div>`:`<div class="dgnext">${fr?"Ta prochaine séance le fait éclore.":"Your next workout hatches it."}<span class="dgmore">${fr?"Stats":"Stats"} ›</span></div>`}</button></div></section>`;
 }
 function openDragon(){
   dgFont();if(DG_DEMO)Object.keys(DG_FONTS).forEach(f=>{if(!dgFontsIn[f]){dgFontsIn[f]=1;const l=document.createElement("link");l.rel="stylesheet";l.href=`https://fonts.googleapis.com/css2?family=${DG_FONTS[f]}&display=swap`;document.head.appendChild(l)}});
@@ -1500,14 +1541,9 @@ function openDragon(){
 }
 function dgSayAgain(txt){const s=document.getElementById("dgSay");if(!s)return;s.textContent=txt;s.classList.remove("again");void s.offsetWidth;s.classList.add("again")}
 function dgPet(){
-  const box=document.getElementById("dgPet");if(!box)return;const svg=box.querySelector("svg");const d=dragonData();
-  if(!d.st){svg.classList.remove("dg-knock");void svg.getBoundingClientRect();svg.classList.add("dg-knock");dgSfx("knock");buzz([25]);
-    dgSayAgain(dgPick("egg",Date.now()%97));return}
-  svg.classList.remove("dg-petted");void svg.getBoundingClientRect();svg.classList.add("dg-petted");setTimeout(()=>svg.classList.remove("dg-petted"),750);
-  const old=box.querySelector(".dg-hearts");if(old)old.remove();
-  box.style.position="relative";box.insertAdjacentHTML("beforeend",`<div class="dg-hearts">${[-34,-10,14,36].map((x,i)=>`<i style="--x:${x}px;--d:${i*.08}s">${["❤️","💛","❤️","✨"][i]}</i>`).join("")}</div>`);
-  dgSayAgain(dgPick("pet",Math.floor(Date.now()/700)%53));
-  dgSfx("pet");buzz([25]);
+  const box=document.getElementById("dgPet");if(!box)return;const d=dragonData();
+  dgTap(box,box.querySelector("svg"));
+  dgSayAgain(d.st?dgPick("pet",Math.floor(Date.now()/700)%53):dgPick("egg",Date.now()%97));
 }
 
 /* ---------- finish screen: a happy hop, or a hatch / evolution show ---------- */
@@ -1565,7 +1601,12 @@ function dgSfx(k){
       e.gain.setValueAtTime(vol,t0+at);e.gain.exponentialRampToValueAtTime(.0001,t0+at+len);s.connect(fl);fl.connect(e);e.connect(out);s.start(t0+at);s.stop(t0+at+len+.02)};
     const sparkle=(at,notes,gap)=>notes.forEach((f,i)=>{tone(f,at+i*(gap||.07),.45,.5,"sine");tone(f*2,at+i*(gap||.07),.25,.08,"triangle")});
     const chord=(at,fs,len,vol,type)=>fs.forEach(f=>tone(f,at,len,vol||.22,type||"triangle"));
-    if(k==="pet"){tone(1175,0,.12,.5,"sine",1568);tone(1568,.09,.18,.45,"sine",2093)}
+    if(k==="pet"||k==="tap-hearts"){tone(1175,0,.12,.5,"sine",1568);tone(1568,.09,.18,.45,"sine",2093)}
+    else if(k==="tap-balloons"){tone(400,0,.25,.25,"sine",900);noise(.28,.08,.9,1500,.8)}
+    else if(k==="tap-confetti"){noise(0,.06,.8,1800,.9);[1319,1568,2093].forEach((f,i)=>tone(f,.05+i*.06,.25,.35))}
+    else if(k==="tap-stars"){[2093,2637,3136,2637].forEach((f,i)=>tone(f,i*.07,.3,.22))}
+    else if(k==="tap-bubbles"){[0,.1,.22].forEach((t,i)=>tone(500+i*180,t,.09,.4,"sine",900+i*250))}
+    else if(k==="tap-notes"){[[784,0],[988,.12],[1175,.24],[1568,.36]].forEach(([f,t])=>tone(f,t,.2,.35,"triangle"))}
     else if(k==="knock"){[0,.12,.24].forEach(t=>noise(t,.05,.9,1400,2))}
     else if(k==="hatch"){[.25,.55,.82,1.0].forEach((t,i)=>{noise(t,.05,.7+i*.2,2500,3);tone(1800+i*250,t,.04,.2,"square")});noise(1.18,.18,1,1200,1,"bandpass",400);sparkle(1.22,[1047,1319,1568,2093,2637],.06);chord(1.55,[523,659,784,1047],1.2,.16)}
     else if(k==="baby"){tone(320,0,1.1,.12,"sine",720);noise(1.18,.14,1.4,1600,.8);tone(180,1.18,.12,.4,"sine",60);sparkle(1.3,[784,988,1175,1568,1976],.07)}
@@ -1610,6 +1651,68 @@ function dgDemoClick(t){
   return false;
 }
 
+/* ---------- tap the dragon (or its quote): it bounces and something cute bursts out, different every time ---------- */
+const DG_TAPS=["hearts","balloons","confetti","stars","bubbles","notes"];
+const DG_TAP_COLS={hearts:["#ff4d6d","#ff8fab","#c77dff","#ffd166","#4cc9f0","#06d6a0","#ff9f1c"],balloons:["#e5482b","#ffd166","#4cc9f0","#c77dff","#06d6a0","#ff8fab"],
+  confetti:["#e5482b","#f2b233","#f3efe6","#4cc9f0","#c77dff","#06d6a0","#ff8fab"],stars:["#f2b233","#fff6d8","#ffd166","#ffe8a3"],bubbles:["#bfe3ff","#d9f2ff","#e7d9ff","#c8f5e6"],notes:["#c77dff","#4cc9f0","#ff8fab","#06d6a0","#f2b233"]};
+let dgTapLast="",dgMoveLast="";
+function dgTapBurst(host){
+  let k;do{k=DG_TAPS[Math.floor(Math.random()*DG_TAPS.length)]}while(k===dgTapLast);dgTapLast=k;
+  const cols=DG_TAP_COLS[k],n=k==="balloons"?5:k==="confetti"?26:k==="bubbles"?9:10,rnd=(a,b)=>a+Math.random()*(b-a);
+  let h="";
+  for(let i=0;i<n;i++){const c=cols[i%cols.length],x=Math.round(rnd(-1,1)*(k==="confetti"?95:k==="balloons"?70:60)),y=Math.round(-rnd(55,125)),d=rnd(0,k==="balloons"?.35:.2).toFixed(2),r=Math.round(rnd(-40,40)),s=rnd(.8,1.35).toFixed(2);
+    const st=`--x:${x}px;--y:${y}px;--d:${d}s;--r:${r}deg;--s:${s};--c:${c}`;
+    h+=k==="hearts"?`<i style="${st}">♥</i>`:k==="stars"?`<i style="${st}">${i%3?"★":"✦"}</i>`:k==="notes"?`<i style="${st}">${["♪","♫","♬"][i%3]}</i>`
+      :k==="balloons"?`<i style="${st}"><svg width="26" height="40" viewBox="0 0 26 40"><path d="M13 1 C5 1 1 8 1 14 C1 22 8 27 13 28 C18 27 25 22 25 14 C25 8 21 1 13 1Z" fill="${c}" stroke="rgba(0,0,0,.25)"/><path d="M11 28 h4 l-2 3z" fill="${c}"/><path d="M13 31 c-3 3 3 5 0 9" stroke="#9b9a93" fill="none"/><ellipse cx="8.5" cy="9" rx="2.5" ry="4.5" fill="#fff" opacity=".5" transform="rotate(25 8.5 9)"/></svg></i>`
+      :`<i style="${st}"></i>`}
+  const box=document.createElement("div");box.className=`dg-tapfx fx-${k}`;box.setAttribute("aria-hidden","true");box.innerHTML=h;host.appendChild(box);
+  setTimeout(()=>box.remove(),2600);return k;
+}
+function dgBounce(svg,egg){if(!svg)return;const moves=egg?["dg-knock"]:["dg-petted","dg-spin","dg-wiggle","dg-boing"];
+  let m;do{m=moves[Math.floor(Math.random()*moves.length)]}while(moves.length>1&&m===dgMoveLast);dgMoveLast=m;
+  moves.concat("dg-knock").forEach(c=>svg.classList.remove(c));void svg.getBoundingClientRect();svg.classList.add(m);setTimeout(()=>svg.classList.remove(m),1000)}
+/* One tap handler for the Today card (dragon or quote), the dragon sheet and the dragon on the barbell. */
+function dgTap(host,svg){const egg=!dragonData().st;dgBounce(svg,egg);const k=dgTapBurst(host);dgSfx("tap-"+k);buzz([25]);return k}
+
+/* ---------- the mini dragon gym behind each workout title (dragon athletes only) ----------
+   Small dragons training in the background, matching the day: upper body = overhead presses and pull-ups,
+   lower body = squats in racks, full body = a mix. They loop gently, out of step with each other. */
+function dgDayKind(day){const types=day.items.map(i=>i.type);const legs=types.filter(t=>t==="Legs").length,ub=types.filter(t=>t==="Push"||t==="Pull").length;
+  return legs>=ub?"lower":legs>=2?"full":"upper"}
+function dgMini(hat){const {R,RD,OL,C,AM,AMD,INK,MEM,SN,MO,PK}=DGC;
+  const fin=`<path d="M-13 -42 c-6 0 -10 -4 -10 -10 c3 2 5 1 6 -2 c1 3 3 6 7 7z" fill="${MEM}" stroke="${OL}" stroke-width="1.2" stroke-linejoin="round"/>`;
+  return {
+    tail:`<path d="M-9 -7 C-20 -4 -26 -12 -24 -21" fill="none" stroke="${R}" stroke-width="5" stroke-linecap="round"/><path d="M-24 -21 l-4 -6 7 1z" fill="${AM}"/>`,
+    feet:`<ellipse cx="-7" cy="-2.5" rx="6" ry="3.5" fill="${RD}" stroke="${OL}" stroke-width="1.5"/><ellipse cx="7" cy="-2.5" rx="6" ry="3.5" fill="${RD}" stroke="${OL}" stroke-width="1.5"/>`,
+    body:`<ellipse cx="0" cy="-15" rx="13" ry="13" fill="${R}" stroke="${OL}" stroke-width="1.8"/><ellipse cx="0" cy="-12" rx="8" ry="9" fill="${C}"/>`,
+    head:`<g>${fin}<g transform="scale(-1 1)">${fin}</g><path d="M-9 -49 l-3 -9 7 5z M9 -49 l3 -9 -7 5z" fill="${AM}" stroke="${AMD}" stroke-width="1"/>
+      <circle cx="0" cy="-39" r="14" fill="${R}" stroke="${OL}" stroke-width="1.8"/><ellipse cx="0" cy="-33" rx="7.5" ry="5" fill="${SN}"/>
+      <path d="M-9 -40 q4 -5 8 0 M1 -40 q4 -5 8 0" stroke="${INK}" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <ellipse cx="-10" cy="-34" rx="3" ry="2" fill="${PK}"/><ellipse cx="10" cy="-34" rx="3" ry="2" fill="${PK}"/>
+      <path d="M-3 -31 q3 3 6 0" stroke="${MO}" stroke-width="1.6" fill="none" stroke-linecap="round"/>${hat?dgHat(0,-50,.32,-10):""}</g>`}}
+const dgBar=(w,y)=>`<rect x="${-w/2}" y="${y-2}" width="${w}" height="4" rx="2" fill="#b9c1ca" stroke="#4b525a" stroke-width="1"/><rect x="${-w/2+1}" y="${y-9}" width="6" height="18" rx="2" fill="#e5482b" stroke="#7a2112" stroke-width="1"/><rect x="${w/2-7}" y="${y-9}" width="6" height="18" rx="2" fill="#e5482b" stroke="#7a2112" stroke-width="1"/>`;
+function dgStation(kind,dx,delay,hat){
+  const m=dgMini(hat),RD=DGC.RD,OL=DGC.OL,steel="#7c8692",dl=`style="animation-delay:${delay}s"`;
+  const arm=(x,y,h)=>`<rect x="${x-3}" y="${y}" width="6" height="${h}" rx="3" fill="${RD}" stroke="${OL}" stroke-width="1.2"/>`;
+  if(kind==="squat")return `<g transform="translate(${dx} 0)"><path d="M24 96 V24 M106 96 V24" stroke="${steel}" stroke-width="4.5" stroke-linecap="round"/><path d="M24 44 h8 v4 M106 44 h-8 v4" stroke="${steel}" stroke-width="3" fill="none"/>
+    <ellipse cx="65" cy="97" rx="20" ry="2.6" fill="#000" opacity=".18"/><g transform="translate(65 96)">${m.tail}${m.feet}
+    <g class="dgm dgm-squat" ${dl}>${m.body}${dgBar(84,-31)}<ellipse cx="-15" cy="-27" rx="4" ry="6" fill="${RD}" stroke="${OL}" stroke-width="1.2"/><ellipse cx="15" cy="-27" rx="4" ry="6" fill="${RD}" stroke="${OL}" stroke-width="1.2"/>${m.head}</g></g></g>`;
+  if(kind==="pull")return `<g transform="translate(${dx} 0)"><path d="M20 96 V12 M110 96 V12" stroke="${steel}" stroke-width="4.5" stroke-linecap="round"/><path d="M20 12 H110" stroke="#9aa3ad" stroke-width="4" stroke-linecap="round"/>
+    <ellipse cx="65" cy="97" rx="14" ry="2.2" fill="#000" opacity=".12"/>
+    <g class="dgm dgm-arms" ${dl}>${arm(48,12,52)}${arm(82,12,52)}</g>
+    <g class="dgm dgm-pull" ${dl}><g transform="translate(65 88)">${m.tail}${m.feet}${m.body}${m.head}</g></g>
+    <circle cx="48" cy="12" r="3.8" fill="${RD}" stroke="${OL}" stroke-width="1.2"/><circle cx="82" cy="12" r="3.8" fill="${RD}" stroke="${OL}" stroke-width="1.2"/></g>`;
+  return `<g transform="translate(${dx} 0)"><ellipse cx="65" cy="97" rx="20" ry="2.6" fill="#000" opacity=".18"/><g transform="translate(65 96)">${m.tail}${m.feet}${m.body}
+    <g class="dgm dgm-parms" ${dl}>${arm(-17,-66,42)}${arm(17,-66,42)}</g>${m.head}<g class="dgm dgm-press" ${dl}>${dgBar(70,-30)}</g></g></g>`;
+}
+function dragonGym(day){
+  if(!dragonOn()||!day||isCircuit(day))return "";
+  const k=dgDayKind(day),h=dgHoliday(),hat=!!h&&h!=="remember";
+  const set=k==="upper"?["press","pull","press"]:k==="lower"?["squat","squat","squat"]:["squat","pull","press"];
+  return `<div class="dg-gym dg-gym-${k}" aria-hidden="true"><svg viewBox="0 0 390 100" width="100%"><path d="M0 97.5 H390" stroke="var(--line)" stroke-width="2"/>
+    ${set.map((s,i)=>dgStation(s,i*130,(i*.55).toFixed(2),hat)).join("")}</svg></div>`;
+}
+
 /* ---------- render & events ---------- */
 function render(){
   if(BLOCKED){app.innerHTML=BLOCKED;document.getElementById("tabs").innerHTML="";return}
@@ -1638,6 +1741,7 @@ app.addEventListener("click",e=>{
   // must not undo it (it used to tick and untick in one go).
   const chk=t.closest("[data-check]");if(chk){const row=chk.closest(".set");if(Date.now()-(+row.dataset.auto||0)<1500){row.dataset.auto="";return}toggleSet(row);return}
   if(t.closest("#finish")){finishWorkout(VIEW.w,VIEW.d);return}
+  const dgt=t.closest("[data-dgtap]");if(dgt){dgTap(dgt,dgt.closest(".dgcard").querySelector(".dg-tapme svg"));return}
   if(t.closest("#dragonCard")){openDragon();return}
   if(t.closest("#dgPerch")){dgPerchPet();return}
   if(t.closest("#circuitDone")){const k=`${VIEW.w}|${VIEW.d}`;if(S.days[k]){delete S.days[k];queueDayMark(VIEW.w,VIEW.d,"")}else{const b=dragonOn()?dragonData():null;S.days[k]=Date.now();queueDayMark(VIEW.w,VIEW.d,"✓ Done · "+isoDay());buzz();chime();if(b)toast(`+${dragonData().xp-b.xp} XP 🐉`)}save();render();return}
