@@ -1325,17 +1325,20 @@ const dgName=st=>DG_STAGES[st][S.profile.lang==="fr"?"fr":"en"];
 const dgFr=()=>S.profile.lang==="fr";
 function dgMonday(d){const x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x}
 function dragonData(){
+  /* XP (and so growth) counts only from the start date in the switch, so an athlete who trained before
+     starts as an egg. The streak counts the whole history, the same as the app's normal streak, so nobody
+     loses a streak when the dragon is switched on. Freezes are a dragon extra: earned and used only from the start date. */
   const from=DRAGON&&DRAGON.from?dgMonday(DRAGON.from):null;
-  const weeks=WEEKS.filter(w=>w.week<=CUR&&!(from&&weekDate(w)<from)).map(w=>{const lifts=w.days.filter(d=>!isCircuit(d));
-    return {w:w.week,n:w.days.filter(d=>dayStatus(w.week,d.day)==="done").length,hit:lifts.filter(d=>dayStatus(w.week,d.day)==="done").length,goal:lifts.length,deload:/deload/i.test(phaseOf(w)||"")}});
+  const weeks=WEEKS.filter(w=>w.week<=CUR).map(w=>{const lifts=w.days.filter(d=>!isCircuit(d));
+    return {w:w.week,xpOn:!(from&&weekDate(w)<from),n:w.days.filter(d=>dayStatus(w.week,d.day)==="done").length,hit:lifts.filter(d=>dayStatus(w.week,d.day)==="done").length,goal:lifts.length,deload:/deload/i.test(phaseOf(w)||"")}});
   let workouts=0,streak=0,best=0,freezes=0,run=0,bonus=0,started=false,frozeLast=false,missedLast=false;
-  weeks.forEach(x=>{workouts+=x.n;if(!started){if(!x.n)return;started=true}
+  weeks.forEach(x=>{if(x.xpOn)workouts+=x.n;if(!started){if(!x.n)return;started=true}
     if(!x.goal)return;   // a week with no gym sessions counts neither way
     const hit=x.hit>=x.goal;
-    if(x.w===CUR){if(hit){streak++;bonus++}}
-    else if(hit){streak++;bonus++;run++;if(run%4===0&&freezes<2)freezes++;frozeLast=false;missedLast=false}
-    else if(freezes>0){freezes--;frozeLast=true;missedLast=false}
-    else{streak=0;run=0;frozeLast=false;missedLast=true}
+    if(x.w===CUR){if(hit){streak++;if(x.xpOn)bonus++}}
+    else if(hit){streak++;if(x.xpOn){bonus++;run++;if(run%4===0&&freezes<2)freezes++}frozeLast=false;missedLast=false}
+    else if(x.xpOn&&freezes>0){freezes--;frozeLast=true;missedLast=false}
+    else{streak=0;frozeLast=false;missedLast=true}
     best=Math.max(best,streak)});
   const cur=weeks.find(x=>x.w===CUR)||{n:0,hit:0,goal:0,deload:false};
   let xp=workouts*10+bonus*20;
