@@ -581,6 +581,8 @@ button.dg-say:active{transform:scale(.97)}
 .dg-wave .dg-pawr{transform-box:fill-box;transform-origin:30% 100%;animation:dgPawUp .35s ease-out 1.9s forwards,dgWave .42s ease-in-out 2.25s 8 alternate forwards}
 @keyframes dgPawUp{to{transform:translate(4px,-16px) rotate(-20deg)}}
 @keyframes dgWave{from{transform:translate(4px,-16px) rotate(-28deg)}to{transform:translate(4px,-16px) rotate(18deg)}}
+.dgm-dead{transform-origin:50% 100%;animation-name:dgmDead}
+@keyframes dgmDead{0%,100%{transform:translateY(5px) scale(1.04,.95)}40%,58%{transform:translateY(-4px)}}
 @media (max-width:370px){.set,.colhead{grid-template-columns:22px minmax(0,1fr) 64px 54px 42px;gap:6px}.bigweek{font-size:76px}}
 </style>
 
@@ -1727,6 +1729,9 @@ function dgTap(host,svg){const egg=!dragonData().st;
    Small dragons training in the background, matching the day: upper body = overhead presses and pull-ups,
    lower body = squats in racks, full body = a mix. They loop gently, out of step with each other. */
 const DG_GYM_FORCE=()=>(DPREV&&DPREV.gym)||((location.search.match(/[?&]gym=(upper|lower|full)\b/)||[])[1])||"";
+if(DG_DEMO){const _dayTitle=dayTitle;dayTitle=function(d){const f=DG_GYM_FORCE();return f&&!isCircuit(d)?T("dayNames")[f]:_dayTitle(d)}}
+/* Demo only: ?dragon&fresh starts with no workouts done (no sample logs), so finishing one hatches the egg for real. */
+if(DG_DEMO&&/[?&]fresh\b/.test(location.search)){S.logs={};S.notes={};S.days={};S.timers={};S.sample=false;S.seeded=true;save()}
 function dgDayKind(day){const types=day.items.map(i=>i.type);const legs=types.filter(t=>t==="Legs").length,ub=types.filter(t=>t==="Push"||t==="Pull").length;
   return legs>=ub?"lower":legs>=2?"full":"upper"}
 function dgMini(hat,wreath){const {R,RD,OL,C,AM,AMD,INK,MEM,SN,MO,PK}=DGC;
@@ -1747,6 +1752,8 @@ function dgStation(kind,dx,delay,hat,wreath){
   if(kind==="squat")return `<g transform="translate(${dx} 0)"><path d="M24 96 V24 M106 96 V24" stroke="${steel}" stroke-width="4.5" stroke-linecap="round"/><path d="M24 44 h8 v4 M106 44 h-8 v4" stroke="${steel}" stroke-width="3" fill="none"/>
     <ellipse cx="65" cy="97" rx="20" ry="2.6" fill="#000" opacity=".18"/><g transform="translate(65 96)">${m.tail}${m.feet}
     <g class="dgm dgm-squat" ${dl}>${m.body}${dgBar(84,-31)}<ellipse cx="-15" cy="-27" rx="4" ry="6" fill="${RD}" stroke="${OL}" stroke-width="1.2"/><ellipse cx="15" cy="-27" rx="4" ry="6" fill="${RD}" stroke="${OL}" stroke-width="1.2"/>${m.head}</g></g></g>`;
+  if(kind==="dead")return `<g transform="translate(${dx} 0)"><ellipse cx="65" cy="97" rx="24" ry="2.6" fill="#000" opacity=".18"/><g transform="translate(65 96)">${m.tail}${m.feet}
+    <g class="dgm dgm-dead" ${dl}>${m.body}${arm(-16,-25,10)}${arm(16,-25,10)}${dgBar(84,-14)}${m.head}</g></g></g>`;
   if(kind==="pull")return `<g transform="translate(${dx} 0)"><path d="M20 96 V12 M110 96 V12" stroke="${steel}" stroke-width="4.5" stroke-linecap="round"/><path d="M20 12 H110" stroke="#9aa3ad" stroke-width="4" stroke-linecap="round"/>
     <ellipse cx="65" cy="97" rx="14" ry="2.2" fill="#000" opacity=".12"/>
     <g class="dgm dgm-arms" ${dl}>${arm(48,12,52)}${arm(82,12,52)}</g>
@@ -1758,7 +1765,7 @@ function dgStation(kind,dx,delay,hat,wreath){
 function dragonGym(day){
   if(!dragonOn()||!day||isCircuit(day))return "";
   const k=(DG_DEMO&&DG_GYM_FORCE())||dgDayKind(day),h=dgHoliday(),hat=!!h&&h!=="remember";
-  const set=k==="upper"?["press","pull"]:k==="lower"?["squat","squat"]:["squat","pull"];
+  const set=k==="upper"?["press","pull"]:k==="lower"?["squat","dead"]:["squat","press"];
   // two tiny dragons far behind yours (smaller, a little higher, faded = farther away)
   return `<div class="dg-gym dg-gym-${k}" aria-hidden="true"><svg viewBox="0 0 260 100"><path d="M-10 97.5 H270" stroke="var(--line)" stroke-width="3"/>
     ${set.map((s,i)=>dgStation(s,i*130,(i*.7).toFixed(2),hat,!hat&&dgStoicNow())).join("")}</svg></div>`;
