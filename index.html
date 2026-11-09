@@ -1546,7 +1546,7 @@ function dragonCard(){
   if(!dragonOn())return "";dgFont();const d=dragonData(),fr=dgFr();
   return `<section style="padding-bottom:0"><div class="dgcard">
     <div class="dgtop"><button class="dg-hello dg-tapme" data-dgtap aria-label="${fr?"Flatter ton dragon":"Pet your dragon"}">${dragonSVG(d.st,dgStoicNow()&&d.st?"stoic":d.mood,{px:120,medals:d.medals,stoic:dgStoicNow()})}</button><button class="dg-say" data-dgtap>${dgSayHtml(d)}</button></div>
-    <button class="dginfo" id="dragonCard" aria-label="${fr?"Ton dragon : statistiques":"Your dragon: stats"}"><div class="dgrow"><div><div class="eyebrow">${fr?"DB · ton dragon":"DB · your dragon"}</div><div class="dgname">${esc(dgName(d.st))}</div></div>
+    <button class="dginfo" id="dragonCard" aria-label="${fr?"Ton dragon : statistiques":"Your dragon: stats"}"><div class="dgrow"><div><div class="eyebrow">${fr?"Dibi · ton dragon":"Dibi · your dragon"}</div><div class="dgname">${esc(dgName(d.st))}</div></div>
      ${d.st?`<div class="dgmeta"><span>🔥 <b>${d.streak}</b> ${dgStreakTxt(d.streak)}</span>${d.freezes?`<span>🧊 <b>${d.freezes}</b></span>`:""}${d.medals?`<span>🏅 <b>${d.medals}</b></span>`:""}</div>`:""}</div>
      ${d.st?`<div class="xpbar"><i style="width:${d.pct}%"></i></div><div class="dgnext">${esc(dgNextTxt(d))}<span class="dgmore">${fr?"Stats":"Stats"} ›</span></div>`:`<div class="dgnext">${fr?"Ta prochaine séance le fait éclore.":"Your next workout hatches it."}<span class="dgmore">${fr?"Stats":"Stats"} ›</span></div>`}</button></div></section>`;
 }
@@ -1618,7 +1618,7 @@ function dragonCelebration(b,a,pr){
   const k=grew?DG_STAGES[a.st].k:medal?"medal":"",ev=!!k;
   const title=k==="hatch"?(fr?"Il a éclos!":"It hatched!"):grew?(fr?"Ton dragon a évolué!":"Your dragon evolved!"):medal?(fr?"Nouvelle médaille!":"New medal!"):"";
   const nm=dgHelloName();
-  const line=k==="hatch"?(fr?`Salut${nm?" "+nm:""}! Moi, c'est DB. J’ai tellement hâte de grandir avec toi pendant que tu t’entraînes!`:`Hi${nm?" "+nm:""}! I'm DB. I'm so excited to keep growing with you as you train!`)
+  const line=k==="hatch"?(fr?`Salut${nm?" "+nm:""}! Moi, c'est Dibi. J’ai tellement hâte de grandir avec toi pendant que tu t’entraînes!`:`Hi${nm?" "+nm:""}! I'm Dibi. I'm so excited to keep growing with you as you train!`)
     :ev?dgEvolveLine(k):dgPick(pr?"pr":"after",a.workouts);
   const L=ev?"dg-late":"";
   const stage=k==="hatch"?`<div class="layer old">${dgEggSVG({px:200,cracks:true,cls:"dg-hatching"})}</div><div class="layer cap">${dgCapSVG(200)}</div><div class="flash"></div><div class="layer new">${dragonSVG(a.st,"happy",{px:200,cls:"dg-wave"})}</div>`
