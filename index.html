@@ -583,6 +583,16 @@ button.dg-say:active{transform:scale(.97)}
 @keyframes dgWave{from{transform:translate(4px,-16px) rotate(-28deg)}to{transform:translate(4px,-16px) rotate(18deg)}}
 .dgm-dead{transform-origin:50% 100%;animation-name:dgmDead}
 @keyframes dgmDead{0%,100%{transform:translateY(5px) scale(1.04,.95)}40%,58%{transform:translateY(-4px)}}
+/* "Tap me!" hint (until the first tap on this phone) */
+.dg-hint{position:absolute;z-index:7;pointer-events:none;padding:4px 9px;border-radius:999px;background:#fffaf0;color:#3a1a10;border:2px solid #7a2112;
+  font-family:var(--dgfont,"Fredoka"),ui-rounded,"SF Pro Rounded",system-ui,sans-serif;font-weight:600;font-size:13px;line-height:1.2;white-space:nowrap;box-shadow:0 2px 0 rgba(122,33,18,.35);
+  animation:dgHintIn .5s cubic-bezier(.3,1.6,.5,1) var(--hd,0s) backwards,dgHintPulse 1.3s ease-in-out calc(var(--hd,0s) + .5s) infinite}
+.dg-hint.card{right:-10px;bottom:2px;--hd:.9s}
+.dg-hint.cele{left:60%;top:64%;--hd:2.8s}
+.dg-hint.cele.now{--hd:1.2s}
+@keyframes dgHintIn{0%{opacity:0;transform:scale(.3)}100%{opacity:1;transform:none}}
+@keyframes dgHintPulse{0%,100%{transform:none}50%{transform:translateY(-4px) scale(1.07)}}
+.dg-cele{cursor:pointer;-webkit-tap-highlight-color:transparent}
 @media (max-width:370px){.set,.colhead{grid-template-columns:22px minmax(0,1fr) 64px 54px 42px;gap:6px}.bigweek{font-size:76px}}
 </style>
 
@@ -1547,7 +1557,7 @@ const dgStreakTxt=n=>dgFr()?(n>1?"semaines de suite":"semaine de suite"):"week s
 function dragonCard(){
   if(!dragonOn())return "";dgFont();const d=dragonData(),fr=dgFr();
   return `<section style="padding-bottom:0"><div class="dgcard">
-    <div class="dgtop"><button class="dg-hello dg-tapme" data-dgtap aria-label="${fr?"Flatter ton dragon":"Pet your dragon"}">${dragonSVG(d.st,dgStoicNow()&&d.st?"stoic":d.mood,{px:120,medals:d.medals,stoic:dgStoicNow()})}</button><button class="dg-say" data-dgtap>${dgSayHtml(d)}</button></div>
+    <div class="dgtop"><button class="dg-hello dg-tapme" data-dgtap aria-label="${fr?"Flatter ton dragon":"Pet your dragon"}">${dragonSVG(d.st,dgStoicNow()&&d.st?"stoic":d.mood,{px:120,medals:d.medals,stoic:dgStoicNow()})}${dgHint("card")}</button><button class="dg-say" data-dgtap>${dgSayHtml(d)}</button></div>
     <button class="dginfo" id="dragonCard" aria-label="${fr?"Ton dragon : statistiques":"Your dragon: stats"}"><div class="dgrow"><div><div class="eyebrow">${fr?"Dibi · ton dragon":"Dibi · your dragon"}</div><div class="dgname">${esc(dgName(d.st))}</div></div>
      ${d.st?`<div class="dgmeta"><span>🔥 <b>${d.streak}</b> ${dgStreakTxt(d.streak)}</span>${d.freezes?`<span>🧊 <b>${d.freezes}</b></span>`:""}${d.medals?`<span>🏅 <b>${d.medals}</b></span>`:""}</div>`:""}</div>
      ${d.st?`<div class="xpbar"><i style="width:${d.pct}%"></i></div><div class="dgnext">${esc(dgNextTxt(d))}<span class="dgmore">${fr?"Stats":"Stats"} ›</span></div>`:`<div class="dgnext">${fr?"Ta prochaine séance le fait éclore.":"Your next workout hatches it."}<span class="dgmore">${fr?"Stats":"Stats"} ›</span></div>`}</button></div></section>`;
@@ -1626,7 +1636,7 @@ function dragonCelebration(b,a,pr){
   const stage=k==="hatch"?`<div class="layer old">${dgEggSVG({px:200,cracks:true,cls:"dg-hatching"})}</div><div class="layer cap">${dgCapSVG(200)}</div><div class="flash"></div><div class="layer new">${dragonSVG(a.st,"happy",{px:200,cls:"dg-wave"})}</div>`
     :grew?`<div class="layer old">${dragonSVG(b.st,"awake",{px:200,medals:b.medals})}</div><div class="flash"></div><div class="layer new">${dragonSVG(a.st,"happy",{px:200,medals:a.medals})}</div>`
     :`<div class="layer new">${dragonSVG(a.st,"happy",{px:200,medals:a.medals})}</div>`;
-  return `<div class="dg-cele ${ev?`ev ev-${k}`:""}">${stage}${dgFx(k)}<div class="xp-pop">+${gain} XP</div></div>
+  return `<div class="dg-cele ${ev?`ev ev-${k}`:""}" role="button" aria-label="${fr?"Flatter ton dragon":"Pet your dragon"}">${stage}${dgFx(k)}<div class="xp-pop">+${gain} XP</div>${dgHint(ev?"cele":"cele now")}</div>
     ${title?`<div class="dg-title ${L}" style="color:var(--amber)">${title}</div><div class="dgname ${L}">${esc(dgName(a.st))}</div>`:""}
     ${line?`<div class="dg-say up ${L}" style="justify-self:center;max-width:320px">${esc(line)}</div>`:""}
     <div class="dg-streak ${L}"><span>🔥 <b>${a.streak}</b> ${dgStreakTxt(a.streak)}</span>${a.freezes?`<span>🧊 <b>${a.freezes}</b></span>`:""}<span><b>${a.xp}</b> XP</span></div>
@@ -1716,11 +1726,13 @@ function dgTapBurst(host,force){
   const box=document.createElement("div");box.className=`dg-tapfx fx-${k}`;box.setAttribute("aria-hidden","true");box.innerHTML=h;host.appendChild(box);
   setTimeout(()=>box.remove(),2600);return k;
 }
+function dgHint(where){return S.dgTapped?"":`<span class="dg-hint ${where}" aria-hidden="true">👆 ${dgFr()?"Touche-moi!":"Tap me!"}</span>`}
+function dgHintsOff(){if(!S.dgTapped){S.dgTapped=1;save()}document.querySelectorAll(".dg-hint").forEach(e=>e.remove())}
 function dgBounce(svg,egg){if(!svg)return;const moves=egg?["dg-knock"]:["dg-petted","dg-spin","dg-wiggle","dg-boing"];
   let m;do{m=moves[Math.floor(Math.random()*moves.length)]}while(moves.length>1&&m===dgMoveLast);dgMoveLast=m;
   moves.concat("dg-knock").forEach(c=>svg.classList.remove(c));void svg.getBoundingClientRect();svg.classList.add(m);setTimeout(()=>svg.classList.remove(m),1000)}
 /* One tap handler for the Today card (dragon or quote), the dragon sheet and the dragon on the barbell. */
-function dgTap(host,svg){const egg=!dragonData().st;
+function dgTap(host,svg){dgHintsOff();const egg=!dragonData().st;
   if(dgStoicNow()){if(svg){svg.classList.remove("dg-nod");void svg.getBoundingClientRect();svg.classList.add("dg-nod");setTimeout(()=>svg.classList.remove("dg-nod"),1600)}
     dgTapBurst(host,"leaves");dgSfx("tap-leaves");buzz([20]);return "leaves"}
   dgBounce(svg,egg);const k=dgTapBurst(host);dgSfx("tap-"+k);buzz([25]);return k}
@@ -1731,7 +1743,7 @@ function dgTap(host,svg){const egg=!dragonData().st;
 const DG_GYM_FORCE=()=>(DPREV&&DPREV.gym)||((location.search.match(/[?&]gym=(upper|lower|full)\b/)||[])[1])||"";
 if(DG_DEMO){const _dayTitle=dayTitle;dayTitle=function(d){const f=DG_GYM_FORCE();return f&&!isCircuit(d)?T("dayNames")[f]:_dayTitle(d)}}
 /* Demo only: ?dragon&fresh starts with no workouts done (no sample logs), so finishing one hatches the egg for real. */
-if(DG_DEMO&&/[?&]fresh\b/.test(location.search)){S.logs={};S.notes={};S.days={};S.timers={};S.sample=false;S.seeded=true;save()}
+if(DG_DEMO&&/[?&]fresh\b/.test(location.search)){S.logs={};S.notes={};S.days={};S.timers={};S.sample=false;S.seeded=true;delete S.dgTapped;save()}
 function dgDayKind(day){const types=day.items.map(i=>i.type);const legs=types.filter(t=>t==="Legs").length,ub=types.filter(t=>t==="Push"||t==="Pull").length;
   return legs>=ub?"lower":legs>=2?"full":"upper"}
 function dgMini(hat,wreath){const {R,RD,OL,C,AM,AMD,INK,MEM,SN,MO,PK}=DGC;
@@ -1856,6 +1868,7 @@ document.getElementById("overlay").addEventListener("click",e=>{
   if(t.closest("#a2hsGot")){S.a2hsHide=true;save();closeSettings();return}   // they've seen the steps: stop showing the banner on this phone
   if(t.closest("[data-close]")){closeSettings();return}
   if(t.closest("#dgPet")){dgPet();return}
+  const dgc=t.closest(".dg-cele");if(dgc){dgTap(dgc,dgc.querySelector(".layer.new svg"));return}
   if(DG_DEMO&&dgDemoClick(t))return;
   if(t.closest("#a2hsSettings")){openA2hs();return}
   const sx=t.closest("[data-sex]");if(sx){p.sex=sx.dataset.sex;save();queueProfile();openSettings();return}
