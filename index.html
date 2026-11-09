@@ -1548,6 +1548,7 @@ function openDragon(){
     <div class="small muted">Mood</div><div class="dg-prev">${["awake","happy","sleepy","asleep"].map(m=>`<button data-dprev-mood="${m}">${m}</button>`).join("")}</div>
     <div class="small muted">Play the animation (from the stage before)</div><div class="dg-prev">${["hatch","baby","young","adult","racing","medal"].map(k=>`<button data-dprev-ev="${k}">▶ ${k==="hatch"?"Hatch":k==="medal"?"Medal":DG_STAGES.find(s=>s.k===k).en}</button>`).join("")}<button data-dprev-ev="">▶ Normal workout</button></div>
     <div class="small muted">Quote of the day</div><div class="dg-prev"><button data-dprev-stoic="1">Stoic day 🏛️</button><button data-dprev-stoic="0">Normal quote</button></div>
+    <div class="small muted">Workout gym (opens a workout)</div><div class="dg-prev"><button data-dprev-gym="upper">Upper body</button><button data-dprev-gym="lower">Lower body</button><button data-dprev-gym="full">Full body</button></div>
     <div class="small muted">Holidays</div><div class="dg-prev">${[["","Normal day"],["remember","Nov 11"],["xmas","Dec 1–23"],["eve","Dec 24"],["day","Dec 25"],["boxing","Dec 26"]].map(([k,n])=>`<button data-dprev-hol="${k}">${n}</button>`).join("")}</div>
     <div class="small muted">Font for the dragon's words</div><div class="dg-prev">${Object.keys(DG_FONTS).map(f=>`<button data-dprev-font="${f}" style="font-family:'${f}',sans-serif;font-size:15px">${f}</button>`).join("")}</div>
     <div class="dg-prev"><button data-dprev-day>Next day's message ›</button><button data-dprev-clear>Back to real data</button><button data-dprev-buzz>📳 Test buzz</button></div></div>`:"";
@@ -1669,6 +1670,8 @@ function dgDemoClick(t){
   if(t.closest("[data-dprev-almost]")){const d=dragonData();return set({xp:d.xp+d.toNext-10})}
   if(m)return set({mood:m.dataset.dprevMood});
   if(hl)return set({hol:hl.dataset.dprevHol});
+  const gb=t.closest("[data-dprev-gym]");if(gb){DPREV=Object.assign(DPREV||{},{gym:gb.dataset.dprevGym});document.getElementById("overlay").innerHTML="";
+    const W=WEEKS[CUR-1];go({name:"workout",w:CUR,d:W.days.find(x=>!isCircuit(x)).day});return true}
   const sb=t.closest("[data-dprev-stoic]");if(sb)return set({stoic:sb.dataset.dprevStoic==="1"});
   const fb=t.closest("[data-dprev-font]");if(fb)return set({font:fb.dataset.dprevFont});
   if(t.closest("[data-dprev-day]"))return set({day:((DPREV&&DPREV.day)||0)+1});
@@ -1710,6 +1713,7 @@ function dgTap(host,svg){const egg=!dragonData().st;
 /* ---------- the mini dragon gym behind each workout title (dragon athletes only) ----------
    Small dragons training in the background, matching the day: upper body = overhead presses and pull-ups,
    lower body = squats in racks, full body = a mix. They loop gently, out of step with each other. */
+const DG_GYM_FORCE=()=>(DPREV&&DPREV.gym)||((location.search.match(/[?&]gym=(upper|lower|full)\b/)||[])[1])||"";
 function dgDayKind(day){const types=day.items.map(i=>i.type);const legs=types.filter(t=>t==="Legs").length,ub=types.filter(t=>t==="Push"||t==="Pull").length;
   return legs>=ub?"lower":legs>=2?"full":"upper"}
 function dgMini(hat,wreath){const {R,RD,OL,C,AM,AMD,INK,MEM,SN,MO,PK}=DGC;
@@ -1740,7 +1744,7 @@ function dgStation(kind,dx,delay,hat,wreath){
 }
 function dragonGym(day){
   if(!dragonOn()||!day||isCircuit(day))return "";
-  const k=dgDayKind(day),h=dgHoliday(),hat=!!h&&h!=="remember";
+  const k=(DG_DEMO&&DG_GYM_FORCE())||dgDayKind(day),h=dgHoliday(),hat=!!h&&h!=="remember";
   const set=k==="upper"?["press","pull"]:k==="lower"?["squat","squat"]:["squat","pull"];
   // two tiny dragons far behind yours (smaller, a little higher, faded = farther away)
   return `<div class="dg-gym dg-gym-${k}" aria-hidden="true"><svg viewBox="0 0 260 100"><path d="M-10 97.5 H270" stroke="var(--line)" stroke-width="3"/>
