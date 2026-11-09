@@ -320,6 +320,181 @@ section{display:grid;gap:12px;padding-block:18px}
 .lift.pr{border-color:var(--amber);background:color-mix(in srgb,var(--amber) 12%,var(--raised))}
 .prchip{display:inline-block;margin-left:6px;padding:2px 7px;border-radius:6px;background:var(--amber);color:#1a1405;font-family:var(--display);font-weight:800;font-size:12px;letter-spacing:.06em;vertical-align:2px}
 .done-grid.three{grid-template-columns:repeat(3,1fr)}
+/* ---------- dragon (one athlete at a time, switched on per athlete) ---------- */
+.dgsvg{display:block;overflow:visible}
+.dgsvg .dg-a{transform-box:fill-box}
+.dg-breathe{transform-origin:50% 100%;animation:dgBreathe 3.4s ease-in-out infinite}
+@keyframes dgBreathe{50%{transform:scale(1.025,.975)}}
+.dg-blink{transform-origin:50% 50%;animation:dgBlink 4.6s infinite}
+@keyframes dgBlink{0%,91%,100%{transform:scaleY(1)}94%{transform:scaleY(.08)}97%{transform:scaleY(1)}}
+.dg-tail{transform-origin:0% 70%;animation:dgTail 2.6s ease-in-out infinite alternate}
+@keyframes dgTail{0%{transform:rotate(-7deg)}100%{transform:rotate(9deg)}}
+.dg-wing{transform-origin:100% 85%;animation:dgWing 3s ease-in-out infinite}
+@keyframes dgWing{0%,100%{transform:rotate(0)}50%{transform:rotate(-9deg)}}
+.dg-head{transform-origin:50% 92%;animation:dgHead 6s ease-in-out infinite}
+@keyframes dgHead{0%,100%{transform:rotate(0)}30%{transform:rotate(-3.5deg)}60%{transform:rotate(2.5deg)}}
+.dg-band{transform-origin:0% 50%;animation:dgBand 1.1s ease-in-out infinite alternate}
+@keyframes dgBand{0%{transform:rotate(-6deg) scaleX(.96)}100%{transform:rotate(7deg) scaleX(1.04)}}
+.dg-egg{transform-origin:50% 100%;animation:dgEgg 3.4s ease-in-out infinite}
+@keyframes dgEgg{0%,62%,100%{transform:rotate(0)}68%{transform:rotate(-7deg)}74%{transform:rotate(6deg)}80%{transform:rotate(-4deg)}86%{transform:rotate(2deg)}}
+.dg-shine{animation:dgShine 3.4s ease-in-out infinite;opacity:0}
+@keyframes dgShine{0%,60%{opacity:0}75%{opacity:1}100%{opacity:0}}
+/* moods */
+.dg-happy .dg-hop{transform-origin:50% 100%;animation:dgHop 1.7s cubic-bezier(.3,.7,.4,1) infinite}
+@keyframes dgHop{0%,55%,100%{transform:none}64%{transform:scale(1.06,.92)}76%{transform:translateY(-9%) scale(.97,1.04)}88%{transform:scale(1.03,.97)}}
+.dg-happy .dg-wing{animation-duration:.9s}
+.dg-happy .dg-tail{animation-duration:.8s}
+.dg-sleepy .dg-head{animation:dgNod 5s ease-in-out infinite}
+@keyframes dgNod{0%,100%{transform:rotate(0)}40%,70%{transform:translateY(5%) rotate(6deg)}76%{transform:translateY(-2%) rotate(-2deg)}84%{transform:rotate(0)}}
+.dg-sleepy .dg-blink{animation:dgSlowBlink 5s ease-in-out infinite}
+@keyframes dgSlowBlink{0%,30%,85%,100%{transform:scaleY(1)}45%,72%{transform:scaleY(.35)}}
+.dg-asleep .dg-breathe{animation-duration:4.8s}
+.dg-asleep .dg-head,.dg-asleep .dg-wing{animation:none}
+.dg-asleep .dg-tail{animation-duration:5s}
+.dg-bubble{transform-box:fill-box;transform-origin:0% 50%;animation:dgBubble 4.8s ease-in-out infinite}
+@keyframes dgBubble{0%,100%{transform:scale(.35)}50%{transform:scale(1)}}
+.dg-z{animation:dgZ 2.8s ease-in-out infinite;opacity:0}
+.dg-z.z2{animation-delay:.95s}.dg-z.z3{animation-delay:1.9s}
+@keyframes dgZ{0%{opacity:0;transform:translate(0,6px)}30%{opacity:1}100%{opacity:0;transform:translate(12px,-16px)}}
+.dg-spark{transform-box:fill-box;transform-origin:50% 50%;animation:dgTwinkle 1.6s ease-in-out infinite}
+.dg-spark.s2{animation-delay:.55s}.dg-spark.s3{animation-delay:1.1s}
+@keyframes dgTwinkle{0%,100%{transform:scale(.2);opacity:0}50%{transform:scale(1);opacity:1}}
+/* tap to pet */
+.dg-petted .dg-hop{animation:dgPet .7s cubic-bezier(.3,1.5,.5,1)!important}
+@keyframes dgPet{0%{transform:none}30%{transform:scale(1.1,.86)}60%{transform:translateY(-14%) scale(.95,1.06)}100%{transform:none}}
+.dg-hearts{position:absolute;left:50%;top:22%;width:0;height:0;pointer-events:none}
+.dg-hearts i{position:absolute;font-style:normal;font-size:20px;opacity:0;animation:dgHeart 1.3s ease-out var(--d) forwards}
+@keyframes dgHeart{0%{opacity:0;transform:translate(0,10px) scale(.4)}25%{opacity:1}100%{opacity:0;transform:translate(var(--x),-70px) scale(1.1)}}
+.dg-hello{animation:dgHello .8s cubic-bezier(.3,1.5,.5,1) .25s backwards}
+@keyframes dgHello{0%{transform:translateY(18px) scale(.7);opacity:0}100%{transform:none;opacity:1}}
+/* home card */
+.dgcard{position:relative;display:grid;grid-template-columns:118px 1fr;gap:10px;align-items:center;width:100%;text-align:left;padding:10px 14px 12px 4px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line);color:var(--fg)}
+.dgcard .dgsvg{width:118px;height:118px}
+.dgname{font-family:var(--display);font-weight:800;font-size:20px;letter-spacing:.04em;text-transform:uppercase;line-height:1}
+.dgmeta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:4px}
+.dgmeta b{font-family:var(--display);font-weight:800;font-size:18px;color:var(--fg)}
+.dg-say{position:relative;margin-top:9px;padding:8px 11px;border-radius:12px;background:var(--raised);border:1px solid var(--line);font-size:14px;line-height:1.35;color:var(--fg)}
+.dg-say:before{content:"";position:absolute;left:-7px;top:14px;width:12px;height:12px;background:var(--raised);border-left:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg)}
+.dg-say.up:before{left:50%;top:-7px;margin-left:-6px;border:0;border-left:1px solid var(--line);border-top:1px solid var(--line)}
+.xpbar{height:8px;border-radius:5px;background:var(--raised);overflow:hidden;margin-top:8px}
+.xpbar i{display:block;height:100%;border-radius:5px;background:var(--amber);transition:width 1.1s cubic-bezier(.2,.8,.2,1) .35s}
+.dgnext{font-size:12px;color:var(--muted);margin-top:4px}
+/* sheet */
+.dg-big{position:relative;display:grid;justify-items:center;gap:6px;text-align:center}
+.dg-big .dgsvg{width:210px;height:210px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.dg-title{font-family:var(--display);font-weight:800;font-size:30px;line-height:1;text-transform:uppercase;letter-spacing:.03em}
+.dg-path{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;align-items:end}
+.dg-stage{display:grid;justify-items:center;gap:2px;padding:6px 2px 8px;border-radius:12px;font-size:11px;color:var(--muted);text-align:center;line-height:1.2}
+.dg-stage b{color:var(--fg);font-size:12px;font-weight:600}
+.dg-stage.on{background:color-mix(in srgb,var(--amber) 16%,var(--raised));outline:2px solid var(--amber)}
+.dg-stage.lock .dgsvg{filter:brightness(0) invert(1);opacity:.2}
+:root[data-skin="daylight"] .dg-stage.lock .dgsvg{filter:brightness(0);opacity:.22}
+.dg-stats .stat span{font-size:12px;white-space:nowrap}
+.dg-stage.lock b{color:var(--muted)}
+.dg-stage .dgsvg{width:100%;height:auto;aspect-ratio:1}
+.dg-rules{margin:0;padding-left:20px;display:grid;gap:8px;font-size:14px;line-height:1.4;color:var(--muted)}
+.dg-rules b{color:var(--fg)}
+.dg-prev{display:flex;flex-wrap:wrap;gap:6px}
+.dg-prev button{padding:7px 10px;border-radius:9px;border:1px solid var(--line);background:var(--raised);color:var(--fg);font-size:13px}
+/* finish screen + evolution */
+.dg-cele{position:relative;display:grid;place-items:center;height:200px;width:230px;margin:-4px auto 0}
+.dg-cele .layer{position:absolute;inset:0;display:grid;place-items:center}
+.dg-cele .dgsvg{width:200px;height:200px}
+.dg-cele .new{animation:dgHello .7s cubic-bezier(.3,1.6,.5,1) .1s backwards}
+.dg-cele .flash{position:absolute;left:50%;top:55%;width:40px;height:40px;margin:-20px;border-radius:50%;background:radial-gradient(circle,#fff 0,#fff6d8 35%,rgba(242,178,51,0) 70%);opacity:0;pointer-events:none}
+@keyframes dgEvolveOut{0%{opacity:1;transform:none;filter:none}12%{transform:rotate(-6deg)}24%{transform:rotate(6deg)}36%{transform:rotate(-8deg) scale(1.03)}48%{transform:rotate(8deg) scale(1.05)}60%{transform:rotate(-5deg) scale(1.08);filter:brightness(1.8)}74%{transform:scale(1.12);filter:brightness(6) saturate(0);opacity:1}100%{transform:scale(1.3);filter:brightness(8) saturate(0);opacity:0}}
+@keyframes dgEvolveIn{0%{opacity:0;transform:scale(.35);filter:brightness(5) saturate(0)}60%{filter:brightness(1.4)}100%{opacity:1;transform:none;filter:none}}
+@keyframes dgFlash{0%{opacity:0;transform:scale(.2)}25%{opacity:1}100%{opacity:0;transform:scale(9)}}
+.xp-pop{position:absolute;top:10px;right:0;font-family:var(--display);font-weight:800;font-size:30px;color:var(--amber);animation:xpup 1.4s ease-out .3s backwards}
+@keyframes xpup{0%{opacity:0;transform:translateY(16px) scale(.6)}30%{opacity:1;transform:translateY(0) scale(1.15)}100%{opacity:1;transform:none}}
+.dg-streak{display:flex;justify-content:center;gap:14px;font-size:14px;color:var(--muted)}
+.dg-streak b{font-family:var(--display);font-weight:800;font-size:22px;color:var(--fg)}
+.dg-late{animation:rise .5s ease-out 2.1s backwards}
+/* egg: wiggles every few seconds, with a little hop */
+.dg-egg{transform-origin:50% 100%;animation:dgEggIdle 4.4s ease-in-out infinite}
+@keyframes dgEggIdle{0%,58%,100%{transform:none}62%{transform:rotate(-8deg)}66%{transform:rotate(7deg)}70%{transform:rotate(-6deg)}74%{transform:rotate(4deg)}78%{transform:none}84%{transform:translateY(-7%) scale(.97,1.03)}88%{transform:scale(1.04,.96)}92%{transform:none}}
+.dg-knock .dg-egg{animation:dgShakeUp .7s ease-in-out!important}
+/* hatching: cracks draw in, the egg shakes harder, the top pops off, the baby peeks out */
+.dg-hatching .dg-egg{animation:dgShakeUp 1.2s ease-in forwards!important}
+@keyframes dgShakeUp{0%{transform:none}10%{transform:rotate(-4deg)}20%{transform:rotate(4deg)}30%{transform:rotate(-6deg) translateY(-1%)}40%{transform:rotate(6deg)}50%{transform:rotate(-8deg) translateY(-2%)}60%{transform:rotate(8deg)}70%{transform:rotate(-10deg) translateY(-3%)}80%{transform:rotate(10deg) scale(1.04,.96)}90%{transform:rotate(-5deg) scale(.96,1.06)}100%{transform:scale(1.06,.94)}}
+.dg-crack{stroke-dasharray:240;stroke-dashoffset:240;animation:dgCrack .95s ease-out .15s forwards}
+@keyframes dgCrack{to{stroke-dashoffset:0}}
+.dg-cele.ev-hatch .old{animation:dgGone .01s linear 1.18s forwards}
+@keyframes dgGone{to{opacity:0}}
+.dg-cele .cap{opacity:0}
+.dg-cele.ev-hatch .cap{animation:dgCap 1.4s cubic-bezier(.2,.7,.4,1) 1.18s forwards}
+@keyframes dgCap{0%{opacity:1;transform:none}75%{opacity:1}100%{opacity:0;transform:translate(80px,-170px) rotate(260deg)}}
+.dg-cele.ev-hatch .new{opacity:0;animation:dgShow .01s linear 1.18s forwards}
+@keyframes dgShow{to{opacity:1}}
+.dg-cele.ev-hatch .new .dg-hop{animation:dgPeek .9s cubic-bezier(.3,1.5,.5,1) 1.2s backwards,dgHop 1.7s cubic-bezier(.3,.7,.4,1) 2.2s infinite}
+@keyframes dgPeek{0%{transform:translateY(34%) scale(.85,1.15)}55%{transform:translateY(-8%) scale(1.05,.95)}100%{transform:none}}
+/* every other evolution: the old form shakes and glows white, a flash, the new one pops in */
+.dg-cele.ev:not(.ev-hatch):not(.ev-medal) .old{opacity:0;animation:dgEvolveOut 1.5s ease-in forwards}
+.dg-cele.ev:not(.ev-hatch):not(.ev-medal) .new{animation:dgEvolveIn .7s cubic-bezier(.3,1.6,.5,1) 1.3s backwards}
+.dg-cele.ev .flash{animation:dgFlash 1s ease-out 1.15s}
+.dg-cele.ev .xp-pop{animation-delay:2s}
+.done-panel.dgp{overflow:hidden}
+/* particles (confetti, bubbles, stars, hearts, shell pieces, coins) */
+.dg-fx{position:absolute;left:50%;top:56%;width:0;height:0;pointer-events:none;z-index:4}
+.dg-fx i{position:absolute;display:block;opacity:0;background:var(--c);animation:dgPart var(--t) cubic-bezier(.2,.65,.4,1) var(--d) forwards}
+@keyframes dgPart{0%{opacity:1;transform:translate(-50%,-50%) scale(.4) rotate(0)}40%{opacity:1;transform:translate(calc(var(--x) - 50%),calc(var(--y) - 50%)) scale(1) rotate(calc(var(--r) * .5))}100%{opacity:0;transform:translate(calc(var(--x) * 1.2 - 50%),calc(var(--y) + var(--g) - 50%)) scale(.9) rotate(var(--r))}}
+.dg-fx .pc{width:7px;height:11px;border-radius:2px}
+.dg-fx .pl{width:4px;height:18px;border-radius:2px}
+.dg-fx .po{width:9px;height:9px;border-radius:50%}
+.dg-fx .pb{width:10px;height:10px;border-radius:50%;background:transparent;border:2px solid var(--c)}
+.dg-fx .ps{width:14px;height:14px;clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%)}
+.dg-fx .ph{width:14px;height:13px;clip-path:polygon(50% 100%,4% 52%,0 28%,12% 6%,32% 0,50% 16%,68% 0,88% 6%,100% 28%,96% 52%)}
+.dg-fx .pk{width:15px;height:12px;background:#f3efe6;border:1.5px solid #d9c8a9;clip-path:polygon(0 30%,30% 0,55% 25%,85% 5%,100% 60%,60% 100%,10% 85%)}
+.dg-fx .pg{width:13px;height:13px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff6d0,#f2b233 45%,#b8800f);box-shadow:0 0 0 1.5px #b8800f inset}
+/* props */
+.dg-prop{position:absolute;pointer-events:none;z-index:3}
+.dg-balloon{left:142px;top:8px;width:60px;height:96px;transform-origin:50% 40%;opacity:0;animation:dgBalloon 1.22s ease-in forwards}
+@keyframes dgBalloon{0%{opacity:0;transform:translateY(130px) scale(.5)}15%{opacity:1}55%{transform:translateY(0) scale(1) rotate(4deg)}70%{transform:scale(1.12,1.08) rotate(-4deg)}84%{transform:scale(1.25,1.2) rotate(3deg)}97%{opacity:1;transform:scale(1.42,1.36)}100%{opacity:0;transform:scale(1.6)}}
+.dg-popfx{position:absolute;left:172px;top:42px;width:0;height:0;z-index:5;pointer-events:none}
+.dg-popfx b{position:absolute;left:-30px;top:-14px;width:60px;text-align:center;font-family:var(--display);font-weight:800;font-size:26px;color:#f2b233;-webkit-text-stroke:1.5px #7a2112;opacity:0;animation:dgPopWord .9s cubic-bezier(.3,1.6,.5,1) 1.2s forwards}
+.dg-popfx i{position:absolute;left:-2px;top:-24px;width:4px;height:14px;border-radius:2px;background:#f2b233;transform-origin:2px 24px;opacity:0;animation:dgPopLine .45s ease-out 1.2s forwards}
+@keyframes dgPopWord{0%{opacity:0;transform:scale(.3) rotate(-12deg)}40%{opacity:1;transform:scale(1.15) rotate(-8deg)}80%{opacity:1}100%{opacity:0;transform:scale(1) translateY(-14px) rotate(-8deg)}}
+@keyframes dgPopLine{0%{opacity:1;transform:rotate(var(--a)) scaleY(.3)}100%{opacity:0;transform:rotate(var(--a)) translateY(-16px) scaleY(1)}}
+.dg-bottle{left:158px;top:84px;width:46px;height:116px;transform-origin:50% 100%;animation:dgBottle 1.6s ease-in-out backwards}
+@keyframes dgBottle{0%{opacity:0;transform:translateX(60px) rotate(10deg)}18%{opacity:1;transform:rotate(-14deg)}30%{transform:rotate(-20deg)}40%{transform:rotate(-14deg)}50%{transform:rotate(-22deg)}60%{transform:rotate(-14deg)}70%{transform:rotate(-24deg)}68%,73%{transform:rotate(-26deg) translateX(-2px)}75%{transform:rotate(-30deg) translateY(4px)}100%{transform:rotate(-28deg)}}
+.dg-bottle.out{animation:dgBottle 1.6s ease-in-out backwards,dgFade .5s ease-in 2.6s forwards}
+@keyframes dgFade{to{opacity:0}}
+.dg-cork{position:absolute;left:14px;top:-6px;width:18px;height:16px;border-radius:5px 5px 3px 3px;background:#c9a06b;border:2px solid #7a5530;animation:dgCork 1.2s cubic-bezier(.15,.7,.4,1) 1.12s forwards}
+@keyframes dgCork{0%{transform:none}100%{transform:translate(-30px,-190px) rotate(620deg);opacity:0}}
+.dg-disco{left:50%;top:-6px;width:70px;margin-left:-35px;height:120px;z-index:3;animation:dgDrop 1s cubic-bezier(.3,1.25,.5,1) backwards,dgLift .8s ease-in 2.5s forwards}
+@keyframes dgLift{to{transform:translateY(-200px)}}
+@keyframes dgDrop{0%{transform:translateY(-190px)}100%{transform:none}}
+.dg-disco .facets{animation:dgSpin 1.2s linear infinite}
+@keyframes dgSpin{to{transform:translateX(-16px)}}
+.dg-rays{position:absolute;left:50%;top:44px;width:340px;height:340px;margin:-170px;border-radius:50%;z-index:0;pointer-events:none;opacity:0;
+  background:conic-gradient(from 0deg,rgba(255,92,170,.42) 0 5deg,transparent 5deg 30deg,rgba(80,200,255,.42) 30deg 35deg,transparent 35deg 60deg,rgba(255,230,90,.45) 60deg 65deg,transparent 65deg 90deg,rgba(150,110,255,.42) 90deg 95deg,transparent 95deg 120deg,rgba(90,230,150,.42) 120deg 125deg,transparent 125deg 150deg,rgba(255,140,60,.42) 150deg 155deg,transparent 155deg 180deg,rgba(255,92,170,.42) 180deg 185deg,transparent 185deg 210deg,rgba(80,200,255,.42) 210deg 215deg,transparent 215deg 240deg,rgba(255,230,90,.45) 240deg 245deg,transparent 245deg 270deg,rgba(150,110,255,.42) 270deg 275deg,transparent 275deg 300deg,rgba(90,230,150,.42) 300deg 305deg,transparent 305deg 330deg,rgba(255,140,60,.42) 330deg 335deg,transparent 335deg 360deg);
+  -webkit-mask:radial-gradient(circle,#000 30%,transparent 70%);mask:radial-gradient(circle,#000 30%,transparent 70%);
+  animation:dgRaysIn .5s ease-out .9s forwards,dgRaysSpin 6s linear .9s infinite,dgFade 1s ease-in 3.2s forwards}
+@keyframes dgRaysIn{to{opacity:1}}
+@keyframes dgRaysSpin{from{rotate:0deg}to{rotate:360deg}}
+.dg-spot{position:absolute;width:26px;height:26px;margin:-13px;border-radius:50%;filter:blur(3px);opacity:0;z-index:5;pointer-events:none;animation:dgSpot 2.4s ease-in-out var(--d) 2 alternate}
+@keyframes dgSpot{0%{opacity:0;transform:translate(0,0)}15%{opacity:.75}100%{opacity:.6;transform:translate(var(--x),var(--y))}}
+.dg-tape{position:absolute;top:118px;height:16px;z-index:5;pointer-events:none;background:repeating-linear-gradient(90deg,#f3efe6 0 14px,#e5482b 14px 28px);box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.dg-tape.l{left:-40px;width:156px;transform-origin:0 50%;animation:dgTapeIn .6s ease-out backwards,dgTapeL .9s cubic-bezier(.3,.6,.5,1) 1.2s forwards}
+.dg-tape.r{left:114px;width:156px;transform-origin:100% 50%;animation:dgTapeIn .6s ease-out backwards,dgTapeR .9s cubic-bezier(.3,.6,.5,1) 1.2s forwards}
+@keyframes dgTapeIn{0%{opacity:0;transform:scaleX(.2)}100%{opacity:1}}
+@keyframes dgTapeL{100%{opacity:0;transform:rotate(-38deg) translate(-30px,20px)}}
+@keyframes dgTapeR{100%{opacity:0;transform:rotate(38deg) translate(30px,20px)}}
+.dg-fw{position:absolute;width:0;height:0;z-index:4;pointer-events:none}
+.dg-fw i{position:absolute;width:6px;height:6px;margin:-3px;border-radius:50%;background:var(--c);box-shadow:0 0 6px var(--c);opacity:0;animation:dgFw 1.1s cubic-bezier(.1,.7,.3,1) var(--d) forwards}
+@keyframes dgFw{0%{opacity:1;transform:scale(.4)}70%{opacity:1}100%{opacity:0;transform:translate(var(--x),calc(var(--y) + 18px)) scale(.6)}}
+.dg-medal{left:50%;top:-30px;width:56px;margin-left:-28px;height:110px;transform-origin:50% 0;z-index:3;animation:dgSwing 1.4s cubic-bezier(.3,1.2,.5,1) backwards}
+@keyframes dgSwing{0%{transform:translateY(-160px) rotate(0)}50%{transform:translateY(0) rotate(14deg)}70%{transform:rotate(-9deg)}85%{transform:rotate(5deg)}100%{transform:none}}
+.dg-medal.out{animation:dgSwing 1.4s cubic-bezier(.3,1.2,.5,1) backwards,dgFade .5s ease-in 2.4s forwards}
+/* Dec 25: the gift lid pops, sparkles rise, the mini dragon hops. Dec 26: the shopping bags swing. */
+.dg-lid{transform-origin:0% 100%;animation:dgLid 4.5s ease-in-out infinite}
+@keyframes dgLid{0%,38%,100%{transform:none}46%{transform:translate(-4px,-16px) rotate(-28deg)}86%{transform:translate(-4px,-16px) rotate(-24deg)}94%{transform:none}}
+.dg-gspark{opacity:0;animation:dgGspark 4.5s ease-out infinite}
+@keyframes dgGspark{0%,42%{opacity:0;transform:translateY(6px)}52%{opacity:1}84%{opacity:1;transform:translateY(-10px)}92%,100%{opacity:0;transform:translateY(-14px)}}
+.dg-h-day .dg-hop{animation:dgHop 4.5s cubic-bezier(.3,.7,.4,1) infinite}
+.dg-bags{transform-origin:50% 0%;animation:dgBags 1.4s ease-in-out infinite alternate}
+@keyframes dgBags{0%{transform:rotate(-2deg)}100%{transform:rotate(2deg)}}
+.dg-h-remember .dg-hop{animation:none}
 @media (max-width:370px){.set,.colhead{grid-template-columns:22px minmax(0,1fr) 64px 54px 42px;gap:6px}.bigweek{font-size:76px}}
 </style>
 
@@ -583,6 +758,7 @@ function viewToday(){
   <div class="wrap">
    ${S.sample?`<div style="padding-top:12px"><div class="banner"><span>${T("sample")}</span><button id="clearSample">${T("clear")}</button></div></div>`:""}
    ${a2hsBanner()}
+   ${dragonCard()}
    <div class="hero">
      <div class="eyebrow">${T("week")} · ${fmtDate(weekDate(w))}</div>
      <div class="row"><div class="bigweek num">${LIVE?esc(w.name):String(w.week).padStart(2,"0")}</div>
@@ -599,13 +775,13 @@ function viewToday(){
 }
 /* Weeks in a row with every gym session done (team circuits don't count). The current week only
    adds once it's complete, so the streak never "breaks" mid-week. */
-function weekStreak(){let n=0;for(let w=CUR;w>=1;w--){const ww=WEEKS[w-1];if(!ww)continue;
+function weekStreak(){if(dragonOn())return dragonData().streak;let n=0;for(let w=CUR;w>=1;w--){const ww=WEEKS[w-1];if(!ww)continue;
   const lifts=ww.days.filter(d=>!isCircuit(d));if(!lifts.length)continue;
   const all=lifts.every(d=>dayStatus(w,d.day)==="done");if(all)n++;else if(w<CUR)break}return n}
 /* "This week: 1 of 3 done" with a pip per session, and the week streak, at the top of Today. */
 function weekGoal(w){
   const lifts=w.days.filter(d=>!isCircuit(d));if(!lifts.length)return `<div class="eyebrow">${T("thisWeek")}</div>`;
-  const done=lifts.filter(d=>dayStatus(w.week,d.day)==="done").length,all=done===lifts.length,st=weekStreak();
+  const done=lifts.filter(d=>dayStatus(w.week,d.day)==="done").length,all=done===lifts.length,st=dragonOn()?0:weekStreak();
   return `<div class="wkgoal ${all?"all":""}"><div class="g"><div class="eyebrow">${T("thisWeek")}</div>
     <b class="num">${all?T("weekDone"):`${done} ${T("ofSets")} ${lifts.length} ${T("doneLc")}`}</b>
     <span class="pips">${lifts.map(d=>`<i class="${dayStatus(w.week,d.day)==="done"?"on":""}"></i>`).join("")}</span></div>
@@ -979,6 +1155,7 @@ function finishWorkout(wn,dn){
   // Demo: the sample days are already done, so finishing one again still shows the celebration.
   if(!LIVE&&S.days[key]){delete S.days[key];if(S.timers)delete S.timers[key]}
   const fresh=!S.days[key];
+  const dgBefore=fresh&&dragonOn()?dragonData():null;
   const tm=wtFinish(wn,dn);if(!tm)queueDayMark(wn,dn,"✓ Done · "+isoDay());
   const d=WEEKS[wn-1].days.find(x=>x.day===dn);let sets=0;const prs=[],lifts=[];
   d.items.forEach((it,i)=>{(it.sets||[]).forEach((_,s)=>{if(S.logs[keyOf(wn,dn,i,s)]?.done)sets++});
@@ -986,9 +1163,11 @@ function finishWorkout(wn,dn){
     const pr=!!prev&&b.score>prev.score+(b.bw?0:.5);if(pr)prs.push(it.name);
     if(lifts.length<2)lifts.push({name:it.name,b,prev,pr})});
   S.days[key]=Date.now();save();stopRest();
+  let dgAfter=null;if(dgBefore){if(DPREV&&DPREV.xp!=null)DPREV.xp+=10;dgAfter=dragonData()}
+  const dgEv=dgAfter&&(dgAfter.st>dgBefore.st||dgAfter.medals>dgBefore.medals);
   const fmtPrev=(l)=>l.prev?`${T("bestBefore")}: ${liftLine(l.prev)}`:T("firstTime");
-  document.getElementById("overlay").innerHTML=`<div class="scrim" data-close></div><div class="sheet"><div class="inner wrap"><div class="done-panel">
-    ${fresh?burstHtml():""}<div class="done-check">${I.check}</div>
+  document.getElementById("overlay").innerHTML=`<div class="scrim" data-close></div><div class="sheet"><div class="inner wrap"><div class="done-panel ${dgAfter?"dgp":""}">
+    ${dgAfter?(dgEv?"":burstHtml())+dragonCelebration(dgBefore,dgAfter,prs.length):`${fresh?burstHtml():""}<div class="done-check">${I.check}</div>`}
     <div class="eyebrow">${T("week")} ${WN(wn)} · ${esc(dayTitle(d))}</div><div class="big">${T("finished")}</div>
     <div class="done-grid three"><div class="stat"><b class="num">${tm?wtMins(tm):"–"}</b><span>${T("duration")} (min)</span></div><div class="stat"><b class="num">${sets}</b><span>${T("setsDone")}</span></div><div class="stat"><b class="num">${prs.length}</b><span>${T("prs")}</span></div></div>
     ${lifts.length?`<div class="lifts"><div class="eyebrow">${T("topLifts")}</div>${lifts.map((l,j)=>`<div class="lift ${l.pr?"pr":""}" style="--d:${.35+j*.12}s">
@@ -996,7 +1175,376 @@ function finishWorkout(wn,dn){
       <div class="sub">${fmtPrev(l)}</div></div>`).join("")}</div>`:""}
     ${prs.filter(n=>!lifts.some(l=>l.name===n)).length?`<div class="callout">🏅 ${prs.filter(n=>!lifts.some(l=>l.name===n)).map(esc).join(", ")}</div>`:""}
     <button class="btn block" data-close>${T("back")}</button></div></div></div>`;
-  if(fresh){buzz();chime(prs.length?"pr":"done")}
+  if(dgEv){buzz([40,60,40,1050,200,80,260]);dgSfx(dgAfter.st>dgBefore.st?DG_STAGES[dgAfter.st].k:"medal")}
+  else if(fresh){buzz();chime(prs.length?"pr":"done")}
+  if(dgAfter)dgAnimateXp();
+}
+
+/* ---------- dragon ----------
+   A pet dragon that hatches on the first finished workout and grows as the athlete trains.
+   Switched on one athlete at a time: the Training App sends athlete.dragon from the Copies tab ("Dragon" column):
+   "Yes", or a date like 2026-11-09 to count workouts from that week on (so it starts as an egg).
+   Off for everyone else: nothing below draws unless dragonOn() is true. In the public demo it only
+   appears with ?dragon in the address, so the demo used in videos stays as it is.
+   It only reads which days are done (the same rule as the rest of the app); it never writes to the sheet.
+   XP: 10 per finished workout, +20 each week every gym session of the week is done (the weekly goal).
+   Streak = weeks in a row with the goal met. A freeze is earned every 4 goal weeks (hold up to 2);
+   a short week uses one and the streak survives. The dragon never shrinks. */
+let DRAGON=null,DPREV=null;
+const DG_DEMO=!LIVE&&/[?&]dragon\b/i.test(location.search);
+const dragonOn=()=>LIVE?!!DRAGON:DG_DEMO;
+function setDragon(v){v=String(v==null?"":v).trim();if(!v||/^(no|non|off|false|0)$/i.test(v)){DRAGON=null;return}
+  const m=v.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);DRAGON={from:m?new Date(+m[1],+m[2]-1,+m[3]):null}}
+const DG_STAGES=[
+  {k:"egg",xp:0,en:"Dragon egg",fr:"Œuf de dragon"},
+  {k:"hatch",xp:10,en:"Hatchling",fr:"Nouveau-né",s:.6,head:1.3,dy:-40,wing:0,horn:0,fins:.75,spikes:0,tail:0,arm:.8},
+  {k:"baby",xp:100,en:"Baby dragon",fr:"Bébé dragon",s:.66,head:1.24,wing:.5,horn:.42,fins:.85,spikes:1,tail:.7,arm:.85},
+  {k:"young",xp:300,en:"Young dragon",fr:"Jeune dragon",s:.78,head:1.12,wing:.82,horn:.72,fins:1,spikes:3,tail:.9,arm:1,fang:1},
+  {k:"adult",xp:700,en:"Adult dragon",fr:"Dragon adulte",s:.9,head:1.03,wing:1.02,horn:1,fins:1.08,spikes:5,tail:1.08,arm:1.2,fang:2,brows:1,plates:1},
+  {k:"racing",xp:1300,en:"Racing dragon",fr:"Dragon de course",s:.96,head:1,wing:1.08,horn:1.06,fins:1.1,spikes:5,tail:1.12,arm:1.25,fang:2,brows:1,plates:1,band:1,paddle:1}];
+const DG_MEDAL_XP=500;   // after Racing dragon: a medal every 500 XP, so it keeps going season after season
+const dgStageOf=xp=>{let i=0;DG_STAGES.forEach((s,j)=>{if(xp>=s.xp)i=j});return i};
+const dgName=st=>DG_STAGES[st][S.profile.lang==="fr"?"fr":"en"];
+const dgFr=()=>S.profile.lang==="fr";
+function dgMonday(d){const x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x}
+function dragonData(){
+  const from=DRAGON&&DRAGON.from?dgMonday(DRAGON.from):null;
+  const weeks=WEEKS.filter(w=>w.week<=CUR&&!(from&&weekDate(w)<from)).map(w=>{const lifts=w.days.filter(d=>!isCircuit(d));
+    return {w:w.week,n:w.days.filter(d=>dayStatus(w.week,d.day)==="done").length,hit:lifts.filter(d=>dayStatus(w.week,d.day)==="done").length,goal:lifts.length,deload:/deload/i.test(phaseOf(w)||"")}});
+  let workouts=0,streak=0,best=0,freezes=0,run=0,bonus=0,started=false,frozeLast=false,missedLast=false;
+  weeks.forEach(x=>{workouts+=x.n;if(!started){if(!x.n)return;started=true}
+    if(!x.goal)return;   // a week with no gym sessions counts neither way
+    const hit=x.hit>=x.goal;
+    if(x.w===CUR){if(hit){streak++;bonus++}}
+    else if(hit){streak++;bonus++;run++;if(run%4===0&&freezes<2)freezes++;frozeLast=false;missedLast=false}
+    else if(freezes>0){freezes--;frozeLast=true;missedLast=false}
+    else{streak=0;run=0;frozeLast=false;missedLast=true}
+    best=Math.max(best,streak)});
+  const cur=weeks.find(x=>x.w===CUR)||{n:0,hit:0,goal:0,deload:false};
+  let xp=workouts*10+bonus*20;
+  const dow=(TODAY.getDay()+6)%7;
+  let mood=!workouts?"egg":cur.goal&&cur.hit>=cur.goal?"happy":!cur.n&&missedLast?"asleep":!cur.n&&dow>=3?"sleepy":"awake";
+  if(DPREV){if(DPREV.xp!=null){xp=DPREV.xp;workouts=xp?Math.max(1,Math.round(xp/15)):0}
+    if(DPREV.mood)mood=DPREV.mood;if(!xp)mood="egg";else if(mood==="egg")mood="awake"}
+  const st=dgStageOf(xp),stage=DG_STAGES[st],next=DG_STAGES[st+1];
+  const medals=next?0:Math.floor((xp-stage.xp)/DG_MEDAL_XP);
+  const lo=next?stage.xp:stage.xp+medals*DG_MEDAL_XP,hi=next?next.xp:lo+DG_MEDAL_XP;
+  const perWk=Math.max(1,cur.goal||3);
+  return {xp,workouts,streak,best:Math.max(best,streak),freezes,frozeLast,mood,st,stage,next,medals,curN:cur.n,deload:cur.deload,
+    pct:Math.max(0,Math.min(100,(xp-lo)/(hi-lo)*100)),toNext:hi-xp,left:Math.max(0,cur.goal-cur.hit),goal:cur.goal,
+    toNextW:Math.max(1,Math.ceil((hi-xp)/(10+20/perWk)))}
+}
+
+/* ---------- holidays (Christmas for now) ---------- */
+function dgHoliday(){
+  if(DPREV&&DPREV.hol!=null)return DPREV.hol;
+  const m=TODAY.getMonth()+1,d=TODAY.getDate();
+  if(m===11&&d===11)return "remember";
+  if(m===12&&d<=23)return "xmas";
+  if(m===12&&d===24)return "eve";
+  if(m===12&&d===25)return "day";
+  if(m===12&&d===26)return "boxing";
+  return "";
+}
+const DG_HOL_LINES={
+  remember:[["Today we remember. Lest we forget.","Aujourd’hui, on se souvient. N’oublions jamais."],["Wearing my poppy today. We remember.","Je porte mon coquelicot aujourd’hui. On se souvient."],["A quiet moment today. Lest we forget.","Un moment de silence aujourd’hui. N’oublions jamais."]],
+  xmas:[["I found a Santa hat. I'm never taking it off. 🎅","J’ai trouvé une tuque de père Noël. Je l’enlève plus jamais. 🎅"],["Sleigh bells and deadlifts. Best month.","Clochettes et soulevés de terre. Meilleur mois."],["Making my list: bench, rows, pull-ups. Checking it twice.","Ma liste : couché, rowing, tractions. Je la vérifie deux fois."],["Cookies after the workout, not before. Dragon rules.","Les biscuits après la séance, pas avant. Règle de dragon."],["Even reindeer do leg day.","Même les rennes font leur journée de jambes."],["This hat is warm. Your muscles should be too. Warm up!","Ma tuque est chaude. Tes muscles aussi devraient l’être. Échauffe-toi!"],["Ho ho… one more set!","Ho ho… encore une série!"],["I'm on the nice list. So are you. 🎄","Je suis sur la liste des sages. Toi aussi. 🎄"]],
+  eve:[["Ho ho ho! Santa dragon reporting for duty! 🎅","Ho ho ho! Le dragon Noël est au rapport! 🎅"],["My sack is full of gifts. And protein bars.","Ma poche est pleine de cadeaux. Et de barres protéinées."],["Tonight I deliver. Tomorrow we feast. 🎁","Ce soir je livre. Demain on fête. 🎁"]],
+  day:[["Merry Christmas! I got my little cousin a gift. 🎁","Joyeux Noël! J’ai un cadeau pour mon petit cousin. 🎁"],["Merry Christmas! Rest, eat, laugh. Training can wait a day.","Joyeux Noël! Repose-toi, mange, ris. L’entraînement peut attendre."],["Best gift this year? Getting stronger with you. 🎄","Le plus beau cadeau cette année? Devenir plus fort avec toi. 🎄"]],
+  boxing:[["Boxing Day! I'm shopping. Back for leg day. 🛍️","Lendemain de Noël! Je magasine. De retour pour les jambes. 🛍️"],["Deals everywhere. Still no discount on reps.","Des aubaines partout. Mais pas de rabais sur les répétitions."],["New shades, new bags, same training plan. 😎","Nouvelles lunettes, nouveaux sacs, même plan d’entraînement. 😎"]]};
+
+/* ---------- daily lines ---------- */
+const DG_LINES={"egg":[{"en":"I can hear you warming up out there!","fr":"Je t'entends t'échauffer, là-dehors!"},{"en":"Is it workout time? I'm so ready to hatch!","fr":"C'est l'heure de la séance? J'ai tellement hâte d'éclore!"},{"en":"Finish one workout and out I come! ✨","fr":"Finis une séance et je sors de ma coquille! ✨"},{"en":"It's cozy in here, but I'd rather be at the gym with you.","fr":"C'est douillet ici, mais j'aime mieux le gym avec toi."},{"en":"*crack*... not yet. Your first workout will finish the job!","fr":"*crac*... pas encore. Ta première séance va finir le travail!"},{"en":"Somebody in this shell can't wait to paddle with you.","fr":"Quelqu'un dans cette coquille a hâte de pagayer avec toi."},{"en":"I'm an egg with big plans. Step one: your first workout.","fr":"Je suis un œuf avec de grands projets. Étape 1: ta première séance."},{"en":"Wiggle, wiggle. That's egg for 'let's go train!'","fr":"Gigote, gigote. En langage d'œuf, ça veut dire « let's go au gym »!"},{"en":"Knock knock. It's me, your future training buddy!","fr":"Toc toc. C'est moi, ton futur partenaire d'entraînement!"},{"en":"I've been working on my roar. Finish a workout and I'll show you.","fr":"Je travaille mon rugissement. Finis une séance et je te le montre!"},{"en":"Your gym bag! Things are getting exciting in here!","fr":"Ton sac de gym! Ça commence à bouger là-dedans!"},{"en":"Shh... I'm listening for your very first rep. 🐉","fr":"Chut... j'attends ta toute première rep. 🐉"}],"train":[{"en":"{left} workouts left this week. I'll carry the water bottle.","fr":"Encore {left} séances cette semaine. Je porte ta bouteille d'eau."},{"en":"Today feels like a good day to get strong. 🔥","fr":"Aujourd'hui, ça sent la bonne séance. 🔥"},{"en":"Could today be one of your {left} sessions? Just asking.","fr":"Et si aujourd'hui était une de tes {left} séances? Je dis ça de même."},{"en":"Let's go! I already did my warm-up wiggle.","fr":"Let's go! J'ai déjà fait mon petit échauffement."},{"en":"Only {left} more workouts and the week is ours.","fr":"Plus que {left} séances et la semaine est à nous."},{"en":"Future race-day you says thanks for today.","fr":"Le toi du jour de course te dit merci d'avance."},{"en":"I counted with my claws: {left} workouts left.","fr":"J'ai compté avec mes griffes: il reste {left} séances."},{"en":"Strength today, speed on the water later.","fr":"De la force aujourd'hui, de la vitesse sur l'eau plus tard."},{"en":"Got {left} workouts to go. I believe in every single one.","fr":"{left} séances à faire. Je crois en chacune d'elles."},{"en":"Every set today is a stroke on race day.","fr":"Chaque série au gym, c'est un coup de pagaie le jour de la course."},{"en":"Week plan: {left} workouts, one dragon cheering for all of them.","fr":"Le plan: {left} séances, un dragon qui t'encourage à chacune."},{"en":"I've got a good feeling about today's session.","fr":"J'ai un bon feeling pour la séance d'aujourd'hui."},{"en":"Still {left} sessions to go. Warm-up first, then we fly.","fr":"Il reste {left} séances. Échauffement d'abord, puis on s'envole."},{"en":"Big dragon energy today. Let's use it! 🔥","fr":"Grosse énergie de dragon aujourd'hui. On s'en sert! 🔥"},{"en":"Between us and my happy dance: {left} workouts.","fr":"Entre nous et ma danse de joie: {left} séances."},{"en":"Attention... GYM! My favourite start sequence.","fr":"Attention... GYM! Ma séquence de départ préférée."},{"en":"We've got {left} sessions left. I packed your bag. Sort of.","fr":"Il nous reste {left} séances. J'ai fait ton sac. Un peu."},{"en":"Pull-ups today? I'll hang on the bar with you.","fr":"Des tractions aujourd'hui? Je m'accroche à la barre avec toi."},{"en":"Your next {left} trips to the gym? I call the front seat!","fr":"Tes {left} prochaines visites au gym? Je prends le siège d'en avant!"},{"en":"I'm guarding your water bottle. Nobody touches it.","fr":"Je surveille ta bouteille d'eau. Personne n'y touche."},{"en":"Like a race piece: {left} strong efforts and we cross the line.","fr":"Comme une course: {left} bons efforts et on passe la ligne."},{"en":"Rest timer's running. I'm counting seconds with my tail.","fr":"Le chrono de repos roule. Je compte les secondes avec ma queue."},{"en":"That's {left} chances this week to help me grow! ✨","fr":"Ça fait {left} chances cette semaine de m'aider à grandir! ✨"},{"en":"Deadlifts? I'll cheer from behind the plates.","fr":"Du deadlift? Je t'encourage, caché derrière les disques."},{"en":"Every rep counts, and I'm the one counting. {left} more!","fr":"Chaque rep compte, et c'est moi qui compte. Encore {left} séances!"},{"en":"Bench day? I'm your spotter. Emotionally.","fr":"Jour de bench? Je suis ton spotter. Émotionnellement."},{"en":"Boom, boom. The drum says {left} more sessions.","fr":"Boum, boum. Le tambour annonce {left} séances de plus."},{"en":"I'm already doing wing circles. Warm-up buddies?","fr":"Je fais déjà mes cercles d'ailes. On s'échauffe ensemble?"},{"en":"Ready when you are. {left} sessions left this week.","fr":"Prêt quand tu l'es. Il reste {left} séances cette semaine."},{"en":"Last time I counted your reps, I got to twelve and lost track.","fr":"La dernière fois, j'ai compté tes reps. Rendu à douze, je me suis mêlé."},{"en":"One stroke at a time. {left} workouts to go.","fr":"Un coup de pagaie à la fois. Encore {left} séances."},{"en":"Chalk on hands, dragon on shoulder. Let's lift. 💪","fr":"Magnésie sur les mains, dragon sur l'épaule. On lève! 💪"},{"en":"Scoreboard: {left} workouts left. Dragon morale: very high.","fr":"Tableau: {left} séances à faire. Moral du dragon: au sommet."},{"en":"Rows today? Your catch on the water will thank you.","fr":"Des tirages aujourd'hui? Ton attaque dans l'eau va te remercier."},{"en":"Plot twist: these {left} workouts are going to be fun.","fr":"Rebondissement: ces {left} séances vont être le fun."},{"en":"The drummer is ready. Are you?","fr":"Le tambour est prêt. Et toi?"},{"en":"I drew {left} little stars on the calendar. One per workout!","fr":"J'ai dessiné {left} petites étoiles sur le calendrier. Une par séance!"},{"en":"Somewhere, a boat is waiting for your power. 🛶","fr":"Quelque part, un bateau attend ta puissance. 🛶"},{"en":"Pick your moment. {left} workouts left, and I'll be at every one.","fr":"Choisis ton moment. Il reste {left} séances et je serai à chacune."},{"en":"Race day starts in the gym. Today counts.","fr":"Le jour de course commence au gym. Aujourd'hui, ça compte."},{"en":"Just {left} sessions between you and a well-earned rest.","fr":"Juste {left} séances avant un repos bien mérité."},{"en":"Strong legs, strong catch, happy dragon.","fr":"Bonnes jambes, bonne attaque, dragon heureux."},{"en":"Easy math: {left} more workouts, done together.","fr":"Calcul facile: {left} séances, faites ensemble."},{"en":"I dream about the water every night. Gym first, though!","fr":"Je rêve de l'eau chaque nuit. Mais le gym d'abord!"},{"en":"Lining up {left} workouts like boats at the start. 🛶","fr":"J'aligne {left} séances comme des bateaux au départ. 🛶"},{"en":"Twenty strokes of hype, coming your way!","fr":"Vingt coups de pagaie d'encouragement, juste pour toi!"},{"en":"My tail is wagging. {left} workouts left to share with you!","fr":"Ma queue frétille. Encore {left} séances à partager avec toi!"},{"en":"Let's build the power behind every stroke.","fr":"On bâtit la puissance derrière chaque coup de pagaie."},{"en":"The rest timer and I are on standby. {left} sessions to go.","fr":"Le chrono de repos et moi, on attend. {left} séances à faire."},{"en":"Picture the start line. Today, we get ready for it.","fr":"Imagine la ligne de départ. Aujourd'hui, on s'y prépare."},{"en":"Week check: {left} to go. Feeling good about this one 💪","fr":"Bilan de la semaine: {left} à faire. Je le sens bien 💪"},{"en":"Paddles up! Oops, wrong room. Barbells up!","fr":"Pagaies prêtes! Oups, mauvaise place. Barres prêtes!"},{"en":"I'll keep the bench warm for your next {left} workouts.","fr":"Je garde le banc au chaud pour tes {left} prochaines séances."},{"en":"The water is far, the gym is close. Off we go!","fr":"L'eau est loin, le gym est proche. On y va!"},{"en":"Each of these {left} workouts makes the boat a little faster.","fr":"Chacune de ces {left} séances rend le bateau un peu plus rapide."},{"en":"I tried a pull-up. I flew instead. Does that count? 🐉","fr":"J'ai essayé une traction. J'ai volé à la place. Ça compte? 🐉"},{"en":"Here's the deal: {left} sessions, no stress, lots of fun.","fr":"Le deal: {left} séances, pas de stress, plein de plaisir."},{"en":"Fun fact: dragons love leg day. Okay, I made that up.","fr":"Le savais-tu? Les dragons adorent le jour de jambes. Bon, j'ai inventé ça."},{"en":"Hey you! {left} more workouts and a dragon who loves them all.","fr":"Hé toi! Encore {left} séances et un dragon qui les adore toutes."},{"en":"I breathe fire. You breathe through your sets. Team!","fr":"Moi, je crache du feu. Toi, tu respires dans tes séries. Quelle équipe!"},{"en":"My roar is loud, but my belief in you is louder.","fr":"Mon rugissement est fort, mais ma confiance en toi l'est encore plus."},{"en":"Warning: this dragon gets very excited about squats.","fr":"Avertissement: ce dragon capote sur les squats."},{"en":"Gym clothes on? Mine are invisible, but they're on.","fr":"Linge de gym enfilé? Le mien est invisible, mais il est là."},{"en":"I sharpened my claws. For clapping, obviously.","fr":"J'ai aiguisé mes griffes. Pour applaudir, évidemment."},{"en":"Do dragons get a turn on the foam roller? Asking for me.","fr":"Est-ce que les dragons ont droit au rouleau de mousse? Je demande pour moi."},{"en":"*stretches wings* Okay, I'm up. Let's train!","fr":"*étire ses ailes* OK, je suis debout. On s'entraîne?"},{"en":"I sat on your gym bag so you wouldn't forget it.","fr":"Je me suis assis sur ton sac de gym pour que tu l'oublies pas."},{"en":"Look! I'm holding your towel. Very important job.","fr":"Regarde! Je tiens ta serviette. Une job très importante."},{"en":"I'm waiting by the door. Whenever you're ready!","fr":"Je t'attends à la porte. Quand tu veux!"},{"en":"Loudest cheer in the room: you've got this!","fr":"Le plus gros cri d'encouragement du gym: t'es capable!"},{"en":"I polished the dumbbells. They're sparkly now. ✨","fr":"J'ai poli les haltères. Ils brillent maintenant. ✨"},{"en":"Can I come? I'll be quiet. Mostly. 🐉","fr":"Je peux venir? Je vais être sage. Presque. 🐉"},{"en":"I made a playlist. It's just roars. Ten of them.","fr":"J'ai fait une playlist. C'est juste des rugissements. Dix."},{"en":"*curls up next to your shoes* Gym soon?","fr":"*se roule en boule près de tes souliers* Gym bientôt?"},{"en":"You bring the effort, I bring the fire. Deal?","fr":"Toi, l'effort. Moi, le feu. Marché conclu?"},{"en":"I tapped out a drum beat for your first set. Shall we?","fr":"J'ai préparé un rythme de tambour pour ta première série. On commence?"},{"en":"Psst. The gym is open, and so is my heart.","fr":"Psst. Le gym est ouvert, et mon cœur aussi."},{"en":"Every workout makes my scales a little shinier.","fr":"Chaque séance rend mes écailles un peu plus brillantes."},{"en":"Hi partner! Let's make today count.","fr":"Allô partenaire! Aujourd'hui, on en profite."},{"en":"Breathe in, brace, lift. I'm doing it with you. Kind of.","fr":"Inspire, gaine-toi, lève. Je le fais avec toi. Plus ou moins."},{"en":"A good session today means a happy dragon tonight.","fr":"Une bonne séance aujourd'hui, un dragon heureux ce soir."},{"en":"Your warm-up is my favourite part. Wiggle time!","fr":"Ton échauffement, c'est mon bout préféré. On gigote!"},{"en":"I believe in you more than I believe in naps. And I love naps.","fr":"Je crois en toi plus qu'aux siestes. Et j'adore les siestes."},{"en":"Fast boats are built one good session at a time.","fr":"Un bateau rapide se bâtit une bonne séance à la fois."},{"en":"No pressure, just paddles. Okay, barbells.","fr":"Zéro pression, juste des pagaies. Bon, des barres."},{"en":"Today's mission: show up, warm up, power up.","fr":"Mission du jour: arriver, s'échauffer, tout donner."},{"en":"I'm your biggest fan. Quietly. From inside your phone.","fr":"Je suis ton plus grand fan. Discrètement. Dans ton téléphone."},{"en":"Gym bag: packed. Dragon: ready. You: amazing.","fr":"Sac de gym: fait. Dragon: prêt. Toi: incroyable."},{"en":"Clean catch, strong drive... and that was just my warm-up.","fr":"Belle attaque, gros tirage... et ça, c'était juste mon échauffement."},{"en":"I'm doing push-ups to get ready. One. Okay, done. 💪","fr":"Je fais des push-ups pour me préparer. Un. OK, fini. 💪"}],"oneLeft":[{"en":"One more workout and this week is done! 🔥","fr":"Encore une séance et la semaine est faite! 🔥"},{"en":"Last one of the week. Let's finish strong.","fr":"Dernière séance de la semaine. On finit en force."},{"en":"I can already smell the victory nap. Just one left!","fr":"Je sens déjà la sieste de victoire. Plus qu'une!"},{"en":"Final stretch of the race: one workout to go!","fr":"Dernier droit de la course: une séance à faire!"},{"en":"My special happy dance is one workout away.","fr":"Ma danse spéciale de joie est à une séance."},{"en":"So close! One workout and the week is yours.","fr":"On y est presque! Une séance et la semaine est à toi."},{"en":"The drummer's calling the last 20. One workout left!","fr":"Le tambour annonce le dernier 20. Plus qu'une séance!"},{"en":"I saved my biggest cheer for this one.","fr":"J'ai gardé mon plus gros encouragement pour celle-là."},{"en":"After one more session, the couch is all ours.","fr":"Après une séance de plus, le divan est à nous."},{"en":"Party hat's on. One workout left!","fr":"Chapeau de fête: en place. Il reste une séance!"},{"en":"Finish buoys in sight. One more push! 🛶","fr":"Les bouées d'arrivée sont en vue. Une dernière poussée! 🛶"},{"en":"Only one left. You've done the hard part already.","fr":"Une seule à faire. Le plus dur est déjà fait."},{"en":"One workout away from a full week. Let's go! 🐉","fr":"À une séance d'une semaine complète. Let's go! 🐉"},{"en":"I've got the confetti out. Just one more session.","fr":"J'ai sorti les confettis. Il reste juste une séance."},{"en":"I'm practising my victory roar. One workout to go.","fr":"Je pratique mon rugissement de victoire. Il en reste une."},{"en":"One more and my tail won't stop wagging.","fr":"Encore une et ma queue va frétiller sans arrêt."},{"en":"Almost there! I'll meet you at the finish with a towel.","fr":"Presque là! Je t'attends à l'arrivée avec une serviette."},{"en":"The week is one session from done. You've got this.","fr":"La semaine est à une séance d'être finie. T'es capable."},{"en":"Hey! One workout left. I believe in you so much.","fr":"Hé! Il reste une séance. J'ai tellement confiance en toi."},{"en":"Warm-up, workout, done. That's all that's left!","fr":"Échauffement, séance, fini. C'est tout ce qui reste!"},{"en":"Your week is almost a masterpiece. One brushstroke left.","fr":"Ta semaine est presque un chef-d'œuvre. Il reste un coup de pinceau."},{"en":"I can feel it: one more and I grow a little. ✨","fr":"Je le sens: encore une et je grandis un peu. ✨"},{"en":"The boat is lined up for the last workout of the week.","fr":"Le bateau est aligné pour la dernière séance de la semaine."},{"en":"Bring it home! One session left.","fr":"On finit ça en beauté! Une dernière séance."},{"en":"Bag packed, wings ready. One workout to go!","fr":"Sac prêt, ailes prêtes. Plus qu'une séance!"},{"en":"One. Single. Workout. Then nap time for both of us. 💤","fr":"Une. Seule. Séance. Après, sieste pour nous deux. 💤"},{"en":"I wrote you a tiny chant: 'one more, one more!'","fr":"Je t'ai écrit un petit chant: « encore une, encore une! »"},{"en":"We're in the last 250. Let's power through!","fr":"On est dans le dernier 250. On pousse jusqu'au bout!"},{"en":"Just one to go and this week is in the bag.","fr":"Juste une, et cette semaine est dans la poche."},{"en":"Look at you go! One workout from the goal.","fr":"Regarde-toi aller! Plus qu'une séance avant l'objectif."},{"en":"Goal check: one workout left. Dragon check: super excited.","fr":"Objectif: une séance à faire. Dragon: super excité."},{"en":"I'll keep the fire lit for your last session. 🔥","fr":"Je garde le feu allumé pour ta dernière séance. 🔥"},{"en":"The last workout is the sweetest. Let's go get it.","fr":"La dernière séance est la plus belle. Allons la chercher."},{"en":"One left! I'm already humming the finish song.","fr":"Une seule! Je fredonne déjà la chanson de la fin."},{"en":"Your week has one empty box left. Let's fill it!","fr":"Il reste une case vide cette semaine. On la remplit?"}],"weekDone":[{"en":"Week done! Rest is part of the plan. 💤","fr":"Semaine terminée! Le repos fait partie du plan. 💤"},{"en":"I'm napping on your gym bag. You earned this.","fr":"Je fais la sieste sur ton sac de gym. Tu l'as mérité."},{"en":"Goal smashed. Now we recover like pros.","fr":"Objectif pulvérisé. Maintenant, on récupère comme des pros."},{"en":"You did it! I'm doing a happy dance on your pillow. 🐉","fr":"T'as réussi! Je danse de joie sur ton oreiller. 🐉"},{"en":"Full week! My scales are extra shiny today. ✨","fr":"Semaine complète! Mes écailles brillent encore plus aujourd'hui. ✨"},{"en":"Rest days make fast boats. Enjoy it!","fr":"Les jours de repos font des bateaux rapides. Profites-en!"},{"en":"Blissful dragon, complete week. Life is good.","fr":"Dragon béat, semaine complète. La vie est belle."},{"en":"The whole week, done. Time to relax.","fr":"Toute la semaine, faite. C'est le temps de relaxer."},{"en":"No more workouts needed. Just good rest and big smiles.","fr":"Pas besoin d'autres séances. Juste du bon repos et des gros sourires."},{"en":"I'm so proud I could breathe fire. Carefully. 🔥","fr":"Je suis tellement fier que je pourrais cracher du feu. Prudemment. 🔥"},{"en":"Week nailed! I'm wearing my tiny crown today.","fr":"Semaine réussie! Je porte ma petite couronne aujourd'hui."},{"en":"Recovery is where the speed shows up. Rest well!","fr":"C'est au repos que la vitesse s'installe. Repose-toi bien!"},{"en":"Goal complete! I'm curled up, very content.","fr":"Objectif atteint! Je suis roulé en boule, tout content."},{"en":"You showed up all week. That's what crews are made of.","fr":"T'as été là toute la semaine. C'est de ça qu'un équipage est fait."},{"en":"Let it run! Week complete, time to glide. 🛶","fr":"Laisse glisser! La semaine est faite, on se repose. 🛶"},{"en":"Shhh... I'm napping. Wake me up next week.","fr":"Chut... je fais dodo. Réveille-moi la semaine prochaine."},{"en":"Mission accomplished. Nap mode: activated. 💤","fr":"Mission accomplie. Mode sieste: activé. 💤"},{"en":"Feet up. Phone down. Okay, maybe peek at me sometimes.","fr":"Les pieds en l'air. Téléphone de côté. Bon, tu peux me regarder des fois."},{"en":"Big week! I flapped so hard I fell off my cushion.","fr":"Grosse semaine! J'ai tellement battu des ailes que je suis tombé de mon coussin."},{"en":"You hit the goal. I'm framing this week.","fr":"T'as atteint l'objectif. J'encadre cette semaine."},{"en":"Done and dusted. Go do something fun!","fr":"Fini, bouclé. Va t'amuser!"},{"en":"Seven days, goal done, zero regrets. Enjoy the calm.","fr":"Sept jours, objectif rempli, zéro regret. Profite du calme."},{"en":"I'm guarding your rest day. Nobody gets past me.","fr":"Je protège ton jour de repos. Personne passe."},{"en":"Week complete. The boat says thank you.","fr":"Semaine accomplie. Le bateau te dit merci."},{"en":"Warm, happy and very sleepy. Good week, partner.","fr":"Au chaud, heureux et tout endormi. Belle semaine, partenaire."},{"en":"Wooo! We did it! Okay... now quiet time.","fr":"Wouhou! On l'a fait! Bon... maintenant, on relaxe."},{"en":"I'm wrapped in your gym towel like a little cocoon. So cozy.","fr":"Je suis enroulé dans ta serviette comme un petit cocon. Tellement douillet."},{"en":"Everything this week is checked off. Breathe and enjoy.","fr":"Tout est coché cette semaine. Respire et profite."},{"en":"Training done, now rest. That's the whole recipe.","fr":"L'entraînement est fait, maintenant le repos. C'est toute la recette."},{"en":"Week goal: crushed. Rest goal: starting now.","fr":"Objectif de la semaine: écrasé. Objectif repos: ça commence."},{"en":"Too happy to sit still! Okay, now I'll sit still.","fr":"Trop content pour rester tranquille! Bon, là je reste tranquille."},{"en":"Proud of you. Go refill your energy.","fr":"Fier de toi. Va faire le plein d'énergie."},{"en":"Dragon-approved rest day, starting now.","fr":"Journée de repos approuvée par le dragon, dès maintenant."},{"en":"Done for the week! The barbell needs a rest too.","fr":"C'est fini pour la semaine! La barre a besoin de repos, elle aussi."},{"en":"Look at that full week. Wow. Just wow.","fr":"Regarde cette semaine complète. Wow. Juste wow."},{"en":"You kept every promise to yourself this week.","fr":"T'as tenu chaque promesse envers toi-même cette semaine."},{"en":"Time to rest. You'll feel the difference on the water.","fr":"Place au repos. Tu vas sentir la différence sur l'eau."},{"en":"Today I'm doing nothing. Join me? Dragon's orders.","fr":"Aujourd'hui, je fais rien. Tu te joins? Ordre du dragon."},{"en":"Sunbathing on the windowsill. Great week, by the way.","fr":"Je me fais dorer sur le bord de la fenêtre. Belle semaine, en passant."},{"en":"That's a wrap! See you after a good rest.","fr":"C'est dans la boîte! On se revoit après un bon repos."},{"en":"The weekly goal is done. The bonus prize? Extra rest.","fr":"L'objectif est atteint. Le prix bonus? Du repos en extra."},{"en":"My wings are tired from all that cheering. Nap time. 💤","fr":"Mes ailes sont fatiguées de t'encourager. Au lit! 💤"},{"en":"The work is done. Now trust it.","fr":"Le travail est fait. Maintenant, fais-lui confiance."},{"en":"Week's done! I built a pillow fort. Come on in! 🐉","fr":"Semaine finie! J'ai bâti un fort en coussins. Viens! 🐉"},{"en":"Goal done. A happy dragon says: rest up!","fr":"Objectif fait. Un dragon heureux te dit: repose-toi!"},{"en":"Strong week. Calm days ahead. Perfect balance.","fr":"Semaine solide. Des jours tranquilles devant. L'équilibre parfait."},{"en":"Speed is built in the gym and sealed on the couch.","fr":"La vitesse se bâtit au gym et se scelle sur le divan."},{"en":"I told the whole boat about your week. They cheered.","fr":"J'ai raconté ta semaine à tout le bateau. Tout le monde a applaudi."},{"en":"This week? Gold medal effort. Now, cozy time.","fr":"Cette semaine? Un effort de médaille d'or. Place au cocooning."},{"en":"You don't need to do more. You did great.","fr":"T'as pas besoin d'en faire plus. T'as été super."},{"en":"Quiet days are part of the program too.","fr":"Les journées tranquilles font aussi partie du programme."},{"en":"The rest timer is now set to 'until next week.'","fr":"Le chrono de repos est réglé à « jusqu'à la semaine prochaine »."},{"en":"Stretching, yawning, smiling. Thanks for this week.","fr":"Je m'étire, je bâille, je souris. Merci pour cette semaine."},{"en":"Pull-up bar: closed. Couch: open. Great week!","fr":"Barre de traction: fermée. Divan: ouvert. Belle semaine!"},{"en":"You worked hard. Let rest do its part.","fr":"T'as travaillé fort. Laisse le repos faire sa part."},{"en":"Your week is complete, and so is my happiness.","fr":"Ta semaine est complète, et mon bonheur aussi."},{"en":"Five-star week. ✨ Now the best part: rest.","fr":"Une semaine cinq étoiles. ✨ Place au meilleur: le repos."},{"en":"Did you see me cheering? Now it's cuddle time.","fr":"M'as-tu vu t'encourager? Là, c'est l'heure des câlins."},{"en":"Every workout done. The rest of the week is for recharging.","fr":"Séances: toutes faites. Le reste de la semaine, c'est pour recharger."},{"en":"Even your gym shoes are napping. Well deserved.","fr":"Même tes souliers de gym font la sieste. Bien mérité."}],"sleepy":[{"en":"*yawn* One workout and I'm wide awake. 💤","fr":"*bâille* Une séance et je suis tout réveillé. 💤"},{"en":"I'm a little sleepy. A session would perk me right up.","fr":"Je suis un peu endormi. Une séance me réveillerait d'un coup."},{"en":"Zzz... oh, hi! Gym today, maybe?","fr":"Zzz... oh, allô! Gym aujourd'hui, peut-être?"},{"en":"My eyes are heavy, but my heart is ready to train.","fr":"J'ai les yeux lourds, mais le cœur prêt à s'entraîner."},{"en":"Drowsy dragon here. One workout is all it takes.","fr":"Dragon somnolent au rapport. Une séance, c'est tout ce qu'il faut."},{"en":"No stress. Even one session this week makes me smile.","fr":"Pas de stress. Même une seule séance cette semaine me fait sourire."},{"en":"I'm curled up and cozy. Wake me with a workout?","fr":"Je suis en boule, bien au chaud. Tu me réveilles avec une séance?"},{"en":"Sleepy wings... a little warm-up would help us both.","fr":"Ailes endormies... un petit échauffement nous ferait du bien, toi et moi."},{"en":"Weeks get busy. I get it. One session is plenty.","fr":"Les semaines sont chargées, je comprends. Une séance, c'est déjà beaucoup."},{"en":"*snore*... *snort*... is that the gym bag?","fr":"*ronfle*... *renifle*... c'est ton sac de gym?"},{"en":"Half asleep, fully on your side.","fr":"À moitié endormi, mais complètement de ton bord."},{"en":"Saving all my energy for your next session. Zzz.","fr":"Je garde toute mon énergie pour ta prochaine séance. Zzz."},{"en":"Just napping till you're ready. No rush. 💤","fr":"Je fais juste une sieste en t'attendant. Pas de presse. 💤"},{"en":"One little workout and I'll stretch, roar and spin.","fr":"Une petite séance et je m'étire, je rugis et je tourne en rond."},{"en":"Mmm... dreaming of paddles. Want to make it real?","fr":"Mmm... je rêve de pagaies. On en fait une réalité?"},{"en":"Warm blanket, sleepy dragon, zero judgment.","fr":"Couverture chaude, dragon endormi, zéro jugement."},{"en":"Whenever works for you, I'll be here, yawning happily.","fr":"Quand tu veux, je suis là à bâiller joyeusement."},{"en":"A tiny spark would wake me up. One session? 🔥","fr":"Une petite étincelle me réveillerait. Une séance? 🔥"},{"en":"Every session counts, even if it's the only one this week.","fr":"Chaque séance compte, même si c'est la seule de la semaine."},{"en":"I'm dozing on your water bottle. It's very comfy.","fr":"Je somnole sur ta bouteille d'eau. C'est super confortable."},{"en":"*one eye opens* Gym? I'd love that. 🐉","fr":"*ouvre un œil* Le gym? J'adorerais ça. 🐉"},{"en":"No catching up needed. One good session is enough.","fr":"Pas besoin de rattraper quoi que ce soit. Une bonne séance suffit."},{"en":"Low battery dragon. One workout recharges me.","fr":"Dragon en batterie faible. Une séance me recharge."},{"en":"Slow week? That's okay. Let's do one together.","fr":"Semaine tranquille? C'est correct. On en fait une ensemble."},{"en":"I yawned so big I almost breathed fire. Gym soon?","fr":"J'ai bâillé si fort que j'ai presque craché du feu. Le gym, bientôt?"},{"en":"Snoozing gently. A warm-up would make a nice alarm clock.","fr":"Je roupille doucement. Un échauffement ferait un beau réveille-matin."},{"en":"Even sleepy dragons love a good set of pull-ups.","fr":"Même les dragons endormis aiment une bonne série de tractions."},{"en":"My tail is too sleepy to wag. One session would fix that.","fr":"Ma queue est trop endormie pour frétiller. Une séance arrangerait ça."},{"en":"Nap number three... a workout would be more fun.","fr":"Sieste numéro trois... une séance serait plus le fun."},{"en":"Psst... one session and I'm back to full sparkle. ✨","fr":"Psst... une séance et je brille à nouveau. ✨"},{"en":"Sleepy but hopeful. You've got this.","fr":"Endormi, mais plein d'espoir. T'es capable."},{"en":"Race day is calling softly. One gym session?","fr":"Le jour de course m'appelle doucement. Une séance au gym?"},{"en":"Snuggled up. One workout and I'm bouncing again.","fr":"Bien collé dans mon coin. Une séance et je rebondis."},{"en":"Not grumpy, just drowsy. Promise. Gym when you can?","fr":"Pas grognon, juste somnolent. Promis. Le gym quand tu peux?"},{"en":"*stretches one wing* ...maybe a workout today?","fr":"*étire une aile* ...peut-être une séance aujourd'hui?"}],"asleep":[{"en":"Zzz... I'm asleep. One workout and I'm back! 💤","fr":"Zzz... je dors. Une séance et je reviens! 💤"},{"en":"New week, fresh start. Wake me up whenever you're ready.","fr":"Nouvelle semaine, nouveau départ. Réveille-moi quand tu veux."},{"en":"I took a long nap. Your next session wakes me up.","fr":"J'ai fait une longue sieste. Ta prochaine séance va me réveiller."},{"en":"Clean slate. I'm still your dragon.","fr":"Page blanche. Je suis toujours ton dragon."},{"en":"Asleep, not gone. One workout and we're back on the water.","fr":"Endormi, pas parti. Une séance et on retourne sur l'eau."},{"en":"Shh... dreaming of you. Come wake me with a session.","fr":"Chut... je rêve de toi. Viens me réveiller avec une séance."},{"en":"Every crew has quiet weeks. Today is a new chapter.","fr":"Chaque équipage a ses semaines tranquilles. Aujourd'hui, on ouvre un nouveau chapitre."},{"en":"I'm snoozing, but I saved your seat in the boat. 🛶","fr":"Je roupille, mais j'ai gardé ta place dans le bateau. 🛶"},{"en":"Hi again! One workout and I'll pop right up.","fr":"Hé, re-salut! Une séance et je me lève d'un bond."},{"en":"*snore*... *mumbles* ...pull-ups... *snore*","fr":"*ronfle*... *marmonne* ...tractions... *ronfle*"},{"en":"I fell asleep on your gym bag. Grab it and I'll wake up.","fr":"Je me suis endormi sur ton sac de gym. Prends-le et je me réveille."},{"en":"Life happens. I'm right here, ready for what's next.","fr":"Ça arrive. Je suis juste ici, prêt pour la suite."},{"en":"Comebacks start with one session. Let's start ours.","fr":"Chaque retour commence par une séance. Commençons le nôtre."},{"en":"Deep sleep mode. One finished workout flips the switch.","fr":"Mode sommeil profond. Une séance terminée me rallume."},{"en":"I'm not upset, just sleepy. Let's train when you can.","fr":"Je suis pas fâché, juste endormi. On s'entraîne quand tu peux."},{"en":"The boat waits. The water waits. I wait. Happily.","fr":"Le bateau attend. L'eau attend. Moi aussi. Avec plaisir."},{"en":"One workout wakes the dragon. That's the rule. 🐉","fr":"Une séance réveille le dragon. C'est la règle. 🐉"},{"en":"Hibernating a little. Your next workout is my spring.","fr":"J'hiberne un peu. Ta prochaine séance, c'est mon printemps."},{"en":"Last week? Forgotten. This one is brand new.","fr":"La semaine passée? Oubliée. Celle-ci est toute neuve."},{"en":"Still here, still cheering, just a bit sleepy.","fr":"Toujours là, toujours ton fan, juste un peu endormi."},{"en":"The best naps end with a workout. Wake me?","fr":"Les meilleures siestes finissent par une séance. Tu me réveilles?"},{"en":"Start line, calm water, new race. Let's begin again.","fr":"Ligne de départ, eau calme, nouvelle course. On recommence."},{"en":"*tiny snore* ...one workout and I'm all yours.","fr":"*petit ronflement* ...une séance et je suis tout à toi."},{"en":"Nothing to fix, nothing to make up. Just today.","fr":"Rien à réparer, rien à rattraper. Juste aujourd'hui."},{"en":"I napped all of last week. Ready for a fresh one?","fr":"J'ai dormi toute la semaine passée. On en commence une neuve?"},{"en":"The gym door is always open. No rush.","fr":"La porte du gym est toujours ouverte. Rien qui presse."},{"en":"One session, and this sleepy dragon starts glowing. ✨","fr":"Une séance, et ce dragon endormi se met à briller. ✨"},{"en":"Starting again is a skill. Let's practise it today.","fr":"Recommencer, c'est un talent. On le pratique aujourd'hui?"},{"en":"Sleeping like a log. A dragon log. Wake me with a workout?","fr":"Je dors comme une bûche. Une bûche de dragon. Une séance pour me réveiller?"},{"en":"No matter how long the nap, I'm always happy to see you.","fr":"Peu importe la longueur de la sieste, je suis toujours content de te voir."}],"deload":[{"en":"Deload week! Lighter weights, same dragon love.","fr":"Semaine de décharge! Charges plus légères, même amour de dragon."},{"en":"Recovery is training too. Easy does it this week.","fr":"La récupération, c'est de l'entraînement aussi. Doucement cette semaine."},{"en":"Light week now, more speed later. Trust the plan.","fr":"Semaine légère maintenant, plus de vitesse plus tard. Fais confiance au plan."},{"en":"Easing off this week. Let the hard work sink in.","fr":"On allège cette semaine. On laisse le gros travail s'installer."},{"en":"Even dragons slow their wingbeats sometimes. 🐉","fr":"Même les dragons ralentissent leurs battements d'ailes, des fois. 🐉"},{"en":"Smooth, easy reps this week. I'll count them gently.","fr":"Des reps fluides et faciles cette semaine. Je les compte doucement."},{"en":"This week we refill the tank, one easy session at a time.","fr":"Cette semaine, on refait le plein, une séance facile à la fois."},{"en":"Easy week. Like a long glide after a hard piece. 🛶","fr":"Semaine facile. Comme une longue glisse après un gros effort. 🛶"},{"en":"Lighter isn't lazier. It's smarter. ✨","fr":"Alléger, c'est pas paresser. C'est s'entraîner intelligemment. ✨"},{"en":"The boat gets faster while you recover. Enjoy the deload.","fr":"Le bateau devient plus rapide pendant que tu récupères. Profite de la décharge."},{"en":"Go gentle on the bar. My cheering stays full volume.","fr":"On y va mollo sur la barre. Mes encouragements restent au max."},{"en":"Good form, no grinding, big smiles. Perfect deload.","fr":"Belle technique, aucune rep à l'arraché, gros sourires. Décharge parfaite."},{"en":"A lighter week is a gift. Unwrap it slowly.","fr":"Une semaine plus légère, c'est un cadeau. Déballe-le doucement."},{"en":"The best crews know when to ease off. This is that week.","fr":"Les meilleurs équipages savent quand lever le pied. C'est cette semaine."},{"en":"Happy dragon, fresh energy, lighter week. Love it.","fr":"Dragon heureux, énergie neuve, semaine légère. J'adore."}],"after":[{"en":"So proud of you! 🔥","fr":"Tellement fier de toi! 🔥"},{"en":"That's another one in the boat!","fr":"Une autre dans le bateau!"},{"en":"Workout complete. Happy dragon noises!","fr":"Séance terminée. Bruits de dragon heureux!"},{"en":"I grew a tiny bit! All thanks to you. ✨","fr":"J'ai grandi un petit peu! Tout ça grâce à toi. ✨"},{"en":"Awesome. Just awesome!","fr":"Malade. Juste malade!"},{"en":"Rawr! Translation: you were amazing.","fr":"Rawr! Traduction: t'as été formidable."},{"en":"Look at you! Another session done.","fr":"Regarde-toi! Une autre séance de faite."},{"en":"I counted every rep. They were all great.","fr":"J'ai compté chaque rep. Elles étaient toutes belles."},{"en":"High five! Well, high claw.","fr":"Tape dans ma main! Bon, dans ma griffe."},{"en":"Session done. The boat just got faster.","fr":"Séance faite. Le bateau vient de gagner en vitesse."},{"en":"That's the stuff! I'm running laps around the room.","fr":"C'est ça que j'aime! Je cours en rond dans la pièce."},{"en":"Nailed it. Let's celebrate with a stretch.","fr":"Réussi. On fête ça avec un étirement."},{"en":"You stuck with it to the end. That's everything.","fr":"T'as été là jusqu'au bout. C'est tout ce qui compte."},{"en":"Every session is a brick. You're building something fast.","fr":"Chaque séance est une brique. Tu bâtis quelque chose de rapide."},{"en":"Woohoo! My wings are flapping like crazy.","fr":"Wouhou! Mes ailes battent comme des folles."},{"en":"You're amazing. That's it. That's the message.","fr":"T'es incroyable. C'est tout. C'est le message."},{"en":"I knew you could do it!","fr":"Je savais que t'étais capable!"},{"en":"Great work! Enjoy that good tired feeling.","fr":"Beau travail! Profite de cette bonne fatigue."},{"en":"Banked another session for race day. 🛶","fr":"Une séance de plus en banque pour le jour de course. 🛶"},{"en":"Done! Cue the victory roar!","fr":"Fini! Place au rugissement de victoire!"},{"en":"Finished! One very, very happy dragon here.","fr":"Terminé! Un dragon très, très content ici."},{"en":"That was strong. Like, really strong.","fr":"C'était solide. Genre, vraiment solide."},{"en":"Proud dragon alert! 🐉","fr":"Alerte dragon fier! 🐉"},{"en":"You + me + that workout = perfect team.","fr":"Toi + moi + cette séance = équipe parfaite."},{"en":"And that's how it's done!","fr":"Et c'est comme ça qu'on fait!"},{"en":"I saved you a spot on the couch. Well earned.","fr":"Je t'ai gardé une place sur le divan. Bien mérité."},{"en":"Smooth, strong, done. Love it.","fr":"Fluide, solide, c'est fait. J'adore."},{"en":"Your drummer would be proud. I definitely am.","fr":"Ton tambour serait fier. Moi, je le suis, c'est sûr."},{"en":"One more session, just for you. That's beautiful.","fr":"Encore une séance, juste pour toi. C'est beau, ça."},{"en":"Yesss! Another workout down.","fr":"Ouiii! Une autre séance de réglée."},{"en":"Soak up that feeling. You earned it.","fr":"Savoure ce moment. Tu l'as gagné."},{"en":"Boom! Done. Dragon dance time. 🐉","fr":"Boum! Fini. C'est l'heure de la danse du dragon. 🐉"},{"en":"My tail won't stop wagging!","fr":"Ma queue arrête pas de frétiller!"},{"en":"Another step closer to race day. Nicely done.","fr":"Un pas de plus vers le jour de course. Bien joué."},{"en":"You finished! That's my favourite button.","fr":"T'as fini! C'est mon bouton préféré."},{"en":"Sweat, smiles, session done. Best combo.","fr":"Sueur, sourires, séance faite. Le meilleur combo."},{"en":"That one was for the boat. And for me. Thanks!","fr":"Celle-là, c'était pour le bateau. Et pour moi. Merci!"},{"en":"Focused. Finished. Legendary.","fr":"Focus. Effort. Légende."},{"en":"I'll tell the whole gym. Okay, I'll tell your phone.","fr":"Je vais le dire à tout le gym. Bon, à ton téléphone."},{"en":"Big dragon grin. Workout done.","fr":"Gros sourire de dragon. C'est fait."},{"en":"Proud of every single set you did today.","fr":"Fier de chaque série que t'as faite aujourd'hui."},{"en":"Solid work. Now rest a bit.","fr":"Du solide. Maintenant, repose-toi un peu."},{"en":"Ding ding! Session complete.","fr":"Ding ding! Séance complétée."},{"en":"Today counted. Because of you. ✨","fr":"Aujourd'hui a compté. Grâce à toi. ✨"},{"en":"Effort like that wins races.","fr":"Un effort comme ça, ça gagne des courses."},{"en":"I watched the whole thing. You were incredible.","fr":"J'ai tout regardé. Quelle performance!"},{"en":"One more for the logbook. Happy dance!","fr":"Une de plus dans le carnet. Danse de joie!"},{"en":"Okay, I'm calm. Nope. Not calm at all. GREAT JOB!","fr":"OK, je suis calme. Non. Pas calme du tout. BRAVO!"},{"en":"Strong finish. Exactly how we like it.","fr":"Une finale en force. Exactement comme on aime."},{"en":"Next stop: rest and good vibes.","fr":"Prochain arrêt: repos et bonnes vibes."},{"en":"My scales are glowing! Another one done. 🔥","fr":"Mes écailles brillent! Encore une séance de réussie. 🔥"},{"en":"Big effort. Even bigger smile. 💪","fr":"Gros effort. Encore plus gros sourire. 💪"},{"en":"Clap clap clap! That's me, clapping my claws.","fr":"Clap clap clap! C'est moi qui applaudis avec mes griffes."},{"en":"You did the work. I did the cheering. Teamwork!","fr":"Toi, t'as fait le travail. Moi, j'ai crié. Travail d'équipe!"},{"en":"You made my whole day with that one.","fr":"Tu viens de faire ma journée."},{"en":"Breathe out. Feel that? That's progress.","fr":"Expire. Tu sens ça? C'est du progrès."},{"en":"Stronger than when you walked in.","fr":"Plus solide qu'en arrivant."},{"en":"Wings up! That's a finished workout.","fr":"Ailes en l'air! Ça, c'est une séance finie."},{"en":"Podium-level effort today. 💪","fr":"Effort digne du podium aujourd'hui. 💪"},{"en":"I'm beaming so hard right now.","fr":"Je rayonne tellement en ce moment."},{"en":"Hard part: done. Fun part: now.","fr":"Partie difficile: faite. Partie le fun: maintenant."},{"en":"Started it, finished it. Respect.","fr":"Commencé, terminé. Respect."},{"en":"Now glide through the rest of your day. Lovely work. 🛶","fr":"Maintenant, glisse dans le reste de ta journée. Superbe séance. 🛶"},{"en":"Rest timer can relax now. So can you.","fr":"Le chrono de repos peut relaxer. Toi aussi."},{"en":"Like a perfect start: sharp and powerful.","fr":"Comme un départ parfait: vif et puissant."}],"pr":[{"en":"NEW PR! I'm breathing fire! 🔥","fr":"NOUVEAU RECORD! Je crache du feu! 🔥"},{"en":"A personal record? I need to sit down. Wow!","fr":"Un record perso? Faut que je m'assoie. Wow!"},{"en":"You just did something you've never done before. PR!","fr":"Tu viens de faire ce que t'avais jamais fait. PR!"},{"en":"PR alert! My whole tail is glowing.","fr":"Alerte record! Toute ma queue brille."},{"en":"Strongest version of you yet. That's a PR!","fr":"Ta meilleure version à date. C'est un PR!"},{"en":"I'm writing this one in gold. New record!","fr":"J'écris celui-là en lettres d'or. Nouveau record!"},{"en":"Record broken! I'm in shock. Happy shock.","fr":"Record battu! Je suis sous le choc. Un beau choc."},{"en":"That's a PR. I'm telling everyone. Every. One.","fr":"C'est un PR. Je le dis à tout le monde. Tout. Le. Monde."},{"en":"New personal best! Did you feel that? I did!","fr":"Nouveau meilleur résultat! T'as senti ça? Moi, oui!"},{"en":"PR day! This is why we train.","fr":"Journée record! C'est pour ça qu'on s'entraîne."},{"en":"Whoa. New record. My wings just popped open.","fr":"Ouah. Nouveau record. Mes ailes viennent de s'ouvrir d'un coup."},{"en":"Personal record unlocked. Race day just got nervous.","fr":"Record perso débloqué. Le jour de course commence à trembler."},{"en":"You beat your own best. The only race that matters.","fr":"T'as battu ton propre record. La seule course qui compte."},{"en":"PR! Somebody hold my paddle, I need to dance.","fr":"PR! Tiens ma pagaie, faut que je danse."},{"en":"You absolute legend. A new best! 💪","fr":"Quelle légende! Un record à vie! 💪"},{"en":"I knew this day would come. New record!","fr":"Je savais que ce jour arriverait. Nouveau record!"},{"en":"Record smashed, right here! 🐉","fr":"Record fracassé, ici même! 🐉"},{"en":"That PR just made the boat faster. I can feel it.","fr":"Ce PR vient de rendre le bateau plus rapide. Je le sens."},{"en":"I'm bouncing off the walls. Personal best!","fr":"Je rebondis sur les murs. Un PR!"},{"en":"Ring the bell! Bang the drum! It's a PR!","fr":"Sonne la cloche! Frappe le tambour! C'est un PR!"},{"en":"Every session led to this one. New record! ✨","fr":"Chaque séance menait à celle-ci. Nouveau record! ✨"},{"en":"Is that a PR? It IS a PR! Happy roar!","fr":"C'est un PR? C'EST UN PR! Rugissement de joie!"},{"en":"Past you set the bar. Today you raised it.","fr":"Le toi d'avant avait placé la barre. Aujourd'hui, tu l'as montée."},{"en":"This one goes on the fridge. Personal record!","fr":"Celui-là va sur le frigo. Record perso!"},{"en":"More than ever before. Standing ovation from me.","fr":"Plus que jamais. Ovation debout de ma part."}],"freeze":[{"en":"🧊 Streak freeze to the rescue! All good this week.","fr":"🧊 Le gel de série à la rescousse! Tout est beau cette semaine."},{"en":"Short week? No worries. The ice cube saved your streak.","fr":"Courte semaine? Pas grave. Le glaçon a sauvé ta série."},{"en":"I kept your streak on ice. Safe and sound!","fr":"J'ai gardé ta série sur la glace. Bien à l'abri!"},{"en":"Busy weeks happen. The freeze has your back.","fr":"Les semaines chargées, ça arrive. Le gel de série veille sur toi."},{"en":"Brrr! I froze your streak so it wouldn't melt away.","fr":"Brrr! J'ai gelé ta série pour pas qu'elle fonde."},{"en":"A freeze kept the streak going. Onward, gently.","fr":"Le gel a gardé ta série en vie. On continue, tout doucement."},{"en":"Your streak slipped on the ice, but it's still standing!","fr":"Ta série a glissé sur la glace, mais elle tient toujours!"},{"en":"I'm sitting on the ice cube to keep it cold. Streak safe!","fr":"Je suis assis sur le glaçon pour le garder froid. Série protégée!"},{"en":"No stress: the freeze covered this one. 🧊","fr":"Pas de stress: le gel a couvert celle-là. 🧊"},{"en":"Chilly, but your streak froze instead of breaking. 🧊","fr":"C'est frette, mais ta série a gelé au lieu de casser. 🧊"}],"pet":[{"en":"Hehe!","fr":"Hihi!"},{"en":"Again!","fr":"Encore!"},{"en":"Purrr... wait, dragons don't purr.","fr":"Rrrr... attends, les dragons ronronnent pas."},{"en":"That tickles!","fr":"Ça chatouille!"},{"en":"More pets, please!","fr":"Flatte-moi encore!"},{"en":"Rawr! (happy)","fr":"Rawr! (joyeux)"},{"en":"*wiggles*","fr":"*se tortille*"},{"en":"My favourite person!","fr":"Ma personne préférée!"},{"en":"Ooh, right there!","fr":"Ooh, juste là!"},{"en":"Scratch my horns!","fr":"Gratte mes cornes!"},{"en":"*happy snort*","fr":"*reniflement joyeux*"},{"en":"Tiny smoke puff! 🔥","fr":"Petit nuage de fumée! 🔥"},{"en":"*tail wag*","fr":"*frétillement de queue*"},{"en":"Love you too!","fr":"Moi aussi, je t'aime!"},{"en":"Boop!","fr":"Boop!"},{"en":"Hug mode: on.","fr":"Mode câlin: activé."},{"en":"Pet accepted. ✨","fr":"Caresse acceptée. ✨"},{"en":"*melts*","fr":"*fond*"},{"en":"Stop! No, keep going!","fr":"Arrête! Non, continue!"},{"en":"*spins in a circle*","fr":"*tourne en rond*"}],"evolve":{"hatch":[{"en":"I hatched! Hi! You did this! 🐉","fr":"J'ai éclos! Allô! C'est grâce à toi! 🐉"},{"en":"*crack* Hello, world! Your first workout set me free.","fr":"*crac* Bonjour, le monde! Ta première séance m'a libéré."}],"baby":[{"en":"Look, I'm a baby dragon now! Tiny wings, huge heart.","fr":"Regarde, je suis un bébé dragon! Petites ailes, grand cœur."},{"en":"I'm growing! Thank you for every single workout.","fr":"Je grandis! Merci pour chaque séance."}],"young":[{"en":"Growth spurt! I'm a young dragon now, thanks to you.","fr":"Poussée de croissance! Je suis un jeune dragon, grâce à toi."},{"en":"My wings actually work now! Well, almost. ✨","fr":"Mes ailes fonctionnent pour vrai! Bon, presque. ✨"}],"adult":[{"en":"I'm all grown up! Look how far we've come together.","fr":"Je suis rendu grand! Regarde le chemin qu'on a fait ensemble."},{"en":"Full adult dragon. Built one workout at a time. 🔥","fr":"Dragon adulte. Bâti une séance à la fois. 🔥"}],"racing":[{"en":"Headband on, paddle in hand. I'm race-ready! 🛶","fr":"Bandeau sur la tête, pagaie en main. Prêt pour la course! 🛶"},{"en":"Final form! I've got my own paddle now. Attention... go!","fr":"Forme finale! J'ai ma propre pagaie. Attention... partez!"}],"medal":[{"en":"A medal! For us! I'm wearing it forever.","fr":"Une médaille! Pour nous! Je la porte pour toujours."},{"en":"Medal earned! It shines just like your hard work. ✨","fr":"Médaille gagnée! Elle brille autant que ton travail. ✨"}]}};
+const dgGcd=(a,b)=>b?dgGcd(b,a%b):a;
+function dgDay(){return Math.round((TODAY-new Date(2026,0,1))/864e5)+(DPREV&&DPREV.day||0)}
+function dgPick(kind,salt,ok){let arr=(DG_LINES[kind]||DG_LINES.train||[]);if(ok)arr=arr.filter(ok);if(!arr.length)arr=DG_LINES.train||[];
+  const n=arr.length;if(!n)return "";let step=37;while(n>1&&dgGcd(step,n)!==1)step+=2;
+  const l=arr[(((dgDay()+(salt||0))*step)%n+n)%n];return dgFr()?l.fr:l.en}
+function dgKind(d){return d.mood==="egg"?"egg":d.mood==="happy"?"weekDone":d.mood==="asleep"?"asleep":d.mood==="sleepy"?"sleepy":
+  d.frozeLast&&!d.curN?"freeze":d.deload?"deload":d.left===1?"oneLeft":"train"}
+function dgSay(d){
+  const h=dgHoliday();
+  if(h&&(h!=="xmas"||dgDay()%2===0)){const arr=DG_HOL_LINES[h];const l=arr[((dgDay()%arr.length)+arr.length)%arr.length];if(!(h==="xmas"&&d.mood==="egg"))return dgFr()?l[1]:l[0]}
+  const k=dgKind(d);return dgPick(k,0,k==="train"&&d.left<2?(l=>!/\{left\}/.test(l.en)):null).replace(/\{left\}/g,d.left||2);
+}
+function dgEvolveLine(k){const arr=(DG_LINES.evolve&&DG_LINES.evolve[k])||[];if(!arr.length)return "";const l=arr[dgDay()%arr.length];return dgFr()?l.fr:l.en}
+
+/* ---------- drawing (all in code: DB Speed red, cream belly with the seal's lane lines) ---------- */
+const DGC={R:"#e5482b",RD:"#cf3f22",OL:"#7a2112",C:"#f3efe6",CS:"#e2d4bc",PK:"#ff9a85",AM:"#f2b233",AMD:"#b8800f",INK:"#1b1d20",MEM:"#ff8a6a",SN:"#f0775a",MO:"#6e1a0e",EGG:"#d9c8a9"};
+const dgA=(o,c)=>o.still?"":`dg-a ${c}`;
+/* Santa hat, drawn at the top of a head (or the egg), centred on cx,cy, tilted. */
+function dgHat(cx,cy,sc,rot){const {R,OL,C}=DGC;
+  return `<g transform="translate(${cx} ${cy}) rotate(${rot}) scale(${sc})"><path d="M-34 4 C-30 -22 -12 -40 10 -44 C24 -46 36 -40 44 -28 C36 -32 28 -30 24 -24 C30 -14 32 -4 32 4 Z" fill="${R}" stroke="${OL}" stroke-width="2.5" stroke-linejoin="round"/>
+    <rect x="-40" y="0" width="78" height="14" rx="7" fill="#fff" stroke="#d8d2c4" stroke-width="2"/><circle cx="46" cy="-28" r="9" fill="#fff" stroke="#d8d2c4" stroke-width="2"/>
+    <path d="M-30 6 h6 M-16 9 h5 M0 6 h6 M16 9 h5" stroke="#e9e3d6" stroke-width="2.5" stroke-linecap="round"/></g>`}
+function dgPoppy(x,y,sc){return `<g transform="translate(${x} ${y}) scale(${sc||1})"><path d="M0 4 C-1 20 2 34 0 50" stroke="#3f7a3a" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M1 30 C10 24 16 26 18 30 C12 34 6 34 1 30 Z" fill="#4f8f45"/>
+  ${[0,72,144,216,288].map(a=>`<ellipse cx="0" cy="-9" rx="8.5" ry="10" fill="#d4212b" stroke="#8e1219" stroke-width="1.2" transform="rotate(${a})"/>`).join("")}<circle r="5" fill="#1b1d20"/><circle r="1.6" cx="-1.5" cy="-1.5" fill="#555"/></g>`}
+function dgEggBody(){const {R,C,EGG}=DGC;
+  return `<ellipse cx="100" cy="128" rx="48" ry="60" fill="${C}" stroke="${EGG}" stroke-width="3"/>
+   <path d="M55 140 Q100 126 145 140 M57 155 Q100 141 143 155 M62 169 Q100 156 138 169" fill="none" stroke="${R}" stroke-width="5" stroke-linecap="round"/>
+   <circle cx="80" cy="96" r="7" fill="${R}" opacity=".9"/><circle cx="118" cy="86" r="5" fill="${R}" opacity=".9"/><circle cx="127" cy="110" r="4" fill="${R}" opacity=".9"/><circle cx="70" cy="118" r="3.5" fill="${R}" opacity=".9"/>
+   <ellipse cx="82" cy="100" rx="8" ry="15" fill="#fff" opacity=".55" transform="rotate(22 82 100)"/>`}
+const DG_CRACK="M52.7 118 L66 110 L74 121 L84 108 L94 121 L104 106 L114 121 L124 108 L134 120 L147.3 112";
+function dgEggSVG(o){o=o||{};const px=o.px||110,h=o.hol===undefined?dgHoliday():o.hol;
+  const cracks=o.cracks?`<path class="dg-crack" d="${DG_CRACK}" fill="none" stroke="#9c8a68" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`:"";
+  const deco=o.still?"":(h&&h!=="remember"?dgHat(104,72,.62,-14):h==="remember"?dgPoppy(146,150,.8):"");
+  return `<svg class="dgsvg dg-egg-st ${o.cls||""}" width="${px}" height="${px}" viewBox="0 0 200 200" role="img" aria-label="${esc(dgName(0))}">
+   <ellipse cx="100" cy="191" rx="42" ry="6" fill="#000" opacity=".18"/>
+   <g class="${dgA(o,"dg-egg")}">${dgEggBody()}${cracks}${o.still?"":`<path class="dg-shine" d="M126 72 l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" fill="#fff"/>`}${deco}</g></svg>`}
+/* The top of the egg, flying off when it hatches. */
+function dgCapSVG(px){const {R,C,EGG}=DGC;
+  return `<svg class="dgsvg" width="${px}" height="${px}" viewBox="0 0 200 200" aria-hidden="true"><g class="dg-a" style="transform-origin:50% 60%">
+   <path d="${DG_CRACK} A48 60 0 0 0 52.7 118 Z" fill="${C}" stroke="${EGG}" stroke-width="3" stroke-linejoin="round"/>
+   <circle cx="80" cy="96" r="7" fill="${R}" opacity=".9"/><circle cx="118" cy="86" r="5" fill="${R}" opacity=".9"/>
+   <ellipse cx="82" cy="98" rx="7" ry="12" fill="#fff" opacity=".55" transform="rotate(22 82 98)"/></g></svg>`}
+/* One dragon body (any stage), as SVG markup without the <svg> wrapper. */
+function dgBody(g,mood,o){
+  const {R,RD,OL,C,CS,PK,AM,AMD,INK,MEM,SN,MO}=DGC,sw=3,h=o.hol||"";
+  const scene=g.k!=="hatch"&&!o.mini;   // props that need arms: from Baby on
+  const tail=g.tail?`<g transform="translate(200 0) scale(-1 1)"><g transform="translate(116 170) scale(${g.tail}) translate(-116 -170)"><g class="${dgA(o,"dg-tail")}">
+     <path d="M114 178 C132 192 162 190 172 168 C176 160 177 152 173 146 C167 160 156 171 136 170 C127 169 121 166 116 163 Z" fill="${R}" stroke="${OL}" stroke-width="${sw}" stroke-linejoin="round"/>
+     <path d="M173 148 C166 142 166 133 174 128 C177 135 183 137 185 143 C181 148 177 150 173 148 Z" fill="${AM}" stroke="${AMD}" stroke-width="2" stroke-linejoin="round"/></g></g></g>`:"";
+  const wingP=`<path d="M82 128 C70 110 46 100 18 104 C26 109 28 115 26 122 C36 120 42 125 42 133 C50 129 57 131 60 139 C66 135 74 137 80 144 Z" fill="${MEM}" stroke="${OL}" stroke-width="${sw}" stroke-linejoin="round"/>
+     <path d="M82 128 C70 110 46 100 18 104" fill="none" stroke="${RD}" stroke-width="5" stroke-linecap="round"/>
+     <path d="M80 130 L27 120 M80 133 L43 131" stroke="${OL}" stroke-width="2" stroke-linecap="round" opacity=".5"/>`;
+  const wing1=`<g transform="translate(-6 6) rotate(-4 80 134) translate(80 134) scale(${g.wing}) translate(-80 -134)"><g class="${dgA(o,"dg-wing")}">${wingP}</g></g>`;
+  const wings=g.wing?wing1+`<g transform="translate(200 0) scale(-1 1)">${wing1}</g>`:"";
+  const bw=36+g.arm*4,ax=100-bw+6;
+  const body=`<ellipse cx="100" cy="150" rx="${bw}" ry="39" fill="${R}" stroke="${OL}" stroke-width="${sw}"/>
+    <ellipse cx="100" cy="157" rx="${bw-13}" ry="28" fill="${C}"/>
+    ${g.plates?`<path d="M80 142 Q100 138 120 142 M77 153 Q100 149 123 153 M78 164 Q100 160 122 164 M83 175 Q100 171 117 175" fill="none" stroke="${CS}" stroke-width="3" stroke-linecap="round"/>`
+      :`<path d="M84 148 H116 M82 158 H118 M85 168 H115" stroke="${CS}" stroke-width="3" stroke-linecap="round"/>`}`;
+  const feet=g.k==="hatch"?"":[80,120].map(x=>`<ellipse cx="${x}" cy="184" rx="15" ry="8.5" fill="${RD}" stroke="${OL}" stroke-width="${sw}"/>`+
+    (g.brows?`<path d="M${x-11} 185 l-2 6 5-1z M${x-3} 188 l-1 6 4-2z M${x+5} 187 l1 6 3-4z" fill="${C}" stroke="${OL}" stroke-width="1"/>`
+      :`<circle cx="${x-7}" cy="187" r="2.3" fill="${C}"/><circle cx="${x}" cy="189" r="2.3" fill="${C}"/><circle cx="${x+7}" cy="187" r="2.3" fill="${C}"/>`)).join("");
+  // what the right arm does: paddle (Racing dragon), a sack (Dec 24), shopping bags (Dec 26), a gift (Dec 25)
+  const raise=scene&&(h==="eve"||(g.paddle&&!h)||(g.paddle&&h==="xmas")||(g.paddle&&h==="remember"));
+  const armL=g.k==="hatch"?"":`<ellipse cx="${ax}" cy="152" rx="${8*g.arm}" ry="${13.5*g.arm}" fill="${RD}" stroke="${OL}" stroke-width="${sw}" transform="rotate(26 ${ax} 152)"/>`;
+  const armR=g.k==="hatch"?"":raise?`<ellipse cx="${204-ax}" cy="134" rx="${8*g.arm}" ry="${14*g.arm}" fill="${RD}" stroke="${OL}" stroke-width="${sw}" transform="rotate(-38 ${204-ax} 134)"/>`
+     :`<ellipse cx="${200-ax}" cy="152" rx="${8*g.arm}" ry="${13.5*g.arm}" fill="${RD}" stroke="${OL}" stroke-width="${sw}" transform="rotate(-26 ${200-ax} 152)"/>`;
+  const paddle=g.paddle&&raise&&h!=="eve"?`<g><path d="M146 66 L160 178" stroke="#7a4b2a" stroke-width="6" stroke-linecap="round"/><path d="M137 66 L155 64" stroke="#7a4b2a" stroke-width="7" stroke-linecap="round"/>
+     <path d="M154 150 C147 168 148 186 157 194 C167 192 171 176 166 154 Z" fill="${AM}" stroke="${AMD}" stroke-width="2.5" stroke-linejoin="round"/><path d="M159 158 L161 186" stroke="${AMD}" stroke-width="2" opacity=".6"/></g>`:"";
+  // holiday props held in the hands
+  const sack=scene&&h==="eve"?`<g><path d="M150 112 C176 110 190 132 186 158 C182 180 150 184 136 168 C126 154 132 122 150 112 Z" fill="#b5322a" stroke="${OL}" stroke-width="${sw}" stroke-linejoin="round"/>
+     <path d="M140 116 C146 108 154 106 160 110" stroke="#f2b233" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="146" y="98" width="16" height="14" rx="2" fill="#43c08a" stroke="${OL}" stroke-width="2"/><rect x="160" y="102" width="14" height="12" rx="2" fill="#5089e2" stroke="${OL}" stroke-width="2"/><path d="M154 98 v14 M167 102 v12" stroke="#fff" stroke-width="2"/>
+     <path d="M146 140 l6 -4 4 6 6 -3" stroke="#e7a296" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".7"/></g>`:"";
+  const bags=scene&&h==="boxing"?`<g class="${dgA(o,"dg-bags")}">${[[ax-14,"#e5482b","%"],[200-ax-10,"#f2b233","★"]].map(([x,c,t])=>`<path d="M${x+5} 160 C${x+5} 148 ${x+19} 148 ${x+19} 160" fill="none" stroke="${OL}" stroke-width="2.5"/><path d="M${x} 160 H${x+24} L${x+27} 192 H${x-3} Z" fill="${c}" stroke="${OL}" stroke-width="2.5" stroke-linejoin="round"/><text x="${x+12}" y="183" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800" font-size="15" fill="#fff">${t}</text>`).join("")}</g>`:"";
+  const poppy=scene&&h==="remember"?dgPoppy(ax+2,118,.9):"";
+  // medals on the chest (after Racing dragon)
+  const n=Math.min(o.medals||0,3);
+  const med=n?`<path d="M86 126 L100 141 L114 126" fill="none" stroke="${R}" stroke-width="4"/>`+Array.from({length:n},(_,i)=>{const x=100+(i-(n-1)/2)*19,y=146+(i%2?3:0);
+    return `<circle cx="${x}" cy="${y}" r="9" fill="${AM}" stroke="${AMD}" stroke-width="2"/><path d="M${x} ${y-6} l1.9 3.8 4.2.6-3 2.9.7 4.2-3.8-2-3.8 2 .7-4.2-3-2.9 4.2-.6z" fill="#fff6d8"/>`}).join(""):"";
+  // head
+  const fin1=`<g transform="translate(70 88) scale(${g.fins}) translate(-70 -88)"><path d="M70 98 C55 98 43 88 42 72 C50 77 55 75 57 69 C61 77 67 81 76 82 Z" fill="${MEM}" stroke="${OL}" stroke-width="${sw}" stroke-linejoin="round"/></g>`;
+  const fins=fin1+`<g transform="translate(200 0) scale(-1 1)">${fin1}</g>`;
+  const horn1=g.horn?`<g transform="translate(83 62) scale(${g.horn}) translate(-83 -62)"><path d="M75 66 C71 52 69 41 62 31 C77 36 87 47 91 62 Z" fill="${AM}" stroke="${AMD}" stroke-width="2.5" stroke-linejoin="round"/><path d="M71 52 Q76 50 80 53" stroke="${AMD}" stroke-width="2" fill="none"/></g>`:"";
+  const horns=horn1?horn1+`<g transform="translate(200 0) scale(-1 1)">${horn1}</g>`:"";
+  const spikes=Array.from({length:g.spikes},(_,i)=>{const a=(i-(g.spikes-1)/2)*15,x=100+40*Math.sin(a*Math.PI/180),y=90-37*Math.cos(a*Math.PI/180);
+     return `<path d="M${x-6} ${y+4} L${x} ${y-11} L${x+6} ${y+4} Z" fill="${AM}" stroke="${AMD}" stroke-width="2" stroke-linejoin="round" transform="rotate(${a.toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)})"/>`}).join("");
+  const shades=h==="boxing"&&mood!=="asleep";
+  const eyes=shades?`<path d="M66 82 H134 L131 88 C129 98 118 101 108 98 L103 90 H97 L92 98 C82 101 71 98 69 88 Z" fill="${INK}" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/><path d="M74 86 L82 86 M110 86 L118 86" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".55"/>`
+    :mood==="happy"?`<path d="M72 92 Q82 79 92 92 M108 92 Q118 79 128 92" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"/>`
+    :mood==="asleep"?`<path d="M72 89 Q82 97 92 89 M108 89 Q118 97 128 89" fill="none" stroke="${INK}" stroke-width="4.5" stroke-linecap="round"/>`
+    :mood==="sleepy"?`<g class="${dgA(o,"dg-blink")}"><path d="M72 90 Q82 95 92 90 M108 90 Q118 95 128 90" fill="none" stroke="${INK}" stroke-width="4.5" stroke-linecap="round"/></g><path d="M131 92 q4 6 0 9 q-4 -3 0 -9z" fill="#bfe3ff" stroke="#fff" stroke-width="1"/>`
+    :`<g class="${dgA(o,"dg-blink")}">${[82,118].map(x=>`<ellipse cx="${x}" cy="89" rx="10" ry="12" fill="${INK}"/><circle cx="${x-3.5}" cy="83.5" r="4.2" fill="#fff"/><circle cx="${x+4}" cy="94" r="2" fill="#fff"/>`).join("")}</g>`
+      +(mood==="sleepyX"?[[82,1],[118,-1]].map(([x,f])=>{const a=x-12*f,b=x+12*f;return `<path d="M${a} 74 H${b} V89 Q${x} 87 ${a} 92 Z" fill="${R}"/><path d="M${a-1*f} 93 Q${x-2*f} 86 ${b+1*f} 89" fill="none" stroke="${OL}" stroke-width="2.5" stroke-linecap="round"/>`}).join(""):"");
+  const brows=g.brows&&mood!=="asleep"&&mood!=="sleepy"&&!shades?`<path d="M71 71 Q80 66 90 70 M110 70 Q120 66 129 71" stroke="${OL}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`:"";
+  const snout=`<ellipse cx="100" cy="107" rx="19" ry="12" fill="${SN}"/><ellipse cx="94" cy="104" rx="2.5" ry="1.9" fill="${MO}"/><ellipse cx="106" cy="104" rx="2.5" ry="1.9" fill="${MO}"/>`;
+  const cheeks=`<ellipse cx="68" cy="104" rx="8" ry="5" fill="${PK}" opacity=".9"/><ellipse cx="132" cy="104" rx="8" ry="5" fill="${PK}" opacity=".9"/>`;
+  const mouth=mood==="happy"?`<path d="M90 112 Q100 127 110 112 Q100 115 90 112 Z" fill="${MO}"/><path d="M95 119.5 Q100 124 105 119.5 Q100 117 95 119.5 Z" fill="${PK}"/>`
+    :mood==="sleepy"?`<ellipse cx="100" cy="116" rx="5.5" ry="7" fill="${MO}"/><ellipse cx="100" cy="119" rx="3.5" ry="2.5" fill="${PK}"/>`
+    :mood==="asleep"?`<path d="M96 114 Q100 116.5 104 114" fill="none" stroke="${MO}" stroke-width="2.5" stroke-linecap="round"/>`
+    :`<path d="M92.5 113 Q96.25 117.5 100 113 Q103.75 117.5 107.5 113" fill="none" stroke="${MO}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const fy=mood==="happy"?112.5:113.5;
+  const fangs=g.fang&&mood!=="asleep"&&mood!=="sleepy"?(g.fang>1?[94,106]:[106]).map(x=>`<path d="M${x-2.4} ${fy} L${x} ${fy+5} L${x+2.4} ${fy} Z" fill="#fff" stroke="${CS}" stroke-width=".8" stroke-linejoin="round"/>`).join(""):"";
+  const beard=h==="eve"?`<path d="M62 104 C60 124 74 146 100 150 C126 146 140 124 138 104 C130 112 122 114 116 110 C110 118 90 118 84 110 C78 114 70 112 62 104 Z" fill="#fff" stroke="#d8d2c4" stroke-width="2.5" stroke-linejoin="round"/>
+     <path d="M76 118 q4 8 0 14 M100 126 q4 8 0 14 M124 118 q-4 8 0 14" stroke="#e6e0d2" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+     <path d="M80 110 C88 104 96 108 100 112 C104 108 112 104 120 110 C114 118 104 116 100 114 C96 116 86 118 80 110 Z" fill="#fff" stroke="#d8d2c4" stroke-width="2"/>`:"";
+  const band=g.band&&!(h&&h!=="remember")?`<path d="M62 66 Q100 44 138 66 L137 75 Q100 53 63 75 Z" fill="${C}" stroke="${OL}" stroke-width="2" stroke-linejoin="round"/><path d="M63 71 Q100 49 137 71" fill="none" stroke="${R}" stroke-width="2.6"/>
+    <g transform="translate(136 70)"><g class="${dgA(o,"dg-band")}"><path d="M0 -2 C10 -8 20 -6 32 -13 C28 -4 18 2 2 4 Z" fill="${C}" stroke="${OL}" stroke-width="1.6" stroke-linejoin="round"/><path d="M0 2 C10 4 19 11 30 11 C24 16 12 14 1 8 Z" fill="${C}" stroke="${OL}" stroke-width="1.6" stroke-linejoin="round"/></g></g>`:"";
+  const shellHat=g.k==="hatch"&&!(h&&h!=="remember")?`<g transform="rotate(-14 100 50)"><path d="M74 60 C76 44 92 36 104 37 C118 38 128 48 128 58 L121 54 L114 60 L107 53 L100 59 L93 52 L86 59 L79 53 Z" fill="${C}" stroke="${DGC.EGG}" stroke-width="2.5" stroke-linejoin="round"/><circle cx="97" cy="45" r="3.5" fill="${R}" opacity=".9"/></g>`:"";
+  const hat=h&&h!=="remember"?dgHat(100,58,.95,-12):"";
+  const bubble=mood==="asleep"&&!o.still?`<circle class="dg-bubble" cx="113" cy="106" r="7" fill="#d6ecff" stroke="#fff" stroke-width="1.5" opacity=".85"/>`:"";
+  const lower=mood==="asleep"?"translate(0 9) rotate(7 100 124) ":"";
+  const head=`<g transform="${lower}translate(100 124) scale(${g.head}) translate(-100 -124)"><g class="${dgA(o,"dg-head")}">
+     ${fins}${horns}${spikes}<ellipse cx="100" cy="90" rx="41" ry="37" fill="${R}" stroke="${OL}" stroke-width="${sw}"/>
+     <ellipse cx="80" cy="66" rx="9" ry="5" fill="#fff" opacity=".22" transform="rotate(-25 80 66)"/>${band}${cheeks}${snout}${eyes}${brows}${mouth}${fangs}${beard}${shellHat}${hat}${bubble}</g></g>`;
+  const inner=`${tail}${wings}${sack}${body}${feet}${paddle}${armL}${poppy}${armR}${bags}${med}${head}`;
+  return `<g class="${dgA(o,"dg-hop")}"><g transform="translate(0 ${g.dy||0}) translate(100 190) scale(${g.s}) translate(-100 -190)"><g class="${dgA(o,"dg-breathe")}">${inner}</g></g></g>`;
+}
+function dragonSVG(st,mood,o){
+  o=o||{};const px=o.px||110;
+  const h=o.hol===undefined?(o.still?"":dgHoliday()):o.hol;
+  if(!st)return dgEggSVG(Object.assign({},o,{hol:h}));
+  const g=DG_STAGES[st];const {C,R,EGG}=DGC;
+  const top=190-(190-(124-71*g.head))*g.s+(g.dy||0),rx=100+41*g.head*g.s,lx=100-41*g.head*g.s;
+  const zz=(mood==="asleep"||mood==="sleepy")&&!o.still?`<g fill="#9b9a93" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800"><text class="dg-z" x="${(rx-2).toFixed(0)}" y="${(top+18).toFixed(0)}" font-size="20">z</text><text class="dg-z z2" x="${(rx+12).toFixed(0)}" y="${(top+2).toFixed(0)}" font-size="27">z</text>${mood==="asleep"?`<text class="dg-z z3" x="${(rx+26).toFixed(0)}" y="${(top-16).toFixed(0)}" font-size="34">Z</text>`:""}</g>`:"";
+  const star=(x,y,c,cls)=>`<path class="dg-spark ${cls}" d="M${x} ${y-9} l2.6 6.4 6.4 2.6-6.4 2.6-2.6 6.4-2.6-6.4-6.4-2.6 6.4-2.6z" fill="${c}"/>`;
+  const sparks=(mood==="happy"||h==="eve")&&!o.still&&h!=="remember"?star(rx+12,top+12,"#f2b233","")+star(lx-12,top+30,"#f2b233","s2")+star(rx+4,top+60,"#fff6d8","s3"):"";
+  const hatchShell=g.k==="hatch"?`<path d="${DG_CRACK} A48 60 0 1 1 52.7 118 Z" fill="${C}" stroke="${EGG}" stroke-width="3" stroke-linejoin="round"/>
+     <path d="M55 140 Q100 126 145 140 M57 155 Q100 141 143 155 M62 169 Q100 156 138 169" fill="none" stroke="${R}" stroke-width="5" stroke-linecap="round"/>
+     <ellipse cx="79" cy="115" rx="9" ry="6.5" fill="${DGC.RD}" stroke="${DGC.OL}" stroke-width="2.5"/><ellipse cx="121" cy="115" rx="9" ry="6.5" fill="${DGC.RD}" stroke="${DGC.OL}" stroke-width="2.5"/>${h==="remember"?dgPoppy(140,132,.6):""}`:"";
+  // Dec 25: hands a gift to a mini dragon, and the gift pops open
+  let main=dgBody(g,mood,Object.assign({},o,{hol:h})),extra="";
+  if(h==="day"&&st>=2&&!o.still){
+    const mini=dgBody(Object.assign({},DG_STAGES[2],{s:.4,head:1.3,dy:0}),"happy",{hol:"xmas",mini:true});
+    main=`<g transform="translate(-24 0) translate(100 190) scale(.9) translate(-100 -190)">${main}</g>`;
+    extra=`<g transform="translate(66 2)">${mini}</g>
+      <g transform="translate(122 150)"><rect x="0" y="8" width="30" height="24" rx="3" fill="#43c08a" stroke="${DGC.OL}" stroke-width="2.5"/><rect x="12" y="8" width="6" height="24" fill="#f2b233"/>
+      <g class="dg-a dg-lid"><rect x="-3" y="0" width="36" height="10" rx="3" fill="#43c08a" stroke="${DGC.OL}" stroke-width="2.5"/><rect x="12" y="0" width="6" height="10" fill="#f2b233"/><path d="M15 0 C6 -10 2 -2 15 0 C28 -2 24 -10 15 0" fill="#f2b233" stroke="${DGC.AMD}" stroke-width="2"/></g>
+      <g class="dg-gspark">${star(15,-14,"#f2b233","")}${star(0,-26,"#fff6d8","s2")}${star(30,-24,"#f2b233","s3")}<text x="15" y="-36" text-anchor="middle" font-size="14">❤️</text></g></g>`;
+  }
+  return `<svg class="dgsvg dg-${mood} ${h?"dg-h-"+h:""} ${o.cls||""}" width="${px}" height="${px}" viewBox="0 0 200 200" role="img" aria-label="${esc(dgName(st))}">
+    <ellipse cx="${h==="day"&&st>=2&&!o.still?88:100}" cy="191" rx="${(48*g.s).toFixed(1)}" ry="6" fill="#000" opacity=".18"/>
+    ${main}${hatchShell}${extra}${sparks}${zz}</svg>`;
+}
+
+/* ---------- home card and the dragon sheet ---------- */
+function dgNextTxt(d){const fr=dgFr();
+  if(!d.next)return fr?`Environ ${d.toNextW} séance${d.toNextW>1?"s":""} avant la prochaine médaille`:`About ${d.toNextW} workout${d.toNextW>1?"s":""} to the next medal`;
+  const nm=fr?d.next.fr:d.next.en;
+  return d.toNextW<=1?(fr?`Encore 1 séance avant : ${nm}!`:`1 more workout to ${nm}!`):(fr?`Environ ${d.toNextW} séances avant : ${nm}`:`About ${d.toNextW} workouts to ${nm}`)}
+const dgStreakTxt=n=>dgFr()?(n>1?"semaines de suite":"semaine de suite"):"week streak";
+function dragonCard(){
+  if(!dragonOn())return "";const d=dragonData(),fr=dgFr();
+  return `<section style="padding-bottom:0"><button class="dgcard" id="dragonCard" aria-label="${fr?"Ton dragon":"Your dragon"}">
+    <span class="dg-hello">${dragonSVG(d.st,d.mood,{px:118,medals:d.medals})}</span>
+    <div><div class="eyebrow">${fr?"Ton dragon":"Your dragon"}</div><div class="dgname">${esc(dgName(d.st))}</div>
+     ${d.st?`<div class="dgmeta"><span>🔥 <b>${d.streak}</b> ${dgStreakTxt(d.streak)}</span>${d.freezes?`<span>🧊 <b>${d.freezes}</b></span>`:""}${d.medals?`<span>🏅 <b>${d.medals}</b></span>`:""}</div>
+     <div class="xpbar"><i style="width:${d.pct}%"></i></div><div class="dgnext">${esc(dgNextTxt(d))}</div>`:""}
+     <div class="dg-say">${esc(dgSay(d))}</div></div></button></section>`;
+}
+function openDragon(){
+  const d=dragonData(),fr=dgFr();
+  const path=DG_STAGES.map((s,i)=>`<div class="dg-stage ${i===d.st?"on":""} ${i>d.st?"lock":""}">${i?dragonSVG(i,"awake",{px:64,still:true}):dgEggSVG({px:64,still:true,hol:""})}<b>${esc(fr?s.fr:s.en)}</b><span>${s.xp} XP</span></div>`).join("");
+  const prev=DG_DEMO?`<div class="card" style="padding:12px;display:grid;gap:8px"><div class="eyebrow">Preview controls (demo only, never on a real athlete's link)</div>
+    <div class="small muted">Stage</div><div class="dg-prev">${DG_STAGES.map(s=>`<button data-dprev-xp="${s.xp}">${esc(s.en)}</button>`).join("")}<button data-dprev-xp="2300">+ 2 medals</button><button data-dprev-almost>Almost next stage</button></div>
+    <div class="small muted">Mood</div><div class="dg-prev">${["awake","happy","sleepy","asleep"].map(m=>`<button data-dprev-mood="${m}">${m}</button>`).join("")}</div>
+    <div class="small muted">Play the animation (from the stage before)</div><div class="dg-prev">${["hatch","baby","young","adult","racing","medal"].map(k=>`<button data-dprev-ev="${k}">▶ ${k==="hatch"?"Hatch":k==="medal"?"Medal":DG_STAGES.find(s=>s.k===k).en}</button>`).join("")}<button data-dprev-ev="">▶ Normal workout</button></div>
+    <div class="small muted">Holidays</div><div class="dg-prev">${[["","Normal day"],["remember","Nov 11"],["xmas","Dec 1–23"],["eve","Dec 24"],["day","Dec 25"],["boxing","Dec 26"]].map(([k,n])=>`<button data-dprev-hol="${k}">${n}</button>`).join("")}</div>
+    <div class="dg-prev"><button data-dprev-day>Next day's message ›</button><button data-dprev-clear>Back to real data</button><button data-dprev-buzz>📳 Test buzz</button></div></div>`:"";
+  document.getElementById("overlay").innerHTML=`<div class="scrim" data-close></div><div class="sheet" role="dialog" aria-label="${fr?"Ton dragon":"Your dragon"}"><div class="inner wrap">
+   <div style="display:flex;justify-content:space-between;align-items:center"><h2>${fr?"Ton dragon":"Your dragon"}</h2><button class="btn ghost" data-close style="padding:8px 12px;font-size:14px">${T("close")}</button></div>
+   <div class="dg-big"><div id="dgPet" role="button" aria-label="${fr?"Flatter ton dragon":"Pet your dragon"}">${dragonSVG(d.st,d.mood,{px:210,medals:d.medals})}</div>
+     <div class="dg-title">${esc(dgName(d.st))}${d.medals?` · 🏅 ${d.medals}`:""}</div>
+     ${d.st?`<div class="muted small">${d.xp} XP · ${esc(dgNextTxt(d))}</div><div class="xpbar" style="width:100%;max-width:320px"><i style="width:${d.pct}%"></i></div>`:""}
+     <div class="dg-say up" id="dgSay" style="max-width:320px">${esc(dgSay(d))}</div>
+     <div class="small muted">${fr?(d.st?"Touche ton dragon pour le flatter":"Touche l’œuf"):(d.st?"Tap your dragon to pet it":"Tap the egg")}</div></div>
+   <div class="done-grid dg-stats" style="grid-template-columns:repeat(4,1fr)"><div class="stat"><b>${d.streak}</b><span>🔥 ${fr?"Série":"Streak"}</span></div><div class="stat"><b>${d.best}</b><span>${fr?"Record":"Best"}</span></div><div class="stat"><b>${d.freezes}</b><span>🧊 ${fr?"Gels":"Freezes"}</span></div><div class="stat"><b>${d.workouts}</b><span>${fr?"Séances":"Workouts"}</span></div></div>
+   <div><h3 style="margin:0 0 10px">${fr?"Comment il grandit":"How it grows"}</h3><div class="dg-path">${path}</div></div>
+   <ol class="dg-rules">${fr?`<li><b>+10 XP</b> par séance terminée. Ta première séance fait éclore l’œuf.</li><li><b>+20 XP</b> chaque semaine où tu fais toutes tes séances. C’est ce qui fait ta série 🔥.</li><li><b>Un gel 🧊</b> toutes les 4 semaines de suite (2 max). Une semaine courte en utilise un et ta série survit.</li><li>Ton dragon ne rapetisse jamais. Après le Dragon de course, il gagne une médaille tous les 500 XP.</li>`
+     :`<li><b>+10 XP</b> for every finished workout. Your first one hatches the egg.</li><li><b>+20 XP</b> each week you do all your sessions. That's your streak 🔥.</li><li><b>A freeze 🧊</b> every 4 weeks in a row (hold up to 2). A short week uses one and your streak survives.</li><li>Your dragon never shrinks. After Racing dragon it earns a medal every 500 XP.</li>`}</ol>
+   ${prev}
+  </div></div>`;
+}
+function dgPet(){
+  const box=document.getElementById("dgPet");if(!box)return;const svg=box.querySelector("svg");const d=dragonData();
+  if(!d.st){svg.classList.remove("dg-knock");void svg.getBoundingClientRect();svg.classList.add("dg-knock");dgSfx("knock");buzz([25]);
+    const s=document.getElementById("dgSay");if(s)s.textContent=dgPick("egg",Date.now()%97);return}
+  svg.classList.remove("dg-petted");void svg.getBoundingClientRect();svg.classList.add("dg-petted");setTimeout(()=>svg.classList.remove("dg-petted"),750);
+  const old=box.querySelector(".dg-hearts");if(old)old.remove();
+  box.style.position="relative";box.insertAdjacentHTML("beforeend",`<div class="dg-hearts">${[-34,-10,14,36].map((x,i)=>`<i style="--x:${x}px;--d:${i*.08}s">${["❤️","💛","❤️","✨"][i]}</i>`).join("")}</div>`);
+  const s=document.getElementById("dgSay");if(s)s.textContent=dgPick("pet",Math.floor(Date.now()/700)%53);
+  dgSfx("pet");buzz([25]);
+}
+
+/* ---------- finish screen: a happy hop, or a hatch / evolution show ---------- */
+function dgParts(n,colors,o){o=o||{};let h="";const sh=o.shapes||"c";
+  for(let i=0;i<n;i++){const a=(o.a0??-170)+((o.a1??-10)-(o.a0??-170))*Math.random(),r=(o.r||120)*(.45+.75*Math.random());
+    const x=Math.cos(a*Math.PI/180)*r,y=Math.sin(a*Math.PI/180)*r;
+    h+=`<i class="p${sh[i%sh.length]}" style="left:${o.sx||0}px;top:${o.sy||0}px;--x:${x|0}px;--y:${y|0}px;--g:${((o.g||120)*(.6+.8*Math.random()))|0}px;--r:${(Math.random()*720-360)|0}deg;--c:${colors[i%colors.length]};--d:${((o.d??1.2)+Math.random()*(o.dd??.15)).toFixed(2)}s;--t:${o.t||1.8}s"></i>`}
+  return `<div class="dg-fx">${h}</div>`}
+function dgFireworks(x,y,colors,d){return `<div class="dg-fw" style="left:${x}px;top:${y}px">${Array.from({length:16},(_,i)=>{const a=i/16*Math.PI*2,r=46+(i%2)*12;
+  return `<i style="--x:${Math.round(Math.cos(a)*r)}px;--y:${Math.round(Math.sin(a)*r)}px;--c:${colors[i%colors.length]};--d:${d}s"></i>`}).join("")}</div>`}
+function dgFx(k){
+  if(k==="hatch")return dgParts(36,["#ffd1dc","#fff3b0","#c7f0db","#c9e4ff","#e9d5ff"],{shapes:"ccsohc",r:140,g:150})+dgParts(12,["#f3efe6"],{shapes:"k",r:110,g:170,a0:-160,a1:-20});
+  if(k==="baby")return `<div class="dg-prop dg-balloon"><svg viewBox="0 0 60 96" width="60" height="96"><path d="M30 4 C14 4 4 18 4 32 C4 50 20 62 30 64 C40 62 56 50 56 32 C56 18 46 4 30 4Z" fill="#e5482b" stroke="#7a2112" stroke-width="2"/><path d="M26 64 L34 64 L30 70Z" fill="#cf3f22"/><path d="M30 70 C25 78 35 84 30 94" stroke="#9b9a93" fill="none" stroke-width="1.6"/><ellipse cx="19" cy="22" rx="5" ry="10" fill="#fff" opacity=".5" transform="rotate(25 19 22)"/></svg></div>
+     <div class="dg-popfx"><b>POP!</b>${Array.from({length:10},(_,i)=>`<i style="--a:${i*36}deg"></i>`).join("")}</div>`
+     +dgParts(42,["#e5482b","#ff8a6a","#f2b233","#f3efe6","#ff9ac2"],{shapes:"cclo",sx:57,sy:-70,a0:-180,a1:180,r:120,g:150});
+  if(k==="young")return `<div class="dg-prop dg-bottle out"><svg viewBox="0 0 46 116" width="46" height="116" style="overflow:visible"><path d="M17 4 H29 V30 C29 38 42 44 42 60 V110 C42 113 39 115 36 115 H10 C7 115 4 113 4 110 V60 C4 44 17 38 17 30 Z" fill="#1f5a3a" stroke="#0f2e1d" stroke-width="2"/><path d="M15 2 H31 V32 C31 36 33 38 35 40 H11 C13 38 15 36 15 32 Z" fill="#f2b233" stroke="#b8800f" stroke-width="1.5"/><rect x="8" y="66" width="30" height="30" rx="3" fill="#f3efe6"/><path d="M13 76 H33 M13 81 H33 M13 86 H33" stroke="#e5482b" stroke-width="2.5" stroke-linecap="round"/><path d="M9 50 C9 58 9 90 9 104" stroke="#fff" stroke-width="3" opacity=".25" stroke-linecap="round"/></svg><div class="dg-cork"></div></div>`
+     +dgParts(30,["#fff6d8","#ffffff","#f2e3a6"],{shapes:"b",sx:42,sy:-34,a0:-150,a1:-95,r:170,g:90,d:1.12,dd:.4,t:1.5})
+     +dgParts(34,["#f2b233","#fff6d8","#e9c46a","#f3efe6"],{shapes:"cls",sx:42,sy:-34,a0:-170,a1:-60,r:150,g:160,d:1.15});
+  if(k==="adult")return `<div class="dg-rays"></div><div class="dg-prop dg-disco"><svg viewBox="0 0 70 120" width="70" height="120"><path d="M35 0 V42" stroke="#9b9a93" stroke-width="2"/><defs><clipPath id="dgBall"><circle cx="35" cy="78" r="30"/></clipPath></defs>
+       <circle cx="35" cy="78" r="30" fill="#b9c3cf"/><g clip-path="url(#dgBall)"><g class="facets">${Array.from({length:10},(_,c)=>Array.from({length:8},(_,r)=>{const v=[["#e8eef5"],["#9aa7b6"],["#ffffff"],["#c9d3de"],["#7f8c9c"],["#f6d6ff"],["#cdefff"]][(c*3+r*5)%7][0];return `<rect x="${3+c*8}" y="${48+r*8}" width="7" height="7" fill="${v}"/>`}).join("")).join("")}</g></g>
+       <circle cx="35" cy="78" r="30" fill="none" stroke="#5f6b79" stroke-width="2"/><rect x="31" y="42" width="8" height="7" rx="2" fill="#7f8c9c"/><ellipse cx="25" cy="66" rx="7" ry="4" fill="#fff" opacity=".8" transform="rotate(-30 25 66)"/></svg></div>
+     ${[["#ff5caa",-90,40,1.0],["#50c8ff",90,30,1.15],["#ffe65a",-60,-60,1.3],["#966eff",70,-40,1.1],["#5ae696",-20,70,1.25],["#ff8c3c",40,60,1.4]].map(([c,x,y,d])=>`<i class="dg-spot" style="left:${115+x}px;top:${110+y}px;background:${c};--x:${-x*1.4}px;--y:${-y*.8}px;--d:${d}s"></i>`).join("")}`
+     +dgParts(46,["#ff5caa","#50c8ff","#ffe65a","#966eff","#5ae696","#ff8c3c"],{shapes:"ccls",sy:-30,a0:-180,a1:0,r:160,g:170});
+  if(k==="racing")return `<i class="dg-tape l"></i><i class="dg-tape r"></i>`+dgFireworks(40,40,["#e5482b","#f2b233","#fff"],1.25)+dgFireworks(195,30,["#50c8ff","#f3efe6","#966eff"],1.55)+dgFireworks(118,-10,["#43c08a","#f2b233","#ff5caa"],1.85)
+     +dgParts(40,["#e5482b","#f2b233","#f3efe6","#1b1d20"],{shapes:"ccl",r:150,g:160,d:1.22});
+  if(k==="medal")return `<div class="dg-prop dg-medal out"><svg viewBox="0 0 56 110" width="56" height="110"><path d="M18 0 L28 60 L38 0" fill="none" stroke="#e5482b" stroke-width="8"/><path d="M14 0 L24 58 M42 0 L32 58" stroke="#f3efe6" stroke-width="2"/><circle cx="28" cy="80" r="22" fill="#f2b233" stroke="#b8800f" stroke-width="3"/><circle cx="28" cy="80" r="15" fill="none" stroke="#fff6d8" stroke-width="2"/><path d="M28 70 l3 6.5 7 .9-5.1 4.9 1.3 7-6.2-3.4-6.2 3.4 1.3-7-5.1-4.9 7-.9z" fill="#fff6d8"/></svg></div>`
+     +dgParts(34,["#f2b233"],{shapes:"g",sy:-150,a0:70,a1:110,r:40,g:260,d:.9,dd:.9,t:1.9})+dgParts(16,["#fff6d8","#f2b233"],{shapes:"s",sy:-20,r:120,g:80,d:1.3});
+  return "";
+}
+function dragonCelebration(b,a,pr){
+  const fr=dgFr(),grew=a.st>b.st,medal=!grew&&a.medals>b.medals,gain=a.xp-b.xp;
+  const k=grew?DG_STAGES[a.st].k:medal?"medal":"",ev=!!k;
+  const title=k==="hatch"?(fr?"Il a éclos!":"It hatched!"):grew?(fr?"Ton dragon a évolué!":"Your dragon evolved!"):medal?(fr?"Nouvelle médaille!":"New medal!"):"";
+  const line=ev?dgEvolveLine(k):dgPick(pr?"pr":"after",a.workouts);
+  const L=ev?"dg-late":"";
+  const stage=k==="hatch"?`<div class="layer old">${dgEggSVG({px:200,cracks:true,cls:"dg-hatching"})}</div><div class="layer cap">${dgCapSVG(200)}</div><div class="flash"></div><div class="layer new">${dragonSVG(a.st,"happy",{px:200})}</div>`
+    :grew?`<div class="layer old">${dragonSVG(b.st,"awake",{px:200,medals:b.medals})}</div><div class="flash"></div><div class="layer new">${dragonSVG(a.st,"happy",{px:200,medals:a.medals})}</div>`
+    :`<div class="layer new">${dragonSVG(a.st,"happy",{px:200,medals:a.medals})}</div>`;
+  return `<div class="dg-cele ${ev?`ev ev-${k}`:""}">${stage}${dgFx(k)}<div class="xp-pop">+${gain} XP</div></div>
+    ${title?`<div class="dg-title ${L}" style="color:var(--amber)">${title}</div><div class="dgname ${L}">${esc(dgName(a.st))}</div>`:""}
+    <div class="dg-say up ${L}" style="justify-self:center;max-width:320px">${esc(line)}</div>
+    <div class="dg-streak ${L}"><span>🔥 <b>${a.streak}</b> ${dgStreakTxt(a.streak)}</span>${a.freezes?`<span>🧊 <b>${a.freezes}</b></span>`:""}<span><b>${a.xp}</b> XP</span></div>
+    ${a.st?`<div class="xpbar ${L}" style="width:100%;max-width:320px;justify-self:center"><i id="xpFill" data-to="${a.pct}" style="width:${grew?0:b.pct}%"></i></div>`:""}`;
+}
+function dgAnimateXp(){const f=document.getElementById("xpFill");if(f)requestAnimationFrame(()=>requestAnimationFrame(()=>{f.style.width=f.dataset.to+"%"}))}
+/* Sound for each moment, made in code like the app's chime (Profile & settings → Sounds turns them off). */
+function dgSfx(k){
+  if(S.profile.soundOff)return;
+  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==="suspended")AC.resume();
+    const t0=AC.currentTime+.03,out=AC.createGain();out.gain.value=.24;out.connect(AC.destination);
+    const tone=(f,at,len,vol,type,f2)=>{const o=AC.createOscillator(),e=AC.createGain();o.type=type||"sine";o.frequency.setValueAtTime(f,t0+at);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+at+len);
+      e.gain.setValueAtTime(0,t0+at);e.gain.linearRampToValueAtTime(vol,t0+at+.008);e.gain.exponentialRampToValueAtTime(.0001,t0+at+len);o.connect(e);e.connect(out);o.start(t0+at);o.stop(t0+at+len+.05)};
+    const noise=(at,len,vol,f,q,type,f2)=>{const b=AC.createBuffer(1,Math.ceil(AC.sampleRate*len),AC.sampleRate),dd=b.getChannelData(0);for(let i=0;i<dd.length;i++)dd[i]=Math.random()*2-1;
+      const s=AC.createBufferSource(),fl=AC.createBiquadFilter(),e=AC.createGain();s.buffer=b;fl.type=type||"bandpass";fl.frequency.setValueAtTime(f,t0+at);if(f2)fl.frequency.exponentialRampToValueAtTime(f2,t0+at+len);fl.Q.value=q||1;
+      e.gain.setValueAtTime(vol,t0+at);e.gain.exponentialRampToValueAtTime(.0001,t0+at+len);s.connect(fl);fl.connect(e);e.connect(out);s.start(t0+at);s.stop(t0+at+len+.02)};
+    const sparkle=(at,notes,gap)=>notes.forEach((f,i)=>{tone(f,at+i*(gap||.07),.45,.5,"sine");tone(f*2,at+i*(gap||.07),.25,.08,"triangle")});
+    const chord=(at,fs,len,vol,type)=>fs.forEach(f=>tone(f,at,len,vol||.22,type||"triangle"));
+    if(k==="pet"){tone(1175,0,.12,.5,"sine",1568);tone(1568,.09,.18,.45,"sine",2093)}
+    else if(k==="knock"){[0,.12,.24].forEach(t=>noise(t,.05,.9,1400,2))}
+    else if(k==="hatch"){[.25,.55,.82,1.0].forEach((t,i)=>{noise(t,.05,.7+i*.2,2500,3);tone(1800+i*250,t,.04,.2,"square")});noise(1.18,.18,1,1200,1,"bandpass",400);sparkle(1.22,[1047,1319,1568,2093,2637],.06);chord(1.55,[523,659,784,1047],1.2,.16)}
+    else if(k==="baby"){tone(320,0,1.1,.12,"sine",720);noise(1.18,.14,1.4,1600,.8);tone(180,1.18,.12,.4,"sine",60);sparkle(1.3,[784,988,1175,1568,1976],.07)}
+    else if(k==="young"){noise(.1,1,.06,5000,.5,"highpass");tone(900,1.1,.09,.6,"sine",180);noise(1.1,.08,1.2,900,1);noise(1.15,1.3,.25,7000,.7,"highpass",4000);chord(1.4,[587,740,880,1175],1.4,.15)}
+    else if(k==="adult"){[0,.3,.6,.9].forEach(t=>{tone(130,t,.16,.9,"sine",45);noise(t+.15,.04,.25,8000,1,"highpass")});[[98,.15],[196,.45],[98,.75],[196,1.05]].forEach(([f,t])=>tone(f,t,.14,.35,"sawtooth"));
+      chord(1.2,[523,659,784,988],.35,.18,"sawtooth");chord(1.55,[587,740,880,1109],.6,.15,"sawtooth");sparkle(1.25,[1319,1568,1976,2637],.08)}
+    else if(k==="racing"){[0,.4,.8].forEach(t=>{tone(95,t,.35,1,"sine",42);noise(t,.08,.5,300,1,"lowpass")});[[784,1.2],[1047,1.32],[1319,1.44]].forEach(([f,t])=>tone(f,t,.25,.35,"triangle"));chord(1.58,[784,1047,1319,1568],1.3,.2,"triangle")}
+    else if(k==="medal"){[0.95,1.1,1.25,1.4,1.55].forEach((t,i)=>{tone(2093+i*120,t,.5,.35,"sine");tone(4186+i*240,t,.25,.08,"sine")});chord(1.7,[1047,1319,1568],1,.15)}
+  }catch(e){}
+}
+
+/* ---------- demo-only preview controls (?dragon in the demo address; never on a real athlete's link) ---------- */
+function dgDemoShow(k){
+  const keep=DPREV,idx={hatch:1,baby:2,young:3,adult:4,racing:5}[k];let b,a;
+  if(k==="medal"){DPREV=Object.assign({},keep||{},{xp:DG_STAGES[5].xp+DG_MEDAL_XP-10,mood:"awake"});b=dragonData();DPREV.xp+=10;a=dragonData()}
+  else if(idx){DPREV=Object.assign({},keep||{},{xp:DG_STAGES[idx].xp-10,mood:"awake"});b=dragonData();DPREV.xp=DG_STAGES[idx].xp;a=dragonData()}
+  else{b=dragonData();DPREV=Object.assign({},keep||{},{xp:b.xp+10});a=dragonData()}
+  DPREV=keep;
+  const ev=a.st>b.st||a.medals>b.medals;
+  document.getElementById("overlay").innerHTML=`<div class="scrim" data-close></div><div class="sheet"><div class="inner wrap"><div class="done-panel dgp">
+    ${ev?"":burstHtml()}${dragonCelebration(b,a,false)}<div class="big">${T("finished")}</div>
+    <div class="dg-prev" style="justify-content:center"><button data-dprev-ev="${k}">↻ Replay</button><button data-dprev-open>Back to the dragon</button></div>
+    <button class="btn block" data-close>${T("back")}</button></div></div></div>`;
+  if(ev){buzz([40,60,40,1050,200,80,260]);dgSfx(k)}else{buzz();chime("done")}
+  dgAnimateXp();
+}
+function dgDemoClick(t){
+  const x=t.closest("[data-dprev-xp]"),m=t.closest("[data-dprev-mood]"),hl=t.closest("[data-dprev-hol]"),ev=t.closest("[data-dprev-ev]");
+  const set=o=>{DPREV=Object.assign(DPREV||{},o);render();openDragon();return true};
+  if(x)return set({xp:+x.dataset.dprevXp});
+  if(t.closest("[data-dprev-almost]")){const d=dragonData();return set({xp:d.xp+d.toNext-10})}
+  if(m)return set({mood:m.dataset.dprevMood});
+  if(hl)return set({hol:hl.dataset.dprevHol});
+  if(t.closest("[data-dprev-day]"))return set({day:((DPREV&&DPREV.day)||0)+1});
+  if(t.closest("[data-dprev-clear]")){DPREV=null;render();openDragon();return true}
+  if(t.closest("[data-dprev-open]")){openDragon();return true}
+  if(ev){dgDemoShow(ev.dataset.dprevEv);return true}
+  if(t.closest("[data-dprev-buzz]")){let r="no vibration API";try{if(navigator.vibrate)r=navigator.vibrate(400)?"sent":"blocked"}catch(e){r="error"}
+    if(IS_IOS){buzz();r="ios"}
+    toast(r==="ios"?"Buzz sent: iPhones tick once (iOS 18 or newer)":r==="sent"?"Buzz sent ✓":r==="blocked"?"This browser blocked the buzz":"This browser can't buzz ("+r+")",4000);return true}
+  return false;
 }
 
 /* ---------- render & events ---------- */
@@ -1027,7 +1575,8 @@ app.addEventListener("click",e=>{
   // must not undo it (it used to tick and untick in one go).
   const chk=t.closest("[data-check]");if(chk){const row=chk.closest(".set");if(Date.now()-(+row.dataset.auto||0)<1500){row.dataset.auto="";return}toggleSet(row);return}
   if(t.closest("#finish")){finishWorkout(VIEW.w,VIEW.d);return}
-  if(t.closest("#circuitDone")){const k=`${VIEW.w}|${VIEW.d}`;if(S.days[k]){delete S.days[k];queueDayMark(VIEW.w,VIEW.d,"")}else{S.days[k]=Date.now();queueDayMark(VIEW.w,VIEW.d,"✓ Done · "+isoDay());buzz();chime()}save();render();return}
+  if(t.closest("#dragonCard")){openDragon();return}
+  if(t.closest("#circuitDone")){const k=`${VIEW.w}|${VIEW.d}`;if(S.days[k]){delete S.days[k];queueDayMark(VIEW.w,VIEW.d,"")}else{const b=dragonOn()?dragonData():null;S.days[k]=Date.now();queueDayMark(VIEW.w,VIEW.d,"✓ Done · "+isoDay());buzz();chime();if(b)toast(`+${dragonData().xp-b.xp} XP 🐉`)}save();render();return}
 });
 app.addEventListener("input",e=>{
   const f=e.target.dataset.f;
@@ -1080,6 +1629,8 @@ document.getElementById("overlay").addEventListener("click",e=>{
   const t=e.target;const p=S.profile;
   if(t.closest("#a2hsGot")){S.a2hsHide=true;save();closeSettings();return}   // they've seen the steps: stop showing the banner on this phone
   if(t.closest("[data-close]")){closeSettings();return}
+  if(t.closest("#dgPet")){dgPet();return}
+  if(DG_DEMO&&dgDemoClick(t))return;
   if(t.closest("#a2hsSettings")){openA2hs();return}
   const sx=t.closest("[data-sex]");if(sx){p.sex=sx.dataset.sex;save();queueProfile();openSettings();return}
   const lg=t.closest("[data-lang]");if(lg){p.lang=lg.dataset.lang;save();render();openSettings();return}
@@ -1236,7 +1787,7 @@ function totalWeeks(){
 }
 const nextSeasonSlots=()=>Math.max(0,totalWeeks()-(LIVE&&SEASON?SEASON.weeks.length:WEEKS.length));
 function applyLive(data){
-  applyBrand(data.athlete.team);
+  applyBrand(data.athlete.team);setDragon(data.athlete.dragon);
   TEAM.name=data.athlete.name;EVENTS=[];SEASON=parsePeriod(data.period);if(SEASON)EVENTS=SEASON.events;
   WEEKS=data.weeks.filter(w=>w.days.length&&parseFloat(w.name)>=1).map((w,wi)=>({week:wi+1,name:w.name,label:w.label,date:w.date,tab:w.tab,
     days:w.days.map(d=>({day:d.day,row:d.row||0,mark:d.mark||"",summary:d.summary,circuit:!!d.circuit,timer:d.timer||null,items:d.items.map(it=>({...it,
