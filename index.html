@@ -519,7 +519,7 @@ section{display:grid;gap:12px;padding-block:18px}
 .dg-perch .dg-petted .dg-hop{animation:dgPet .7s cubic-bezier(.3,1.5,.5,1)!important}
 .dg-perch .dg-hearts{top:10%}
 .dg-perch .dg-spark{display:none}
-.whead.dgw #setCount,.whead.dgw .wtimer{padding-right:96px}
+.whead.dgw #setCount,.whead.dgw .wtimer{padding-right:214px}
 /* Today card: dragon and quote are buttons (tap = a cute burst); the info row opens the stats */
 .dgtop .dg-tapme{padding:0;border:0;background:none;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
 button.dg-say{font-size:16.5px}
@@ -552,7 +552,7 @@ button.dg-say:active{transform:scale(.97)}
 .fx-bubbles i{width:16px;height:16px;border-radius:50%;border:2px solid var(--c);background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.85) 0 18%,rgba(255,255,255,.08) 22%);animation-name:dgTapBub;animation-duration:1.9s}
 @keyframes dgTapBub{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}15%{opacity:1}50%{transform:translate(calc(var(--x) * .6 - 40%),calc(var(--y) * .6 - 50%)) scale(var(--s))}85%{opacity:1;transform:translate(calc(var(--x) - 60%),calc(var(--y) - 50%)) scale(var(--s))}100%{opacity:0;transform:translate(calc(var(--x) - 50%),calc(var(--y) - 50%)) scale(1.8)}}
 /* mini dragon gym behind the workout title */
-.dg-gym{margin:-6px 0 0;pointer-events:none;opacity:.92}
+.dg-gym{position:absolute;right:96px;bottom:32px;width:118px;pointer-events:none;opacity:.6;filter:saturate(.85);z-index:1}
 .dg-gym svg{display:block;width:100%;height:auto;overflow:visible}
 .dgm{transform-box:fill-box;animation-duration:2.2s;animation-iteration-count:infinite;animation-timing-function:ease-in-out}
 .dgm-squat{transform-origin:50% 100%;animation-name:dgmSquat}
@@ -565,6 +565,7 @@ button.dg-say:active{transform:scale(.97)}
 @keyframes dgmPress{0%,100%{transform:none}40%,58%{transform:translateY(-36px)}}
 .dgm-parms{transform-origin:50% 100%;animation-name:dgmPArms}
 @keyframes dgmPArms{0%,100%{transform:scaleY(.14)}40%,58%{transform:none}}
+@media (max-width:370px){.whead.dgw .dg-gym{display:none}.whead.dgw #setCount,.whead.dgw .wtimer{padding-right:96px}}
 @media (max-width:370px){.set,.colhead{grid-template-columns:22px minmax(0,1fr) 64px 54px 42px;gap:6px}.bigweek{font-size:76px}}
 </style>
 
@@ -1708,9 +1709,10 @@ function dgStation(kind,dx,delay,hat){
 function dragonGym(day){
   if(!dragonOn()||!day||isCircuit(day))return "";
   const k=dgDayKind(day),h=dgHoliday(),hat=!!h&&h!=="remember";
-  const set=k==="upper"?["press","pull","press"]:k==="lower"?["squat","squat","squat"]:["squat","pull","press"];
-  return `<div class="dg-gym dg-gym-${k}" aria-hidden="true"><svg viewBox="0 0 390 100" width="100%"><path d="M0 97.5 H390" stroke="var(--line)" stroke-width="2"/>
-    ${set.map((s,i)=>dgStation(s,i*130,(i*.55).toFixed(2),hat)).join("")}</svg></div>`;
+  const set=k==="upper"?["press","pull"]:k==="lower"?["squat","squat"]:["squat","pull"];
+  // two tiny dragons far behind yours (smaller, a little higher, faded = farther away)
+  return `<div class="dg-gym dg-gym-${k}" aria-hidden="true"><svg viewBox="0 0 260 100"><path d="M-10 97.5 H270" stroke="var(--line)" stroke-width="3"/>
+    ${set.map((s,i)=>dgStation(s,i*130,(i*.7).toFixed(2),hat)).join("")}</svg></div>`;
 }
 
 /* ---------- render & events ---------- */
