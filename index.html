@@ -508,6 +508,18 @@ section{display:grid;gap:12px;padding-block:18px}
 .dg-bags{transform-origin:50% 0%;animation:dgBags 1.4s ease-in-out infinite alternate}
 @keyframes dgBags{0%{transform:rotate(-2deg)}100%{transform:rotate(2deg)}}
 .dg-h-remember .dg-hop{animation:none}
+.dg-say .dg-by{display:block;margin-top:5px;font-family:var(--body,Barlow),system-ui,sans-serif;font-size:12px;font-weight:600;letter-spacing:.02em;color:#9a5a44;text-transform:none}
+.dg-say .dg-by:before{content:"— "}
+/* perched on a barbell in the workout header: chilling, a slow sway instead of hopping */
+.whead.dgw{position:relative}
+.dg-perch{position:absolute;right:-6px;bottom:15px;width:100px;height:100px;padding:0;border:0;background:none;z-index:2;-webkit-tap-highlight-color:transparent}
+.dg-perch .dgsvg{width:100px;height:100px}
+.dg-perch .dg-happy .dg-hop{animation:dgSway 4s ease-in-out infinite;transform-origin:50% 88%}
+@keyframes dgSway{0%,100%{transform:rotate(-2.5deg)}50%{transform:rotate(2.5deg)}}
+.dg-perch .dg-petted .dg-hop{animation:dgPet .7s cubic-bezier(.3,1.5,.5,1)!important}
+.dg-perch .dg-hearts{top:10%}
+.dg-perch .dg-spark{display:none}
+.whead.dgw #setCount,.whead.dgw .wtimer{padding-right:96px}
 @media (max-width:370px){.set,.colhead{grid-template-columns:22px minmax(0,1fr) 64px 54px 42px;gap:6px}.bigweek{font-size:76px}}
 </style>
 
@@ -850,7 +862,7 @@ function viewWorkout(wn,dn){
   let total=0,done=0;d.items.forEach((it,i)=>(it.sets||[]).forEach((_,s)=>{total++;if(S.logs[keyOf(wn,dn,i,s)]?.done)done++}));
   const pct=total?Math.round(done/total*100):0;
   return head+`<div class="wrap">
-   <div class="whead"><div class="eyebrow">${T("week")} ${WN(wn)}${phaseOf(w)?" · "+esc(phaseOf(w)):""}</div><h1>${esc(dayTitle(d))}</h1>
+   <div class="whead ${dragonOn()?"dgw":""}">${dragonPerch()}<div class="eyebrow">${T("week")} ${WN(wn)}${phaseOf(w)?" · "+esc(phaseOf(w)):""}</div><h1>${esc(dayTitle(d))}</h1>
      <div class="small muted num" id="setCount">${done} ${T("ofSets")} ${total} ${T("sets")}</div>
      ${timerHtml(wn,dn)}
      <div class="progress"><i id="pbar" style="width:${pct}%"></i></div></div>
@@ -1280,6 +1292,17 @@ function dgSay(d){
   if(h&&(h!=="xmas"||dgDay()%2===0)){const arr=DG_HOL_LINES[h];const l=arr[((dgDay()%arr.length)+arr.length)%arr.length];if(!(h==="xmas"&&d.mood==="egg"))return dgFr()?l[1]:l[0]}
   const k=dgKind(d);return dgPick(k,0,k==="train"&&d.left<2?(l=>!/\{left\}/.test(l.en)):null).replace(/\{left\}/g,d.left||2);
 }
+/* The daily bubble: one short public-domain quote a day (proverbs, classic thinkers, classic children's books),
+   picked by date so it changes every day. Special days (Nov 11, Dec 1–26) keep their own lines. */
+const DG_QUOTES=[{"en":"Nobody can be uncheered with a balloon.","fr":"Personne ne peut rester triste avec un ballon.","by":"A. A. Milne","byFr":"A. A. Milne"},{"en":"You're the Best Bear in All the World.","fr":"Tu es le meilleur ours du monde entier.","by":"A. A. Milne","byFr":"A. A. Milne"},{"en":"You will be Useful in the adventure before us.","fr":"Tu seras utile dans l'aventure qui nous attend.","by":"A. A. Milne","byFr":"A. A. Milne"},{"en":"There is no hurry. We shall get there some day.","fr":"Rien ne presse. Nous y arriverons un jour.","by":"A. A. Milne","byFr":"A. A. Milne"},{"en":"Oh, Piglet, how brave and clever you are!","fr":"Oh, Porcinet, comme tu es courageux et malin !","by":"A. A. Milne","byFr":"A. A. Milne"},{"en":"Tiggers can do everything.","fr":"Les Tigrous savent tout faire.","by":"A. A. Milne","byFr":"A. A. Milne"},{"en":"Second to the right, and straight on till morning.","fr":"La deuxième à droite, puis tout droit jusqu'au matin.","by":"J. M. Barrie","byFr":"J. M. Barrie"},{"en":"Fall seven times, stand up eight.","fr":"Tombe sept fois, relève-toi huit.","by":"Japanese proverb","byFr":"Proverbe japonais"},{"en":"Little by little, the bird builds its nest.","fr":"Petit à petit, l'oiseau fait son nid.","by":"French proverb","byFr":"Proverbe français"},{"en":"Rome wasn't built in a day.","fr":"Rome ne s'est pas faite en un jour.","by":"Proverb","byFr":"Proverbe"},{"en":"Practice makes perfect.","fr":"C'est en forgeant qu'on devient forgeron.","by":"Proverb","byFr":"Proverbe"},{"en":"Where there's a will, there's a way.","fr":"Vouloir, c'est pouvoir.","by":"Proverb","byFr":"Proverbe"},{"en":"After the rain comes the sunshine.","fr":"Après la pluie, le beau temps.","by":"French proverb","byFr":"Proverbe français"},{"en":"A smooth sea never made a skilled sailor.","fr":"Ce n'est pas sur une mer calme qu'on devient bon marin.","by":"English proverb","byFr":"Proverbe anglais"},{"en":"Step by step, one goes a long way.","fr":"Pas à pas, on va loin.","by":"French proverb","byFr":"Proverbe français"},{"en":"The best time to plant a tree was 20 years ago. The second best is now.","fr":"Le meilleur moment pour planter un arbre, c'était il y a 20 ans. Le deuxième, c'est maintenant.","by":"Chinese proverb","byFr":"Proverbe chinois"},{"en":"Tomorrow is another day.","fr":"Demain est un autre jour.","by":"Proverb","byFr":"Proverbe"},{"en":"Nothing ventured, nothing gained.","fr":"Qui ne risque rien n'a rien.","by":"Proverb","byFr":"Proverbe"},{"en":"Slow but steady wins the race.","fr":"Rien ne sert de courir, il faut partir à point.","by":"Aesop","byFr":"La Fontaine"},{"en":"Little friends may prove great friends.","fr":"On a souvent besoin d'un plus petit que soi.","by":"Aesop","byFr":"La Fontaine"},{"en":"Patience and length of time do more than strength or rage.","fr":"Patience et longueur de temps font plus que force ni que rage.","by":"La Fontaine","byFr":"La Fontaine"},{"en":"The journey of a thousand miles begins with one step.","fr":"Un voyage de mille lieues commence toujours par un premier pas.","by":"Lao Tzu","byFr":"Lao Tseu"},{"en":"He who overcomes himself is mighty.","fr":"Celui qui se surmonte lui-même est fort.","by":"Lao Tzu","byFr":"Lao Tseu"},{"en":"No great thing is created suddenly.","fr":"Rien de grand ne se crée soudainement.","by":"Epictetus","byFr":"Épictète"},{"en":"Dripping water hollows out stone.","fr":"La goutte d'eau creuse la pierre.","by":"Ovid","byFr":"Ovide"},{"en":"They can because they think they can.","fr":"Ils peuvent parce qu'ils croient pouvoir.","by":"Virgil","byFr":"Virgile"},{"en":"Fortune favours the bold.","fr":"La fortune sourit aux audacieux.","by":"Virgil","byFr":"Virgile"},{"en":"The beginning is the most important part of the work.","fr":"Le commencement est la partie la plus importante de l'ouvrage.","by":"Plato","byFr":"Platon"},{"en":"Well begun is half done.","fr":"Bien commencé, c'est à moitié fait.","by":"Aristotle","byFr":"Aristote"},{"en":"Very little is needed to make a happy life.","fr":"Il faut très peu de choses pour rendre la vie heureuse.","by":"Marcus Aurelius","byFr":"Marc Aurèle"},{"en":"As long as you live, keep learning how to live.","fr":"Tant que tu vis, continue d'apprendre à vivre.","by":"Seneca","byFr":"Sénèque"},{"en":"Little strokes fell great oaks.","fr":"Petits coups abattent grands chênes.","by":"Benjamin Franklin","byFr":"Benjamin Franklin"},{"en":"Well done is better than well said.","fr":"Bien fait vaut mieux que bien dit.","by":"Benjamin Franklin","byFr":"Benjamin Franklin"},{"en":"Diligence is the mother of good luck.","fr":"La persévérance est la mère de la chance.","by":"Benjamin Franklin","byFr":"Benjamin Franklin"},{"en":"Nothing great was ever achieved without enthusiasm.","fr":"Rien de grand ne s'est jamais fait sans enthousiasme.","by":"Ralph Waldo Emerson","byFr":"Ralph Waldo Emerson"},{"en":"Write it on your heart that every day is the best day in the year.","fr":"Écris-le sur ton cœur : chaque jour est le plus beau de l'année.","by":"Ralph Waldo Emerson","byFr":"Ralph Waldo Emerson"},{"en":"To travel hopefully is a better thing than to arrive.","fr":"Voyager plein d'espoir vaut mieux qu'arriver.","by":"Robert Louis Stevenson","byFr":"Robert Louis Stevenson"},{"en":"Optimism is the faith that leads to achievement.","fr":"L'optimisme est la foi qui mène à la réussite.","by":"Helen Keller","byFr":"Helen Keller"},{"en":"Work is love made visible.","fr":"Le travail, c'est l'amour rendu visible.","by":"Kahlil Gibran","byFr":"Khalil Gibran"},{"en":"A merry heart goes all the day.","fr":"Un cœur joyeux tient toute la journée.","by":"Shakespeare","byFr":"Shakespeare"},{"en":"Though she be but little, she is fierce.","fr":"Elle a beau être petite, elle est féroce.","by":"Shakespeare","byFr":"Shakespeare"},{"en":"Wisely and slow; they stumble that run fast.","fr":"Sagement et lentement : qui court trop vite trébuche.","by":"Shakespeare","byFr":"Shakespeare"},{"en":"We know what we are, but know not what we may be.","fr":"Nous savons ce que nous sommes, mais pas ce que nous pouvons devenir.","by":"Shakespeare","byFr":"Shakespeare"},{"en":"Our doubts are traitors.","fr":"Nos doutes sont des traîtres.","by":"Shakespeare","byFr":"Shakespeare"},{"en":"Hope is the thing with feathers.","fr":"L'espoir est une chose avec des plumes.","by":"Emily Dickinson","byFr":"Emily Dickinson"},{"en":"Hope springs eternal in the human breast.","fr":"L'espoir jaillit éternellement du cœur humain.","by":"Alexander Pope","byFr":"Alexander Pope"},{"en":"I'm not afraid of storms, for I'm learning how to sail my ship.","fr":"Je n'ai pas peur des tempêtes : j'apprends à mener mon bateau.","by":"Louisa May Alcott","byFr":"Louisa May Alcott"},{"en":"Isn't it nice to think that tomorrow is a new day with no mistakes in it yet?","fr":"C'est bon de penser que demain est un jour neuf, sans aucune erreur encore.","by":"L. M. Montgomery","byFr":"L. M. Montgomery"},{"en":"Looking forward to things is half the pleasure of them.","fr":"Attendre les choses avec impatience, c'est la moitié du plaisir.","by":"L. M. Montgomery","byFr":"L. M. Montgomery"},{"en":"There is nothing half so much worth doing as simply messing about in boats.","fr":"Rien ne vaut la peine autant que de simplement s'amuser en bateau.","by":"Kenneth Grahame","byFr":"Kenneth Grahame"},{"en":"I've believed as many as six impossible things before breakfast.","fr":"J'ai déjà cru jusqu'à six choses impossibles avant le déjeuner.","by":"Lewis Carroll","byFr":"Lewis Carroll"},{"en":"Begin at the beginning, and go on till you come to the end: then stop.","fr":"Commence au commencement, continue jusqu'à la fin, puis arrête-toi.","by":"Lewis Carroll","byFr":"Lewis Carroll"},{"en":"It's no use going back to yesterday, because I was a different person then.","fr":"Inutile de revenir à hier : j'étais quelqu'un d'autre.","by":"Lewis Carroll","byFr":"Lewis Carroll"},{"en":"Every day, in every way, I'm getting better and better.","fr":"Tous les jours, à tous points de vue, je vais de mieux en mieux.","by":"Émile Coué","byFr":"Émile Coué"},{"en":"Rest is not idleness.","fr":"Le repos n'est pas de la paresse.","by":"John Lubbock","byFr":"John Lubbock"},{"en":"You just think lovely wonderful thoughts, and they lift you up in the air.","fr":"Il suffit de penser à de belles pensées merveilleuses, et elles te soulèvent dans les airs.","by":"J. M. Barrie","byFr":"J. M. Barrie"}];
+function dgQuote(){const n=DG_QUOTES.length;if(!n)return null;let step=41;while(n>1&&dgGcd(step,n)!==1)step+=2;
+  const q=DG_QUOTES[((dgDay()*step)%n+n)%n];return {t:dgFr()?q.fr:q.en,by:dgFr()?(q.byFr||q.by):q.by}}
+function dgSayHtml(d){
+  const h=dgHoliday();
+  if(h&&(h!=="xmas"||dgDay()%2===0))return esc(dgSay(d));
+  const q=dgQuote();if(!q)return esc(dgSay(d));
+  return `${esc(q.t)}<span class="dg-by">${esc(q.by)}</span>`;
+}
 function dgEvolveLine(k){const arr=(DG_LINES.evolve&&DG_LINES.evolve[k])||[];if(!arr.length)return "";const l=arr[dgDay()%arr.length];return dgFr()?l.fr:l.en}
 
 /* ---------- drawing (all in code: DB Speed red, cream belly with the seal's lane lines) ---------- */
@@ -1303,7 +1326,7 @@ function dgEggSVG(o){o=o||{};const px=o.px||110,h=o.hol===undefined?dgHoliday():
   const deco=o.still?"":(h&&h!=="remember"?dgHat(104,72,.62,-14):h==="remember"?dgPoppy(146,150,.8):"");
   return `<svg class="dgsvg dg-egg-st ${o.cls||""}" width="${px}" height="${px}" viewBox="0 0 200 200" role="img" aria-label="${esc(dgName(0))}">
    <ellipse cx="100" cy="191" rx="42" ry="6" fill="#000" opacity=".18"/>
-   <g class="${dgA(o,"dg-egg")}">${dgEggBody()}${cracks}${o.still?"":`<path class="dg-shine" d="M126 72 l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" fill="#fff"/>`}${deco}</g></svg>`}
+   <g class="${dgA(o,"dg-egg")}">${dgEggBody()}${o.perch?dgBarbell(1).replace('<g>','<g transform="translate(0 8)">'):""}${cracks}${o.still?"":`<path class="dg-shine" d="M126 72 l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" fill="#fff"/>`}${deco}</g></svg>`}
 /* The top of the egg, flying off when it hatches. */
 function dgCapSVG(px){const {R,C,EGG}=DGC;
   return `<svg class="dgsvg" width="${px}" height="${px}" viewBox="0 0 200 200" aria-hidden="true"><g class="dg-a" style="transform-origin:50% 60%">
@@ -1382,9 +1405,14 @@ function dgBody(g,mood,o){
   const head=`<g transform="${lower}translate(100 124) scale(${g.head}) translate(-100 -124)"><g class="${dgA(o,"dg-head")}">
      ${fins}${horns}${spikes}<ellipse cx="100" cy="90" rx="41" ry="37" fill="${R}" stroke="${OL}" stroke-width="${sw}"/>
      <ellipse cx="80" cy="66" rx="9" ry="5" fill="#fff" opacity=".22" transform="rotate(-25 80 66)"/>${band}${cheeks}${snout}${eyes}${brows}${mouth}${fangs}${beard}${shellHat}${hat}${bubble}</g></g>`;
-  const inner=`${tail}${wings}${sack}${body}${feet}${paddle}${armL}${poppy}${armR}${bags}${med}${head}`;
+  const bar=o.perch&&g.k!=="hatch"?dgBarbell(g.s):"";
+  const inner=`${tail}${wings}${sack}${body}${bar}${feet}${paddle}${armL}${poppy}${armR}${bags}${med}${head}`;
   return `<g class="${dgA(o,"dg-hop")}"><g transform="translate(0 ${g.dy||0}) translate(100 190) scale(${g.s}) translate(-100 -190)"><g class="${dgA(o,"dg-breathe")}">${inner}</g></g></g>`;
 }
+/* A barbell with red plates, drawn in the dragon's own (scaled) coordinates so it always spans the picture. */
+function dgBarbell(s){const {OL,R,AM,AMD}=DGC,y=176,L=100-95/s,Rr=100+95/s,k=1/s;
+  const plate=(x,dir)=>`<rect x="${x-6*k}" y="${y-22*k}" width="${12*k}" height="${44*k}" rx="${4*k}" fill="${R}" stroke="${OL}" stroke-width="${2.5*k}"/><rect x="${x+dir*9*k-4.5*k}" y="${y-15*k}" width="${9*k}" height="${30*k}" rx="${3*k}" fill="${AM}" stroke="${AMD}" stroke-width="${2*k}"/><rect x="${x+dir*17*k-3*k}" y="${y-6*k}" width="${6*k}" height="${12*k}" rx="${1.5*k}" fill="#9aa3ad" stroke="#4b525a" stroke-width="${1.5*k}"/>`;
+  return `<g><rect x="${L}" y="${y-3.5*k}" width="${Rr-L}" height="${7*k}" rx="${3.5*k}" fill="#b9c1ca" stroke="#4b525a" stroke-width="${2*k}"/>${plate(L+14*k,1)}${plate(Rr-14*k,-1)}</g>`}
 function dragonSVG(st,mood,o){
   o=o||{};const px=o.px||110;
   const h=o.hol===undefined?(o.still?"":dgHoliday()):o.hol;
@@ -1407,9 +1435,10 @@ function dragonSVG(st,mood,o){
       <g class="dg-a dg-lid"><rect x="-3" y="0" width="36" height="10" rx="3" fill="#43c08a" stroke="${DGC.OL}" stroke-width="2.5"/><rect x="12" y="0" width="6" height="10" fill="#f2b233"/><path d="M15 0 C6 -10 2 -2 15 0 C28 -2 24 -10 15 0" fill="#f2b233" stroke="${DGC.AMD}" stroke-width="2"/></g>
       <g class="dg-gspark">${star(15,-14,"#f2b233","")}${star(0,-26,"#fff6d8","s2")}${star(30,-24,"#f2b233","s3")}<text x="15" y="-36" text-anchor="middle" font-size="14">❤️</text></g></g>`;
   }
+  const perchBar=o.perch&&g.k==="hatch"?dgBarbell(1).replace('<g>','<g transform="translate(0 6)">'):"";
   return `<svg class="dgsvg dg-${mood} ${h?"dg-h-"+h:""} ${o.cls||""}" width="${px}" height="${px}" viewBox="0 0 200 200" role="img" aria-label="${esc(dgName(st))}">
     <ellipse cx="${h==="day"&&st>=2&&!o.still?88:100}" cy="191" rx="${(48*g.s).toFixed(1)}" ry="6" fill="#000" opacity=".18"/>
-    ${main}${hatchShell}${extra}${sparks}${zz}</svg>`;
+    ${main}${hatchShell}${perchBar}${extra}${sparks}${zz}</svg>`;
 }
 
 /* ---------- the dragon's font (loaded only for athletes who have the dragon) ---------- */
@@ -1418,6 +1447,18 @@ const dgFontsIn={};
 function dgFont(){const f=(DPREV&&DPREV.font)||"Fredoka";
   if(!dgFontsIn[f]){dgFontsIn[f]=1;try{const l=document.createElement("link");l.rel="stylesheet";l.href=`https://fonts.googleapis.com/css2?family=${DG_FONTS[f]}&display=swap`;document.head.appendChild(l)}catch(e){}}
   document.documentElement.style.setProperty("--dgfont",`"${f}"`)}
+
+/* ---------- perched on a barbell at the top of each workout, smiling ---------- */
+function dragonPerch(){
+  if(!dragonOn())return "";dgFont();const d=dragonData(),h=dgHoliday();
+  const hol=h==="day"?"xmas":h;   // no gift scene up here, just the hat
+  return `<button class="dg-perch" id="dgPerch" aria-label="${dgFr()?"Ton dragon":"Your dragon"}">${dragonSVG(d.st,d.st?"happy":"egg",{px:104,medals:d.medals,perch:true,hol})}</button>`;
+}
+function dgPerchPet(){const b=document.getElementById("dgPerch");if(!b)return;const svg=b.querySelector("svg");
+  svg.classList.remove("dg-petted","dg-knock");void svg.getBoundingClientRect();svg.classList.add(dragonData().st?"dg-petted":"dg-knock");
+  const old=b.querySelector(".dg-hearts");if(old)old.remove();
+  b.insertAdjacentHTML("beforeend",`<div class="dg-hearts">${[-22,0,22].map((x,i)=>`<i style="--x:${x}px;--d:${i*.08}s">${["❤️","💛","❤️"][i]}</i>`).join("")}</div>`);
+  dgSfx(dragonData().st?"pet":"knock");buzz([25]);setTimeout(()=>svg.classList.remove("dg-petted"),750)}
 
 /* ---------- home card and the dragon sheet ---------- */
 function dgNextTxt(d){const fr=dgFr();
@@ -1428,7 +1469,7 @@ const dgStreakTxt=n=>dgFr()?(n>1?"semaines de suite":"semaine de suite"):"week s
 function dragonCard(){
   if(!dragonOn())return "";dgFont();const d=dragonData(),fr=dgFr();
   return `<section style="padding-bottom:0"><button class="dgcard" id="dragonCard" aria-label="${fr?"Ton dragon":"Your dragon"}">
-    <div class="dgtop"><span class="dg-hello">${dragonSVG(d.st,d.mood,{px:120,medals:d.medals})}</span><div class="dg-say">${esc(dgSay(d))}</div></div>
+    <div class="dgtop"><span class="dg-hello">${dragonSVG(d.st,d.mood,{px:120,medals:d.medals})}</span><div class="dg-say">${dgSayHtml(d)}</div></div>
     <div class="dginfo"><div class="dgrow"><div><div class="eyebrow">${fr?"Ton dragon":"Your dragon"}</div><div class="dgname">${esc(dgName(d.st))}</div></div>
      ${d.st?`<div class="dgmeta"><span>🔥 <b>${d.streak}</b> ${dgStreakTxt(d.streak)}</span>${d.freezes?`<span>🧊 <b>${d.freezes}</b></span>`:""}${d.medals?`<span>🏅 <b>${d.medals}</b></span>`:""}</div>`:""}</div>
      ${d.st?`<div class="xpbar"><i style="width:${d.pct}%"></i></div><div class="dgnext">${esc(dgNextTxt(d))}</div>`:`<div class="dgnext">${fr?"Ta prochaine séance le fait éclore.":"Your next workout hatches it."}</div>`}</div></button></section>`;
@@ -1446,7 +1487,7 @@ function openDragon(){
     <div class="dg-prev"><button data-dprev-day>Next day's message ›</button><button data-dprev-clear>Back to real data</button><button data-dprev-buzz>📳 Test buzz</button></div></div>`:"";
   document.getElementById("overlay").innerHTML=`<div class="scrim" data-close></div><div class="sheet" role="dialog" aria-label="${fr?"Ton dragon":"Your dragon"}"><div class="inner wrap">
    <div style="display:flex;justify-content:space-between;align-items:center"><h2>${fr?"Ton dragon":"Your dragon"}</h2><button class="btn ghost" data-close style="padding:8px 12px;font-size:14px">${T("close")}</button></div>
-   <div class="dg-big"><div class="dg-say down" id="dgSay">${esc(dgSay(d))}</div><div id="dgPet" role="button" aria-label="${fr?"Flatter ton dragon":"Pet your dragon"}">${dragonSVG(d.st,d.mood,{px:210,medals:d.medals})}</div>
+   <div class="dg-big"><div class="dg-say down" id="dgSay">${dgSayHtml(d)}</div><div id="dgPet" role="button" aria-label="${fr?"Flatter ton dragon":"Pet your dragon"}">${dragonSVG(d.st,d.mood,{px:210,medals:d.medals})}</div>
      <div class="dg-title">${esc(dgName(d.st))}${d.medals?` · 🏅 ${d.medals}`:""}</div>
      ${d.st?`<div class="muted small">${d.xp} XP · ${esc(dgNextTxt(d))}</div><div class="xpbar" style="width:100%;max-width:320px"><i style="width:${d.pct}%"></i></div>`:""}
      <div class="small muted">${fr?(d.st?"Touche ton dragon pour le flatter":"Touche l’œuf"):(d.st?"Tap your dragon to pet it":"Tap the egg")}</div></div>
@@ -1598,6 +1639,7 @@ app.addEventListener("click",e=>{
   const chk=t.closest("[data-check]");if(chk){const row=chk.closest(".set");if(Date.now()-(+row.dataset.auto||0)<1500){row.dataset.auto="";return}toggleSet(row);return}
   if(t.closest("#finish")){finishWorkout(VIEW.w,VIEW.d);return}
   if(t.closest("#dragonCard")){openDragon();return}
+  if(t.closest("#dgPerch")){dgPerchPet();return}
   if(t.closest("#circuitDone")){const k=`${VIEW.w}|${VIEW.d}`;if(S.days[k]){delete S.days[k];queueDayMark(VIEW.w,VIEW.d,"")}else{const b=dragonOn()?dragonData():null;S.days[k]=Date.now();queueDayMark(VIEW.w,VIEW.d,"✓ Done · "+isoDay());buzz();chime();if(b)toast(`+${dragonData().xp-b.xp} XP 🐉`)}save();render();return}
 });
 app.addEventListener("input",e=>{
