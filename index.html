@@ -577,6 +577,10 @@ button.dg-say:active{transform:scale(.97)}
 .dg-wreath{filter:drop-shadow(0 1px 0 rgba(0,0,0,.2))}
 .fx-leaves i{width:13px;height:7px;border-radius:0 80% 0 80%;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.15);animation-name:dgTapLeaf;animation-duration:2.6s;animation-timing-function:ease-in-out}
 @keyframes dgTapLeaf{0%{opacity:0;transform:translate(-50%,-50%) rotate(0) scale(.5)}12%{opacity:1}35%{transform:translate(calc(var(--x) * .6 - 50%),calc(var(--y) * .7 - 50%)) rotate(calc(var(--r) * 2))}60%{transform:translate(calc(var(--x) * .9 - 30%),calc(var(--y) * .4 - 50%)) rotate(calc(var(--r) * -2))}85%{opacity:1}100%{opacity:0;transform:translate(calc(var(--x) - 60%),calc(var(--y) * .1 + 20px)) rotate(calc(var(--r) * 3))}}
+/* the hatchling waves hello when it hatches */
+.dg-wave .dg-pawr{transform-box:fill-box;transform-origin:30% 100%;animation:dgPawUp .35s ease-out 1.9s forwards,dgWave .42s ease-in-out 2.25s 8 alternate forwards}
+@keyframes dgPawUp{to{transform:translate(4px,-16px) rotate(-20deg)}}
+@keyframes dgWave{from{transform:translate(4px,-16px) rotate(-28deg)}to{transform:translate(4px,-16px) rotate(18deg)}}
 @media (max-width:370px){.set,.colhead{grid-template-columns:22px minmax(0,1fr) 64px 54px 42px;gap:6px}.bigweek{font-size:76px}}
 </style>
 
@@ -1276,7 +1280,14 @@ let DRAGON=null,DPREV=null;
 const DG_DEMO=!LIVE&&/[?&]dragon\b/i.test(location.search);
 const dragonOn=()=>LIVE?!!DRAGON:DG_DEMO;
 function setDragon(v){v=String(v==null?"":v).trim();if(!v||/^(no|non|off|false|0)$/i.test(v)){DRAGON=null;return}
-  const m=v.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);DRAGON={from:m?new Date(+m[1],+m[2]-1,+m[3]):null}}
+  const m=v.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+  const nm=v.replace(/\d{4}-\d{1,2}-\d{1,2}/,"").replace(/\b(yes|oui)\b/gi,"").replace(/[^A-Za-zÀ-ÿ' -]/g," ").trim().split(/\s+/)[0]||"";
+  DRAGON={from:m?new Date(+m[1],+m[2]-1,+m[3]):null,name:nm.slice(0,20)}}
+/* Demo only: ?dragon&egg starts as an egg, &name=Martin sets the name the dragon says hi to. */
+if(DG_DEMO&&/[?&]egg\b/.test(location.search))DPREV={xp:0};
+/* The name the dragon greets when it hatches: from the switch, else the first word of the athlete's name. */
+function dgHelloName(){const q=DG_DEMO?(location.search.match(/[?&]name=([^&]+)/)||[])[1]:"";
+  const n=(DRAGON&&DRAGON.name)||(q?decodeURIComponent(q):"")||String(S.profile.name||"").split(" ")[0];return n&&n!=="Alex"?n.slice(0,20):""}
 const DG_STAGES=[
   {k:"egg",xp:0,en:"Dragon egg",fr:"Œuf de dragon"},
   {k:"hatch",xp:10,en:"Hatchling",fr:"Nouveau-né",s:.6,head:1.3,dy:-40,wing:0,horn:0,fins:.75,spikes:0,tail:0,arm:.8},
@@ -1493,7 +1504,7 @@ function dragonSVG(st,mood,o){
   const sparks=(mood==="happy"||h==="eve")&&!o.still&&h!=="remember"?star(rx+12,top+12,"#f2b233","")+star(lx-12,top+30,"#f2b233","s2")+star(rx+4,top+60,"#fff6d8","s3"):"";
   const hatchShell=g.k==="hatch"?`<path d="${DG_CRACK} A48 60 0 1 1 52.7 118 Z" fill="${C}" stroke="${EGG}" stroke-width="3" stroke-linejoin="round"/>
      <path d="M55 140 Q100 126 145 140 M57 155 Q100 141 143 155 M62 169 Q100 156 138 169" fill="none" stroke="${R}" stroke-width="5" stroke-linecap="round"/>
-     <ellipse cx="79" cy="115" rx="9" ry="6.5" fill="${DGC.RD}" stroke="${DGC.OL}" stroke-width="2.5"/><ellipse cx="121" cy="115" rx="9" ry="6.5" fill="${DGC.RD}" stroke="${DGC.OL}" stroke-width="2.5"/>${h==="remember"?dgPoppy(140,132,.6):""}`:"";
+     <ellipse cx="79" cy="115" rx="9" ry="6.5" fill="${DGC.RD}" stroke="${DGC.OL}" stroke-width="2.5"/><ellipse class="dg-pawr" cx="121" cy="115" rx="9" ry="6.5" fill="${DGC.RD}" stroke="${DGC.OL}" stroke-width="2.5"/>${h==="remember"?dgPoppy(140,132,.6):""}`:"";
   // Dec 25: hands a gift to a mini dragon, and the gift pops open
   let main=dgBody(g,mood,Object.assign({},o,{hol:h})),extra="";
   if(h==="day"&&st>=2&&!o.still){
@@ -1535,7 +1546,7 @@ function dragonCard(){
   if(!dragonOn())return "";dgFont();const d=dragonData(),fr=dgFr();
   return `<section style="padding-bottom:0"><div class="dgcard">
     <div class="dgtop"><button class="dg-hello dg-tapme" data-dgtap aria-label="${fr?"Flatter ton dragon":"Pet your dragon"}">${dragonSVG(d.st,dgStoicNow()&&d.st?"stoic":d.mood,{px:120,medals:d.medals,stoic:dgStoicNow()})}</button><button class="dg-say" data-dgtap>${dgSayHtml(d)}</button></div>
-    <button class="dginfo" id="dragonCard" aria-label="${fr?"Ton dragon : statistiques":"Your dragon: stats"}"><div class="dgrow"><div><div class="eyebrow">${fr?"Ton dragon":"Your dragon"}</div><div class="dgname">${esc(dgName(d.st))}</div></div>
+    <button class="dginfo" id="dragonCard" aria-label="${fr?"Ton dragon : statistiques":"Your dragon: stats"}"><div class="dgrow"><div><div class="eyebrow">${fr?"DB · ton dragon":"DB · your dragon"}</div><div class="dgname">${esc(dgName(d.st))}</div></div>
      ${d.st?`<div class="dgmeta"><span>🔥 <b>${d.streak}</b> ${dgStreakTxt(d.streak)}</span>${d.freezes?`<span>🧊 <b>${d.freezes}</b></span>`:""}${d.medals?`<span>🏅 <b>${d.medals}</b></span>`:""}</div>`:""}</div>
      ${d.st?`<div class="xpbar"><i style="width:${d.pct}%"></i></div><div class="dgnext">${esc(dgNextTxt(d))}<span class="dgmore">${fr?"Stats":"Stats"} ›</span></div>`:`<div class="dgnext">${fr?"Ta prochaine séance le fait éclore.":"Your next workout hatches it."}<span class="dgmore">${fr?"Stats":"Stats"} ›</span></div>`}</button></div></section>`;
 }
@@ -1606,9 +1617,11 @@ function dragonCelebration(b,a,pr){
   dgFont();const fr=dgFr(),grew=a.st>b.st,medal=!grew&&a.medals>b.medals,gain=a.xp-b.xp;
   const k=grew?DG_STAGES[a.st].k:medal?"medal":"",ev=!!k;
   const title=k==="hatch"?(fr?"Il a éclos!":"It hatched!"):grew?(fr?"Ton dragon a évolué!":"Your dragon evolved!"):medal?(fr?"Nouvelle médaille!":"New medal!"):"";
-  const line=ev?dgEvolveLine(k):dgPick(pr?"pr":"after",a.workouts);
+  const nm=dgHelloName();
+  const line=k==="hatch"?(fr?`Salut${nm?" "+nm:""}! Moi, c'est DB. J’ai tellement hâte de grandir avec toi pendant que tu t’entraînes!`:`Hi${nm?" "+nm:""}! I'm DB. I'm so excited to keep growing with you as you train!`)
+    :ev?dgEvolveLine(k):dgPick(pr?"pr":"after",a.workouts);
   const L=ev?"dg-late":"";
-  const stage=k==="hatch"?`<div class="layer old">${dgEggSVG({px:200,cracks:true,cls:"dg-hatching"})}</div><div class="layer cap">${dgCapSVG(200)}</div><div class="flash"></div><div class="layer new">${dragonSVG(a.st,"happy",{px:200})}</div>`
+  const stage=k==="hatch"?`<div class="layer old">${dgEggSVG({px:200,cracks:true,cls:"dg-hatching"})}</div><div class="layer cap">${dgCapSVG(200)}</div><div class="flash"></div><div class="layer new">${dragonSVG(a.st,"happy",{px:200,cls:"dg-wave"})}</div>`
     :grew?`<div class="layer old">${dragonSVG(b.st,"awake",{px:200,medals:b.medals})}</div><div class="flash"></div><div class="layer new">${dragonSVG(a.st,"happy",{px:200,medals:a.medals})}</div>`
     :`<div class="layer new">${dragonSVG(a.st,"happy",{px:200,medals:a.medals})}</div>`;
   return `<div class="dg-cele ${ev?`ev ev-${k}`:""}">${stage}${dgFx(k)}<div class="xp-pop">+${gain} XP</div></div>
