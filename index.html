@@ -733,7 +733,7 @@ const STR = {
   shotBtn:"Fill from a screenshot",shotTip:"Works best with the Laps screen (Garmin Connect or Strava). The app fills your sets, you check them.",shotReading:"Reading your screenshot…",shotTitle:"From your screenshot",shotFill:"Fill in my sets",shotCancel:"Cancel",shotNoLap:"no lap found",
   shotNoSets:"No interval laps found, so only the session totals. Next time, press Lap at each interval.",shotAuto:d=>`Your watch made a lap every ${d} on its own, so your intervals aren’t in the laps: only the session totals. Next time, press Lap at each interval.`,
   shotErr:"Couldn’t read that picture. Try again, or type your numbers in.",shotNothing:"Couldn’t find workout numbers in that picture.",shotDone:n=>n?`Filled ${n} sets. Check them, add your RPE, then save.`:"Session totals filled. Add your RPE, then save.",
-  shotReplace:n=>`Replaces ${n} ${n===1?"set":"sets"} you already logged.`,shotCheck:"Check the numbers before you save.",shotCut:"Some laps are cut off. Add another screenshot if sets are missing.",
+  shotReplace:n=>`Replaces ${n} ${n===1?"set":"sets"} you already logged.`,shotCheck:"Check the numbers before you save.",shotOff:"Your intervals don’t match the planned sets, so they’re filled in order.",shotCut:"Some laps are cut off. Add another screenshot if sets are missing.",
   savedOn:"Saved",rpeWords:["","Very easy","Very easy","Easy","Easy","Moderate","Moderate","Hard","Hard","Very hard","All out"]},
  fr:{today:"Aujourd'hui",program:"Programme",progress:"Progrès",guide:"Guide",seasonTab:"Saison",seasonIntro:"Tes blocs d'entraînement et les dates importantes",blocks:"Blocs d'entraînement",dates:"Dates importantes",now:"En cours",weeksWord:"Semaines",week:"Semaine",thisWeek:"Cette semaine",start:"Commencer",resume:"Continuer",done:"Fait",notStarted:"À faire",opens:"Ouvre",nextUp:"Prochain",inDays:d=>d===0?"aujourd'hui":d===1?"demain":`dans ${d} jours`,
   sets:"séries",lb:"lb",reps:"rép.",target:"Cible",last:"Dernière fois",demo:"Démo",notes:"Notes (optionnel)",finish:"Terminer la séance",finished:"Séance terminée",volume:"Volume",setsDone:"Séries",prs:"Records",back:"Retour",rest:"Repos",skip:"Passer",restOver:"Repos fini — go",superset:"Superset · enchaîne avec le prochain exercice",
@@ -749,7 +749,7 @@ const STR = {
   shotBtn:"Remplir avec une capture",shotTip:"Ça marche mieux avec l’écran des tours (Laps) de Garmin Connect ou Strava. L’app remplit tes séries, tu vérifies.",shotReading:"Lecture de ta capture…",shotTitle:"Selon ta capture",shotFill:"Remplir mes séries",shotCancel:"Annuler",shotNoLap:"aucun tour trouvé",
   shotNoSets:"Aucun intervalle trouvé dans les tours, donc seulement les totaux. La prochaine fois, appuie sur Lap à chaque intervalle.",shotAuto:d=>`Ta montre a fait un tour automatique à chaque ${d}, donc tes intervalles n’y sont pas : seulement les totaux. La prochaine fois, appuie sur Lap à chaque intervalle.`,
   shotErr:"Impossible de lire cette image. Réessaie, ou écris tes chiffres.",shotNothing:"Aucun chiffre d’entraînement trouvé dans cette image.",shotDone:n=>n?`${n} séries remplies. Vérifie-les, ajoute ton RPE, puis enregistre.`:"Totaux de la séance remplis. Ajoute ton RPE, puis enregistre.",
-  shotReplace:n=>`Remplace ${n} ${n===1?"série déjà notée":"séries déjà notées"}.`,shotCheck:"Vérifie les chiffres avant d’enregistrer.",shotCut:"Certains tours sont coupés. Ajoute une autre capture s’il manque des séries.",
+  shotReplace:n=>`Remplace ${n} ${n===1?"série déjà notée":"séries déjà notées"}.`,shotCheck:"Vérifie les chiffres avant d’enregistrer.",shotOff:"Tes intervalles ne correspondent pas aux séries prévues, alors ils sont remplis dans l’ordre.",shotCut:"Certains tours sont coupés. Ajoute une autre capture s’il manque des séries.",
   savedOn:"Enregistrée",rpeWords:["","Très facile","Très facile","Facile","Facile","Modéré","Modéré","Difficile","Difficile","Très difficile","À fond"]}
 };
 const RULES = {
@@ -1369,22 +1369,27 @@ function saveSession(wn,dn){const k=`${wn}|${dn}`;
    session totals when the athlete taps "Fill in my sets". Nothing is saved until then. */
 const pcShotOn=()=>!!((LIVE&&READER_URL)||OC_DEMO);
 let SHOT=null;
-/* The day's planned working sets in order (rows with a time or distance), and the first free row (a row with
-   no sets, e.g. "OC Main set" left blank) for a day with no targets. */
+/* The day's planned working sets in order (rows with a time or distance), and the first free row (a row the
+   coach left without targets, e.g. "OC Main set", even if the athlete already logged sets in it). */
+const pcIsTgt=sl=>!!(pcSecs(sl.target,true)||pcMeters(sl.target));
+/* Cells of a row the coach didn't fill: blank ones and the athlete's own sets. */
+function pcOwnCells(it){const md=pcModel(it);return md.free.concat(md.slots.filter(sl=>!pcIsTgt(sl)).map(sl=>sl.c)).sort((a,b)=>a-b)}
 function pcShotSlots(wn,dn,day){const out=[];let free=null;
-  day.items.forEach((it,i)=>{if(!it.paddle||pcEasy(it))return;const md=pcModel(it);
-    md.slots.forEach(sl=>{const tS=pcSecs(sl.target,true),tM=tS?0:pcMeters(sl.target);if(tS||tM)out.push({i,c:sl.c,target:sl.target,tS,tM})});
-    if(!md.slots.length&&!free)free={i,cells:md.free}});
+  day.items.forEach((it,i)=>{if(!it.paddle||pcEasy(it))return;const md=pcModel(it),tg=md.slots.filter(pcIsTgt);
+    tg.forEach(sl=>{const tS=pcSecs(sl.target,true),tM=tS?0:pcMeters(sl.target);out.push({i,c:sl.c,target:sl.target,tS,tM})});
+    if(!tg.length&&!free)free={i,cells:pcOwnCells(it)}});
   return {slots:out,free}}
-/* Laps the watch makes by itself every 100 m, 1 km, 1 mi… (no lap button pressed): the intervals aren't in them. */
-function pcAutoLaps(laps){if(laps.length<3)return 0;
+/* Laps the watch makes by itself every 100 m, 1 km, 1 mi… (no lap button pressed): the intervals aren't in them.
+   Laps the watch app labels (Warm Up, Run, Recovery…) come from a workout, never from auto-laps. */
+function pcAutoLaps(laps){if(laps.length<3||laps.some(l=>l.label))return 0;
   for(const d of [1000,1609,500,2000,100,200,250,400]){const n=laps.filter(l=>l.m&&Math.abs(l.m-d)<=d*.015).length;if(n>=Math.max(3,laps.length*.7))return d}
   return 0}
 /* Matches laps to the planned sets, in order. Laps the reader marked rest, warm-up or cool-down are skipped.
    A lap matches a set within 15% of its time (at least 15 s) or 12% of its distance (at least 30 m). When more
    laps match than there are sets (equal work and rest, nothing labelled), the hardest ones are kept. */
+const pcFits=(L,s)=>s.tS?!!(L.t&&Math.abs(L.t-s.tS)<=Math.max(15,s.tS*.15)):s.tM?!!(L.m&&Math.abs(L.m-s.tM)<=Math.max(30,s.tM*.12)):false;
 function pcMatchLaps(slots,laps){
-  const fits=(L,s)=>s.tS?!!(L.t&&Math.abs(L.t-s.tS)<=Math.max(15,s.tS*.15)):s.tM?!!(L.m&&Math.abs(L.m-s.tM)<=Math.max(30,s.tM*.12)):false;
+  const fits=pcFits;
   const off=L=>L.kind==="rest"||L.kind==="warmup"||L.kind==="cooldown";
   const pace=L=>L.t&&L.m?L.m/L.t:0,hard=L=>pace(L)*1e4+(L.hr||0)*10+(L.spm||0);
   let cand=laps.map((L,q)=>({L,q})).filter(x=>!off(x.L));
@@ -1395,12 +1400,21 @@ function pcMatchLaps(slots,laps){
   cand=cand.filter(x=>!drop.has(x.q));
   let pos=-1;const used=new Set();
   return slots.map(s=>{const x=cand.find(x=>x.q>pos&&!used.has(x.q)&&fits(x.L,s));if(!x)return {...s,lap:null};used.add(x.q);pos=x.q;return {...s,lap:x.L}})}
-/* What the reader sent → {matches, sess, msg}: matches are [{i, c, target, lap}] for the sets that get filled. */
+/* What the reader sent → {matches, sess, msg}: matches are [{i, c, target, lap}] for the sets that get filled.
+   When the watch app labels the intervals (Garmin "Run"/"Interval", as opposed to Warm Up, Recovery, Cool Down),
+   those are the sets: they fill the planned sets in order even if they don't match the plan (2 x 8 min done on a
+   6 x 4 min day), extra ones go in the row's blank cells, and the athlete is told. Unlabelled laps are matched
+   to the plan by time or distance. */
 function pcShotPlan(wn,dn,day,r){const {slots,free}=pcShotSlots(wn,dn,day);const laps=(r.laps||[]).filter(l=>l.t||l.m);
-  const auto=pcAutoLaps(laps);let matches=[],msg="";
+  let auto=pcAutoLaps(laps);const work=laps.filter(l=>l.kind==="work");let matches=[],msg="";
+  if(auto&&slots.some(s=>s.tM&&Math.abs(s.tM-auto)<=auto*.02))auto=0;   // "6 x 1000 m" lapped by hand looks like auto-laps
   if(auto)msg=T("shotAuto")(auto===1609?"mile":auto>=1000?auto/1000+" km":auto+" m");
+  else if(work.length&&slots.length){matches=slots.map((s,k)=>({...s,lap:work[k]||null}));
+    const last=slots[slots.length-1],cells=pcOwnCells(day.items[last.i]).filter(c=>c>last.c);
+    work.slice(slots.length,slots.length+cells.length).forEach((lap,n)=>matches.push({i:last.i,c:cells[n],target:"",lap}));
+    if(matches.some(m=>m.lap&&m.target&&!pcFits(m.lap,m))||work.length!==slots.length)msg=T("shotOff")}
   else if(slots.length)matches=pcMatchLaps(slots,laps);
-  else if(free){const work=laps.filter(l=>l.kind==="work");matches=work.slice(0,free.cells.length).map((lap,n)=>({i:free.i,c:free.cells[n],target:"",lap}))}
+  else if(free)matches=work.slice(0,free.cells.length).map((lap,n)=>({i:free.i,c:free.cells[n],target:"",lap}));
   if(!auto&&!matches.some(m=>m.lap))msg=T("shotNoSets");
   const today=isoDay(),old=isoDay(Date.now()-21*864e5);
   const sess={min:r.t?Math.max(1,Math.round(r.t/60)):0,km:r.km?Math.round(r.km*10)/10:0,hr:r.hr||0,date:r.date&&r.date<=today&&r.date>=old?r.date:""};
