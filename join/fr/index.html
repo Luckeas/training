@@ -17,12 +17,12 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 var(--body);
   padding:max(28px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 48px max(16px,env(safe-area-inset-left))}
-main{max-width:900px;margin:0 auto;display:grid;gap:24px}
+main{max-width:720px;margin:0 auto;display:grid;gap:24px}
 .brand{font-family:var(--display);font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:15px;color:var(--accent-text)}
 h1{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.02em;line-height:1;font-size:clamp(40px,9vw,60px);margin:6px 0 10px;text-wrap:balance}
 .lead{color:var(--muted);margin:0;max-width:52ch}
-.plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-@media (max-width:760px){.plans{grid-template-columns:1fr}}
+.plans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:620px){.plans{grid-template-columns:1fr}}
 .plan{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px 22px 22px;display:flex;flex-direction:column;gap:12px;position:relative}
 .plan-top{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:24px}
 .feat{list-style:none;margin:2px 0 4px;padding:14px 0 0;border-top:1px solid var(--line);display:grid;gap:9px;font-size:15px;line-height:1.35}
@@ -91,17 +91,6 @@ footer a{color:var(--muted)}
         <li>Votre prix garanti pendant 12 mois</li>
       </ul>
       <a class="btn" href="https://buy.stripe.com/9B69AU9LQc3Ue47a2OcV203" rel="noopener">Essai gratuit</a>
-    </div>
-    <div class="plan">
-      <div class="plan-top"><div class="name">Hebdomadaire</div></div>
-      <div class="price">35&nbsp;$<small>/ semaine</small></div>
-      <div class="note">Facturé chaque semaine · 7 premiers jours gratuits</div>
-      <ul class="feat">
-        <li>Tout ce qui est inclus dans le forfait mensuel</li>
-        <li>De plus petits paiements, chaque semaine</li>
-        <li>Annulez en tout temps</li>
-      </ul>
-      <a class="btn" href="https://buy.stripe.com/8x27sM6zE1pg9NR3EqcV201" rel="noopener">Essai gratuit</a>
     </div>
   </div>
   <p class="fine">Prix en dollars canadiens, plus TPS/TVQ ou TVH au Canada. À l'extérieur du Canada, le paiement s'affiche en dollars américains.</p>
