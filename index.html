@@ -673,7 +673,7 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwH9P1wdXPqAPo1tIr3hjFz
 const PHONE_TZ=(()=>{try{return String(Intl.DateTimeFormat().resolvedOptions().timeZone||"").slice(0,64)}catch(e){return ""}})();
 const TOKEN = new URLSearchParams(location.search).get("t") || "";
 // The screenshot reader (a separate Google script that reads watch screenshots with Claude). Empty = button hidden.
-const READER_URL = "";
+const READER_URL = "https://script.google.com/macros/s/AKfycbwHQN7LJ3b-DK7t59mFV_L8wYAw9-PGs3R0dpzf-Lr6y9gmnQ_Z5wAB0z6Wjo8YSIuZ/exec";
 const LIVE = !!(API_URL && TOKEN);
 /* Demo only: ?oc adds sample paddling days (OC and PERG) to the sample week, saved apart from the normal demo,
    so the public demo used in videos stays as it is. */
