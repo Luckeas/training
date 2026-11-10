@@ -1417,9 +1417,10 @@ async function pcShotImgs(files){const out=[];
       const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(src,0,y0,W,h,0,0,c.width,c.height);
       out.push({type:"image/jpeg",data:c.toDataURL("image/jpeg",.85).split(",")[1]})}}
   return out}
-/* Demo (?oc): a made-up Garmin session (warm-up, 6 x 4 min with 1 min easy, cool-down), no reader needed. */
+/* Demo (?oc): a made-up session (warm-up, 6 x 4 min with 1 min easy, cool-down), the same numbers as the sample
+   screenshot sent to Martin. Any picture gives this result: nothing is read in the demo. */
 function pcShotDemo(){const L=(n,t,m,spm,hr,kind)=>({n,t,m,spm,hr,kind});
-  const laps=[L(1,600,1650,54,128,"warmup")];[[242,1050,63,161],[238,1062,64,165],[240,1058,63,167],[236,1071,64,168],[239,1066,63,170],[231,1094,66,174]].forEach((x,q)=>{laps.push(L(laps.length+1,x[0],x[1],x[2],x[3],"work"));if(q<5)laps.push(L(laps.length+1,60,190,44,140,"rest"))});
+  const laps=[L(1,600,1650,54,128,"warmup")];[[242,1050,63,161],[238,1060,64,165],[240,1060,63,167],[236,1070,64,168],[239,1070,63,170],[231,1090,66,174]].forEach((x,q)=>{laps.push(L(laps.length+1,x[0],x[1],x[2],x[3],"work"));if(q<5)laps.push(L(laps.length+1,60,190,44,140,"rest"))});
   laps.push(L(laps.length+1,602,1580,52,131,"cooldown"));
   return {source:"garmin",date:isoDay(),t:laps.reduce((a,l)=>a+l.t,0),km:Math.round(laps.reduce((a,l)=>a+l.m,0)/10)/100,hr:154,laps,complete:true,notes:""}}
 async function pcShot(inp){const files=[...(inp.files||[])];inp.value="";if(!files.length||!pcShotOn())return;
