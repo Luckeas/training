@@ -639,6 +639,22 @@ button.dg-say:active{transform:scale(.97)}
 .sesline{font-size:13px;color:var(--muted)}
 .sesline a{color:var(--blue);font-weight:600;text-decoration:none}
 .pr a{color:var(--blue);text-decoration:none;font-weight:700}
+.shotbox{display:grid;gap:6px}
+.shotbtn{position:relative;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border-radius:12px;border:1.5px solid var(--blue);color:var(--blue);font-weight:700;font-size:15px;cursor:pointer;background:color-mix(in srgb,var(--blue) 7%,transparent)}
+.shotbtn input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.shotbtn.busy{pointer-events:none;opacity:.7}
+.shotbtn.busy svg{animation:shotspin 1s linear infinite}
+@keyframes shotspin{to{transform:rotate(360deg)}}
+.shotsheet{display:grid;gap:12px;padding:20px 16px 8px}
+.shotsheet h2{margin:0;font-family:var(--display);font-weight:800;font-size:30px;text-transform:uppercase;line-height:1}
+.shotlist{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.shotlist li{display:grid;grid-template-columns:22px minmax(0,auto) 1fr;gap:8px;align-items:center;padding:9px 10px;border-radius:10px;background:var(--raised);border:1px solid var(--line);font-size:14px}
+.shotlist li .sn{font-family:var(--display);font-weight:800;color:var(--faint);text-align:center}
+.shotlist li b{font-weight:600;white-space:nowrap}
+.shotlist li .num{text-align:right;font-variant-numeric:tabular-nums;color:var(--fg)}
+.shotlist li.miss .num{color:var(--faint);font-style:italic}
+.shotsess{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline;font-size:14px}
+.shotsess>span:first-child{font-family:var(--display);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:12px;color:var(--muted)}
 @media (max-width:370px){.pfs.perg .pf span{font-size:10px;letter-spacing:.04em}.pf input{font-size:16px}}
 </style>
 
@@ -656,6 +672,8 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwH9P1wdXPqAPo1tIr3hjFz
 // The phone's time zone (e.g. "Asia/Hong_Kong"), sent with each program load so weekly drops arrive at the athlete's own midnight.
 const PHONE_TZ=(()=>{try{return String(Intl.DateTimeFormat().resolvedOptions().timeZone||"").slice(0,64)}catch(e){return ""}})();
 const TOKEN = new URLSearchParams(location.search).get("t") || "";
+// The screenshot reader (a separate Google script that reads watch screenshots with Claude). Empty = button hidden.
+const READER_URL = "";
 const LIVE = !!(API_URL && TOKEN);
 /* Demo only: ?oc adds sample paddling days (OC and PERG) to the sample week, saved apart from the normal demo,
    so the public demo used in videos stays as it is. */
@@ -712,6 +730,10 @@ const STR = {
   sesRpe:"How hard was it? (RPE)",sesLink:"Strava or Garmin link (optional)",saveSes:"Save session",updSes:"Update session",sesSaved:"Session saved",
   load:"Load",loadHow:"Load = minutes × RPE",water:"On the water",sessionsWk:"Sessions this week",kmWk:"km this week",pNoteFree:"What did you do? (optional)",
   logHint:"Log each set from your watch: time, meters, stroke rate (SPM), heart rate. Leave blank what you don't have.",badLink:"Paste a full link that starts with https://",
+  shotBtn:"Fill from a screenshot",shotTip:"Works best with the Laps screen (Garmin Connect or Strava). The app fills your sets, you check them.",shotReading:"Reading your screenshot…",shotTitle:"From your screenshot",shotFill:"Fill in my sets",shotCancel:"Cancel",shotNoLap:"no lap found",
+  shotNoSets:"No interval laps found, so only the session totals. Next time, press Lap at each interval.",shotAuto:d=>`Your watch made a lap every ${d} on its own, so your intervals aren’t in the laps: only the session totals. Next time, press Lap at each interval.`,
+  shotErr:"Couldn’t read that picture. Try again, or type your numbers in.",shotNothing:"Couldn’t find workout numbers in that picture.",shotDone:n=>n?`Filled ${n} sets. Check them, add your RPE, then save.`:"Session totals filled. Add your RPE, then save.",
+  shotReplace:n=>`Replaces ${n} ${n===1?"set":"sets"} you already logged.`,shotCheck:"Check the numbers before you save.",shotCut:"Some laps are cut off. Add another screenshot if sets are missing.",
   savedOn:"Saved",rpeWords:["","Very easy","Very easy","Easy","Easy","Moderate","Moderate","Hard","Hard","Very hard","All out"]},
  fr:{today:"Aujourd'hui",program:"Programme",progress:"Progrès",guide:"Guide",seasonTab:"Saison",seasonIntro:"Tes blocs d'entraînement et les dates importantes",blocks:"Blocs d'entraînement",dates:"Dates importantes",now:"En cours",weeksWord:"Semaines",week:"Semaine",thisWeek:"Cette semaine",start:"Commencer",resume:"Continuer",done:"Fait",notStarted:"À faire",opens:"Ouvre",nextUp:"Prochain",inDays:d=>d===0?"aujourd'hui":d===1?"demain":`dans ${d} jours`,
   sets:"séries",lb:"lb",reps:"rép.",target:"Cible",last:"Dernière fois",demo:"Démo",notes:"Notes (optionnel)",finish:"Terminer la séance",finished:"Séance terminée",volume:"Volume",setsDone:"Séries",prs:"Records",back:"Retour",rest:"Repos",skip:"Passer",restOver:"Repos fini — go",superset:"Superset · enchaîne avec le prochain exercice",
@@ -724,6 +746,10 @@ const STR = {
   sesRpe:"C’était dur comment ? (RPE)",sesLink:"Lien Strava ou Garmin (optionnel)",saveSes:"Enregistrer la séance",updSes:"Mettre à jour la séance",sesSaved:"Séance enregistrée",
   load:"Charge",loadHow:"Charge = minutes × RPE",water:"Sur l’eau",sessionsWk:"Séances cette semaine",kmWk:"km cette semaine",pNoteFree:"Qu’as-tu fait ? (optionnel)",
   logHint:"Note chaque série avec ta montre : temps, mètres, cadence, fréquence cardiaque. Laisse vide ce que tu n’as pas.",badLink:"Colle un lien complet qui commence par https://",
+  shotBtn:"Remplir avec une capture",shotTip:"Ça marche mieux avec l’écran des tours (Laps) de Garmin Connect ou Strava. L’app remplit tes séries, tu vérifies.",shotReading:"Lecture de ta capture…",shotTitle:"Selon ta capture",shotFill:"Remplir mes séries",shotCancel:"Annuler",shotNoLap:"aucun tour trouvé",
+  shotNoSets:"Aucun intervalle trouvé dans les tours, donc seulement les totaux. La prochaine fois, appuie sur Lap à chaque intervalle.",shotAuto:d=>`Ta montre a fait un tour automatique à chaque ${d}, donc tes intervalles n’y sont pas : seulement les totaux. La prochaine fois, appuie sur Lap à chaque intervalle.`,
+  shotErr:"Impossible de lire cette image. Réessaie, ou écris tes chiffres.",shotNothing:"Aucun chiffre d’entraînement trouvé dans cette image.",shotDone:n=>n?`${n} séries remplies. Vérifie-les, ajoute ton RPE, puis enregistre.`:"Totaux de la séance remplis. Ajoute ton RPE, puis enregistre.",
+  shotReplace:n=>`Remplace ${n} ${n===1?"série déjà notée":"séries déjà notées"}.`,shotCheck:"Vérifie les chiffres avant d’enregistrer.",shotCut:"Certains tours sont coupés. Ajoute une autre capture s’il manque des séries.",
   savedOn:"Enregistrée",rpeWords:["","Très facile","Très facile","Facile","Facile","Modéré","Modéré","Difficile","Difficile","Très difficile","À fond"]}
 };
 const RULES = {
@@ -965,6 +991,7 @@ const I={
  play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4v16l13-8z"/></svg>',
  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>',
  chev:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>',
+ camera:'<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>',
  lock:'<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>'
 };
 
@@ -1221,6 +1248,7 @@ function viewPaddle(w,d){const wn=w.week,dn=d.day;const tot=pcTotals(wn,dn,d);co
      <div class="small muted num" id="setCount">${tot.total?`${tot.done} ${T("ofSets")} ${tot.total} ${T("sets")}`:""}</div>
      <div class="progress" ${tot.total?"":"hidden"}><i id="pbar" style="width:${pct}%"></i></div></div>
    <section><p class="phint">${T("logHint")}</p>
+    ${pcShotOn()?`<div class="shotbox"><label class="shotbtn" id="shotBtn"><input type="file" accept="image/*" multiple data-shot aria-label="${T("shotBtn")}">${I.camera}<span>${T("shotBtn")}</span></label><p class="phint">${T("shotTip")}</p></div>`:""}
     ${d.items.map((it,i)=>paddleCard(wn,dn,it,i)).join("")}
     ${sessionCard(wn,dn)}</section></div>`}
 function paddleCard(wn,dn,it,i){const kind=paddleKind(it),md=pcModel(it),rk=`${wn}|${dn}|${i}`;
@@ -1248,7 +1276,7 @@ function pieceRow(wn,dn,i,sl,n,kind){const k=pcK(wn,dn,i,sl.c),v=S.pc[k]||{};con
 /* Session totals, RPE and the watch link, saved in column P of the "Day N" row. */
 function sessionCard(wn,dn){const k=`${wn}|${dn}`,saved=S.sess[k]||null,dr={...(saved||{}),...(S.sessDraft[k]||{})};
   const day=WEEKS[wn-1].days.find(x=>x.day===dn),tot=pcTotals(wn,dn,day);
-  const dirty=!!saved&&["min","km","hr","rpe","link"].some(f=>String(dr[f]||"")!==String(saved[f]||""));
+  const dirty=!!saved&&["min","km","hr","rpe","link","date"].some(f=>String(dr[f]||"")!==String(saved[f]||""));
   const rpe=+dr.rpe||0,load=saved&&+saved.min&&+saved.rpe?Math.round(+saved.min*+saved.rpe):0;
   const host=u=>{try{return new URL(u).hostname.replace(/^www\./,"")}catch(e){return ""}};
   return `<article class="card sess" id="sessCard"><div class="eyebrow">${T("session")}</div>
@@ -1313,13 +1341,13 @@ function pcSessField(inp){const k=`${VIEW.w}|${VIEW.d}`,f=inp.dataset.sf;let v=i
   if(f==="link"&&v){if(!/^https?:\/\/\S+$/i.test(v)){const m=v.match(/https?:\/\/\S+/i);if(m)v=m[0];else{toast(T("badLink"),3000);v=""}}v=v.slice(0,120)}
   inp.value=v;S.sessDraft[k]={...(S.sessDraft[k]||{}),[f]:v};save();pcSessBtn()}
 function pcSessBtn(){const k=`${VIEW.w}|${VIEW.d}`,b=document.getElementById("saveSession");if(!b)return;const saved=S.sess[k];
-  const dr={...(saved||{}),...(S.sessDraft[k]||{})};const dirty=!!saved&&["min","km","hr","rpe","link"].some(f=>String(dr[f]||"")!==String(saved[f]||""));
+  const dr={...(saved||{}),...(S.sessDraft[k]||{})};const dirty=!!saved&&["min","km","hr","rpe","link","date"].some(f=>String(dr[f]||"")!==String(saved[f]||""));
   b.classList.toggle("ghost",!!saved&&!dirty);b.textContent=saved?(dirty?T("updSes"):T("sesSaved")+" ✓"):T("saveSes")}
 function saveSession(wn,dn){const k=`${wn}|${dn}`;
   // boxes still being typed in count too
   document.querySelectorAll("#sessCard [data-sf]").forEach(inp=>{const cur=String(({...(S.sess[k]||{}),...(S.sessDraft[k]||{})})[inp.dataset.sf]||"");if(inp.value.trim()!==cur)pcSessField(inp)});
   const day=WEEKS[wn-1].days.find(x=>x.day===dn),tot=pcTotals(wn,dn,day),prev=S.sess[k]||null,dr={...(prev||{}),...(S.sessDraft[k]||{})};
-  const s={min:String(+dr.min||(tot.sec?Math.max(1,Math.round(tot.sec/60)):"")||""),km:dr.km||(tot.m?String(Math.round(tot.m/100)/10):""),hr:dr.hr||"",rpe:dr.rpe||"",link:dr.link||"",date:(prev&&prev.date)||isoDay()};
+  const s={min:String(+dr.min||(tot.sec?Math.max(1,Math.round(tot.sec/60)):"")||""),km:dr.km||(tot.m?String(Math.round(tot.m/100)/10):""),hr:dr.hr||"",rpe:dr.rpe||"",link:dr.link||"",date:dr.date||isoDay()};
   const fresh=!S.days[k],dgB=fresh&&dragonOn()?dragonData():null;
   S.sess[k]=s;delete S.sessDraft[k];S.days[k]=S.days[k]||Date.now();
   queueDayMark(wn,dn,pcMark(s));{const dk=`${WEEKS[wn-1].tab}|${dayRowOf(day)}|16`;if(S.queue[dk])S.queue[dk].sess={...s}}
@@ -1334,6 +1362,108 @@ function saveSession(wn,dn){const k=`${wn}|${dn}`;
   if(fresh){buzz();chime("done")}
   if(dgB){const a=dragonData();if(a.xp>dgB.xp)toast(`+${a.xp-dgB.xp} XP 🐉`)}
 }
+/* ---------- Fill from a screenshot ----------
+   The athlete picks 1-4 screenshots of the session (Garmin Connect, Strava…). The phone shrinks them and sends
+   them to the screenshot reader (READER_URL, a separate Google script that asks Claude to read the laps). The laps
+   come back as numbers; the app matches them to the planned sets, shows what it found, and fills the sets and the
+   session totals when the athlete taps "Fill in my sets". Nothing is saved until then. */
+const pcShotOn=()=>!!((LIVE&&READER_URL)||OC_DEMO);
+let SHOT=null;
+/* The day's planned working sets in order (rows with a time or distance), and the first free row (a row with
+   no sets, e.g. "OC Main set" left blank) for a day with no targets. */
+function pcShotSlots(wn,dn,day){const out=[];let free=null;
+  day.items.forEach((it,i)=>{if(!it.paddle||pcEasy(it))return;const md=pcModel(it);
+    md.slots.forEach(sl=>{const tS=pcSecs(sl.target,true),tM=tS?0:pcMeters(sl.target);if(tS||tM)out.push({i,c:sl.c,target:sl.target,tS,tM})});
+    if(!md.slots.length&&!free)free={i,cells:md.free}});
+  return {slots:out,free}}
+/* Laps the watch makes by itself every 100 m, 1 km, 1 mi… (no lap button pressed): the intervals aren't in them. */
+function pcAutoLaps(laps){if(laps.length<3)return 0;
+  for(const d of [1000,1609,500,2000,100,200,250,400]){const n=laps.filter(l=>l.m&&Math.abs(l.m-d)<=d*.015).length;if(n>=Math.max(3,laps.length*.7))return d}
+  return 0}
+/* Matches laps to the planned sets, in order. Laps the reader marked rest, warm-up or cool-down are skipped.
+   A lap matches a set within 15% of its time (at least 15 s) or 12% of its distance (at least 30 m). When more
+   laps match than there are sets (equal work and rest, nothing labelled), the hardest ones are kept. */
+function pcMatchLaps(slots,laps){
+  const fits=(L,s)=>s.tS?!!(L.t&&Math.abs(L.t-s.tS)<=Math.max(15,s.tS*.15)):s.tM?!!(L.m&&Math.abs(L.m-s.tM)<=Math.max(30,s.tM*.12)):false;
+  const off=L=>L.kind==="rest"||L.kind==="warmup"||L.kind==="cooldown";
+  const pace=L=>L.t&&L.m?L.m/L.t:0,hard=L=>pace(L)*1e4+(L.hr||0)*10+(L.spm||0);
+  let cand=laps.map((L,q)=>({L,q})).filter(x=>!off(x.L));
+  const groups={};slots.forEach(s=>{const g=s.tS?"t"+s.tS:"m"+s.tM;(groups[g]=groups[g]||[]).push(s)});
+  const drop=new Set();
+  Object.values(groups).forEach(g=>{const m=cand.filter(x=>fits(x.L,g[0]));if(m.length>g.length&&m.some(x=>x.L.kind!=="work")){
+    const keep=new Set(m.slice().sort((a,b)=>hard(b.L)-hard(a.L)).slice(0,g.length).map(x=>x.q));m.forEach(x=>{if(!keep.has(x.q))drop.add(x.q)})}});
+  cand=cand.filter(x=>!drop.has(x.q));
+  let pos=-1;const used=new Set();
+  return slots.map(s=>{const x=cand.find(x=>x.q>pos&&!used.has(x.q)&&fits(x.L,s));if(!x)return {...s,lap:null};used.add(x.q);pos=x.q;return {...s,lap:x.L}})}
+/* What the reader sent → {matches, sess, msg}: matches are [{i, c, target, lap}] for the sets that get filled. */
+function pcShotPlan(wn,dn,day,r){const {slots,free}=pcShotSlots(wn,dn,day);const laps=(r.laps||[]).filter(l=>l.t||l.m);
+  const auto=pcAutoLaps(laps);let matches=[],msg="";
+  if(auto)msg=T("shotAuto")(auto===1609?"mile":auto>=1000?auto/1000+" km":auto+" m");
+  else if(slots.length)matches=pcMatchLaps(slots,laps);
+  else if(free){const work=laps.filter(l=>l.kind==="work");matches=work.slice(0,free.cells.length).map((lap,n)=>({i:free.i,c:free.cells[n],target:"",lap}))}
+  if(!auto&&!matches.some(m=>m.lap))msg=T("shotNoSets");
+  const today=isoDay(),old=isoDay(Date.now()-21*864e5);
+  const sess={min:r.t?Math.max(1,Math.round(r.t/60)):0,km:r.km?Math.round(r.km*10)/10:0,hr:r.hr||0,date:r.date&&r.date<=today&&r.date>=old?r.date:""};
+  if(!sess.min&&!sess.km&&laps.length){const t=laps.reduce((a,l)=>a+(l.t||0),0),m=laps.reduce((a,l)=>a+(l.m||0),0);if(t)sess.min=Math.max(1,Math.round(t/60));if(m)sess.km=Math.round(m/100)/10}
+  return {matches,sess,msg}}
+/* Screenshot → JPEG, longest side 1568 px (what the reader reads best). A long scrolling screenshot is cut
+   into phone-height pieces first so the text stays big enough. */
+async function pcShotImgs(files){const out=[];
+  for(const f of files){if(out.length>=4)break;if(!/^image\//.test(f.type||"image/"))continue;
+    let src;try{src=await createImageBitmap(f)}catch(e){src=await new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=URL.createObjectURL(f)})}
+    const W=src.width,H=src.height,step=Math.round(W*2.2),parts=H>W*2.6?Math.ceil((H-W*.2)/(step-W*.2)):1;
+    for(let p=0;p<parts&&out.length<4;p++){const y0=parts===1?0:Math.min(H-step,p*(step-Math.round(W*.2))),h=parts===1?H:step;
+      const s=Math.min(1,1568/Math.max(W,h)),c=document.createElement("canvas");c.width=Math.round(W*s);c.height=Math.round(h*s);
+      const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(src,0,y0,W,h,0,0,c.width,c.height);
+      out.push({type:"image/jpeg",data:c.toDataURL("image/jpeg",.85).split(",")[1]})}}
+  return out}
+/* Demo (?oc): a made-up Garmin session (warm-up, 6 x 4 min with 1 min easy, cool-down), no reader needed. */
+function pcShotDemo(){const L=(n,t,m,spm,hr,kind)=>({n,t,m,spm,hr,kind});
+  const laps=[L(1,600,1650,54,128,"warmup")];[[242,1050,63,161],[238,1062,64,165],[240,1058,63,167],[236,1071,64,168],[239,1066,63,170],[231,1094,66,174]].forEach((x,q)=>{laps.push(L(laps.length+1,x[0],x[1],x[2],x[3],"work"));if(q<5)laps.push(L(laps.length+1,60,190,44,140,"rest"))});
+  laps.push(L(laps.length+1,602,1580,52,131,"cooldown"));
+  return {source:"garmin",date:isoDay(),t:laps.reduce((a,l)=>a+l.t,0),km:Math.round(laps.reduce((a,l)=>a+l.m,0)/10)/100,hr:154,laps,complete:true,notes:""}}
+async function pcShot(inp){const files=[...(inp.files||[])];inp.value="";if(!files.length||!pcShotOn())return;
+  const wn=VIEW.w,dn=VIEW.d,W=WEEKS[wn-1],day=W&&W.days.find(x=>x.day===dn);if(!day)return;
+  const btn=document.getElementById("shotBtn"),lab=btn&&btn.querySelector("span");
+  const busy=on=>{if(!btn)return;btn.classList.toggle("busy",on);if(lab)lab.textContent=on?T("shotReading"):T("shotBtn")};
+  busy(true);let r;
+  try{
+    if(OC_DEMO){await new Promise(res=>setTimeout(res,1200));r=pcShotDemo()}
+    else{const images=await pcShotImgs(files);if(!images.length)throw new Error(T("shotNothing"));
+      const plan=pcShotSlots(wn,dn,day).slots.map(s=>s.target);
+      const kind=day.items.some(it=>it.paddle&&paddleKind(it)==="perg")?"perg":"oc";
+      const ac=typeof AbortController==="function"?new AbortController():null;const to=ac&&setTimeout(()=>ac.abort(),90000);
+      const res=await fetch(READER_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({t:TOKEN,lang:S.profile.lang||"en",kind,plan,today:isoDay(),images}),signal:ac?ac.signal:undefined});
+      clearTimeout(to);const j=await res.json();if(!j.ok)throw new Error(j.error||T("shotErr"));r=j.result||{}}
+  }catch(e){busy(false);toast(e&&e.message&&!/fetch|abort|network|JSON|Load failed/i.test(e.message)?e.message:T("shotErr"),4000);return}
+  busy(false);
+  if(VIEW.name!=="workout"||VIEW.w!==wn||VIEW.d!==dn)return;   // they moved on while it was reading
+  const plan=pcShotPlan(wn,dn,day,r);
+  if(!plan.matches.some(m=>m.lap)&&!plan.sess.min&&!plan.sess.km){toast(T("shotNothing"),4000);return}
+  SHOT={wn,dn,...plan,complete:r.complete!==false,notes:r.notes||""};pcShotSheet()}
+function pcShotSheet(){const R=SHOT;if(!R)return;const day=WEEKS[R.wn-1].days.find(x=>x.day===R.dn);
+  const filled=R.matches.filter(m=>m.lap),redo=filled.filter(m=>S.pc[pcK(R.wn,R.dn,m.i,m.c)]?.done).length;
+  const kindOf=m=>paddleKind(day.items[m.i]);
+  const line=(m,n)=>{const L=m.lap,v=L?pcLogStr({t:L.t,m:L.m,w:kindOf(m)==="perg"?L.w:0,spm:L.spm,hr:L.hr}):"";
+    return `<li class="${L?"":"miss"}"><span class="sn">${n+1}</span><b>${esc(m.target||T("yourSet"))}</b><span class="num">${L?esc(v):T("shotNoLap")}</span></li>`};
+  const s=R.sess,sl=[s.min?s.min+" min":"",s.km?s.km+" km":"",s.hr?"HR "+s.hr:""].filter(Boolean).join(" · ");
+  document.getElementById("overlay").innerHTML=`<div class="scrim" data-close></div><div class="sheet"><div class="inner wrap shotsheet">
+    <div class="eyebrow">${T("week")} ${WN(R.wn)} · ${esc(dayTitle(day))}</div><h2>${T("shotTitle")}</h2>
+    ${R.matches.length?`<ol class="shotlist">${R.matches.map(line).join("")}</ol>`:""}
+    ${sl?`<div class="shotsess"><span>${T("session")}</span><b class="num">${esc(sl)}</b>${s.date?`<span class="muted">${esc(fmtDate(new Date(s.date+"T00:00"),true))}</span>`:""}</div>`:""}
+    ${R.msg?`<p class="phint">${esc(R.msg)}</p>`:""}${!R.complete&&filled.length<R.matches.length?`<p class="phint">${T("shotCut")}</p>`:""}
+    ${redo?`<p class="phint">${esc(T("shotReplace")(redo))}</p>`:""}<p class="phint">${T("shotCheck")}</p>
+    <button class="btn block" id="shotFill">${T("shotFill")}</button><button class="btn block ghost" data-close>${T("shotCancel")}</button>
+  </div></div>`}
+function pcShotApply(){const R=SHOT;SHOT=null;if(!R)return;const day=WEEKS[R.wn-1].days.find(x=>x.day===R.dn);let n=0;
+  R.matches.forEach(m=>{if(!m.lap)return;const it=day.items[m.i],kind=paddleKind(it),k=pcK(R.wn,R.dn,m.i,m.c),v={done:true};
+    ["t","m","spm","hr"].concat(kind==="perg"?["w"]:[]).forEach(f=>{const x=+m.lap[f];if(x>=PC_RANGE[f][0]&&x<=PC_RANGE[f][1])v[f]=Math.round(x)});
+    if(!(v.t||v.m))return;S.pc[k]=v;n++;queuePiece({w:R.wn,d:R.dn,i:m.i,c:m.c,it,k,sl:pcSlotAt(it,m.c),kind})});
+  const sk=`${R.wn}|${R.dn}`,dr={...(S.sessDraft[sk]||{})};
+  if(R.sess.min)dr.min=String(R.sess.min);if(R.sess.km)dr.km=String(R.sess.km);if(R.sess.hr)dr.hr=String(R.sess.hr);if(R.sess.date)dr.date=R.sess.date;
+  S.sessDraft[sk]=dr;save();
+  const y=window.scrollY;document.getElementById("overlay").innerHTML="";render();window.scrollTo(0,y);
+  toast(T("shotDone")(n),4500)}
 /* Progress tab: the paddling sessions logged, km per week and this week's load (minutes × RPE). */
 function pcProgress(){
   if(!WEEKS.some(w=>w.days.some(d=>d.items.some(it=>it.paddle))))return "";
@@ -2201,7 +2331,7 @@ app.addEventListener("change",e=>{
   toggleSet(row,true);if(!was&&(S.logs[k]||{}).done)row.dataset.auto=String(Date.now());
 });
 /* Paddling sets and the session card save when a box is left; the athlete's note saves as they type. */
-app.addEventListener("change",e=>{if(e.target.dataset.pf)pcField(e.target);else if(e.target.dataset.sf)pcSessField(e.target)});
+app.addEventListener("change",e=>{if(e.target.dataset.pf)pcField(e.target);else if(e.target.dataset.sf)pcSessField(e.target);else if(e.target.hasAttribute("data-shot"))pcShot(e.target)});
 app.addEventListener("input",e=>{const rk=e.target.dataset.pnote;if(rk){S.pnote[rk]=e.target.value;queuePNote(rk)}});
 function updateCount(){if(VIEW.name!=="workout")return;const d=WEEKS[VIEW.w-1].days.find(x=>x.day===VIEW.d);let total=0,done=0;
   d.items.forEach((it,i)=>(it.sets||[]).forEach((_,s)=>{total++;if(S.logs[keyOf(VIEW.w,VIEW.d,i,s)]?.done)done++}));
@@ -2209,7 +2339,8 @@ function updateCount(){if(VIEW.name!=="workout")return;const d=WEEKS[VIEW.w-1].d
 document.getElementById("overlay").addEventListener("click",e=>{
   const t=e.target;const p=S.profile;
   if(t.closest("#a2hsGot")){S.a2hsHide=true;save();closeSettings();return}   // they've seen the steps: stop showing the banner on this phone
-  if(t.closest("[data-close]")){closeSettings();return}
+  if(t.closest("#shotFill")){pcShotApply();return}
+  if(t.closest("[data-close]")){SHOT=null;closeSettings();return}
   if(t.closest("#dgPet")){dgPet();return}
   const dgc=t.closest(".dg-cele");if(dgc){dgTap(dgc,dgc.querySelector(".layer.new svg"));return}
   if(DG_DEMO&&dgDemoClick(t))return;
