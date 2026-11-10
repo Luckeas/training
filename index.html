@@ -653,6 +653,8 @@ button.dg-say:active{transform:scale(.97)}
 .shotlist li b{font-weight:600;white-space:nowrap}
 .shotlist li .num{text-align:right;font-variant-numeric:tabular-nums;color:var(--fg)}
 .shotlist li.miss .num{color:var(--faint);font-style:italic}
+.shotlist li.part{background:transparent}
+.shotlist li.part b{color:var(--muted);font-weight:500}
 .shotsess{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline;font-size:14px}
 .shotsess>span:first-child{font-family:var(--display);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:12px;color:var(--muted)}
 @media (max-width:370px){.pfs.perg .pf span{font-size:10px;letter-spacing:.04em}.pf input{font-size:16px}}
@@ -733,7 +735,7 @@ const STR = {
   shotBtn:"Fill from a screenshot",shotTip:"Works best with the Laps screen (Garmin Connect or Strava). The app fills your sets, you check them.",shotReading:"Reading your screenshot…",shotTitle:"From your screenshot",shotFill:"Fill in my sets",shotCancel:"Cancel",shotNoLap:"no lap found",
   shotNoSets:"No interval laps found, so only the session totals. Next time, press Lap at each interval.",shotAuto:d=>`Your watch made a lap every ${d} on its own, so your intervals aren’t in the laps: only the session totals. Next time, press Lap at each interval.`,
   shotErr:"Couldn’t read that picture. Try again, or type your numbers in.",shotNothing:"Couldn’t find workout numbers in that picture.",shotDone:n=>n?`Filled ${n} sets. Check them, add your RPE, then save.`:"Session totals filled. Add your RPE, then save.",
-  shotReplace:n=>`Replaces ${n} ${n===1?"set":"sets"} you already logged.`,shotCheck:"Check the numbers before you save.",shotOff:"Your intervals don’t match the planned sets, so they’re filled in order.",shotCut:"Some laps are cut off. Add another screenshot if sets are missing.",
+  shotReplace:n=>`Replaces ${n} ${n===1?"set":"sets"} you already logged.`,shotCheck:"Check the numbers before you save.",wu:"Warm-up",cd:"Cool-down",restShort:"rest",shotOff:"Your intervals don’t match the planned sets, so they’re filled in order.",shotCut:"Some laps are cut off. Add another screenshot if sets are missing.",
   savedOn:"Saved",rpeWords:["","Very easy","Very easy","Easy","Easy","Moderate","Moderate","Hard","Hard","Very hard","All out"]},
  fr:{today:"Aujourd'hui",program:"Programme",progress:"Progrès",guide:"Guide",seasonTab:"Saison",seasonIntro:"Tes blocs d'entraînement et les dates importantes",blocks:"Blocs d'entraînement",dates:"Dates importantes",now:"En cours",weeksWord:"Semaines",week:"Semaine",thisWeek:"Cette semaine",start:"Commencer",resume:"Continuer",done:"Fait",notStarted:"À faire",opens:"Ouvre",nextUp:"Prochain",inDays:d=>d===0?"aujourd'hui":d===1?"demain":`dans ${d} jours`,
   sets:"séries",lb:"lb",reps:"rép.",target:"Cible",last:"Dernière fois",demo:"Démo",notes:"Notes (optionnel)",finish:"Terminer la séance",finished:"Séance terminée",volume:"Volume",setsDone:"Séries",prs:"Records",back:"Retour",rest:"Repos",skip:"Passer",restOver:"Repos fini — go",superset:"Superset · enchaîne avec le prochain exercice",
@@ -749,7 +751,7 @@ const STR = {
   shotBtn:"Remplir avec une capture",shotTip:"Ça marche mieux avec l’écran des tours (Laps) de Garmin Connect ou Strava. L’app remplit tes séries, tu vérifies.",shotReading:"Lecture de ta capture…",shotTitle:"Selon ta capture",shotFill:"Remplir mes séries",shotCancel:"Annuler",shotNoLap:"aucun tour trouvé",
   shotNoSets:"Aucun intervalle trouvé dans les tours, donc seulement les totaux. La prochaine fois, appuie sur Lap à chaque intervalle.",shotAuto:d=>`Ta montre a fait un tour automatique à chaque ${d}, donc tes intervalles n’y sont pas : seulement les totaux. La prochaine fois, appuie sur Lap à chaque intervalle.`,
   shotErr:"Impossible de lire cette image. Réessaie, ou écris tes chiffres.",shotNothing:"Aucun chiffre d’entraînement trouvé dans cette image.",shotDone:n=>n?`${n} séries remplies. Vérifie-les, ajoute ton RPE, puis enregistre.`:"Totaux de la séance remplis. Ajoute ton RPE, puis enregistre.",
-  shotReplace:n=>`Remplace ${n} ${n===1?"série déjà notée":"séries déjà notées"}.`,shotCheck:"Vérifie les chiffres avant d’enregistrer.",shotOff:"Tes intervalles ne correspondent pas aux séries prévues, alors ils sont remplis dans l’ordre.",shotCut:"Certains tours sont coupés. Ajoute une autre capture s’il manque des séries.",
+  shotReplace:n=>`Remplace ${n} ${n===1?"série déjà notée":"séries déjà notées"}.`,shotCheck:"Vérifie les chiffres avant d’enregistrer.",wu:"Échauffement",cd:"Retour au calme",restShort:"repos",shotOff:"Tes intervalles ne correspondent pas aux séries prévues, alors ils sont remplis dans l’ordre.",shotCut:"Certains tours sont coupés. Ajoute une autre capture s’il manque des séries.",
   savedOn:"Enregistrée",rpeWords:["","Très facile","Très facile","Facile","Facile","Modéré","Modéré","Difficile","Difficile","Très difficile","À fond"]}
 };
 const RULES = {
@@ -858,7 +860,8 @@ function pcMeters(s){s=String(s||"");let m;
   return 0}
 /* A short target with a time or distance ("4 min", "1000 m @ race pace") is a set; anything else is an instruction. */
 const pcIsTarget=s=>{s=String(s||"").trim();return !!s&&s.length<=24&&!!(pcSecs(s,true)||pcMeters(s))};
-function pcParseLog(s){const v={done:true},t=String(s||"");let m;
+function pcParseLog(s){const v={done:true};let t=String(s||""),m;
+  if((m=t.match(/\brest\s*(\d+:\d{2}(?::\d{2})?)/i))){v.rest=pcSecs(m[1]);t=t.replace(m[0],"")}   // recovery after the set (from a screenshot)
   if((m=t.match(/(\d+:\d{2}(?::\d{2})?)/)))v.t=pcSecs(m[1]);
   if((m=t.match(/(\d+(?:[.,]\d+)?)\s*(km|m)\b/i)))v.m=Math.round(pcNum(m[1])*(/km/i.test(m[2])?1000:1));
   if((m=t.match(/(\d+)\s*W\b/)))v.w=+m[1];
@@ -869,13 +872,14 @@ function pcParseLog(s){const v={done:true},t=String(s||"");let m;
 function pcSplit(raw){raw=String(raw==null?"":raw).replace(/^'/,"").trim();const m=raw.match(/^(.*?)\s*\(([^()]*)\)\s*$/);
   if(m){const log=pcParseLog(m[2]);if(log)return{target:m[1].trim(),log}}return{target:raw,log:null}}
 function pcFmtT(sec){sec=Math.round(+sec||0);if(!sec)return "";const h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60;return (h?h+":"+String(m).padStart(2,"0"):m)+":"+String(s).padStart(2,"0")}
-function pcLogStr(v){const p=[];if(v.t)p.push(pcFmtT(v.t));if(v.m)p.push(v.m+" m");if(v.w)p.push(v.w+" W");if(v.spm)p.push(v.spm+" spm");if(v.hr)p.push(v.hr+" bpm");return p.join(" · ")}
+function pcLogStr(v){const p=[];if(v.t)p.push(pcFmtT(v.t));if(v.m)p.push(v.m+" m");if(v.w)p.push(v.w+" W");if(v.spm)p.push(v.spm+" spm");if(v.hr)p.push(v.hr+" bpm");if(v.rest&&p.length)p.push("rest "+pcFmtT(v.rest));return p.join(" · ")}
 /* What goes back in the cell: the coach's target, plus the athlete's numbers in brackets. */
 function pcCellValue(target,v){const t=String(target||"").trim(),L=v&&v.done?pcLogStr(v):"";if(!L)return t;return t?`${t} (${L})`:`'(${L})`}
 /* Speed of a logged set: km/h on the water, split per 500 m on the erg. */
 function pcSpeed(v,kind){if(!(v&&v.t>0&&v.m>0))return "";
   if(kind==="perg")return pcFmtT(v.t/(v.m/500))+" /500m";
   return (v.m/1000/(v.t/3600)).toFixed(1)+" km/h"}
+const pcSpdTxt=(v,kind)=>[pcSpeed(v,kind),v&&v.rest?T("restShort")+" "+pcFmtT(v.rest):""].filter(Boolean).join(" · ");
 /* The 10 cells F to O of a row, from the sets the script sends ({load, reps, col} pairs). */
 function pcCells(sets){const c=new Array(PC_N).fill("");(sets||[]).forEach(s=>{const k=+s.col-6;if(k>=0&&k<PC_N){c[k]=String(s.load==null?"":s.load);if(k+1<PC_N)c[k+1]=String(s.reps==null?"":s.reps)}});return c}
 /* Column P: the coach's instructions, then the athlete's note after "✎". */
@@ -900,13 +904,18 @@ const pcK=(w,d,i,c)=>`${w}|${d}|${i}|${c}`;
 /* Sets added by tapping "+ Add a set" that have nothing logged yet (this screen only). */
 let PADD={};
 /* The sets shown for a row: the coach's, plus the athlete's own (logged or just added), in cell order. */
-function pcShown(wn,dn,i,it,md){md=md||pcModel(it);const out=md.slots.slice();
-  md.free.forEach(c=>{if(S.pc[pcK(wn,dn,i,c)]||(PADD[`${wn}|${dn}|${i}`]||[]).includes(c))out.push({c,target:"",wt:"",own:true})});
+function pcShown(wn,dn,i,it,md){md=md||pcModel(it);const out=md.slots.slice(),has=new Set(out.map(s=>s.c)),add=PADD[`${wn}|${dn}|${i}`]||[];
+  for(let c=0;c<PC_N;c++){if(has.has(c))continue;const own=md.free.includes(c);
+    if(!(S.pc[pcK(wn,dn,i,c)]||(own&&add.includes(c))))continue;
+    // a cell with coach text ("10 min easy" on a warm-up row) that got numbers from a screenshot: shown as a set under that text
+    const raw=own?"":pcSplit((it.cells||[])[c]||"").target;out.push(raw?{c,target:raw,wt:raw}:{c,target:"",wt:"",own:true})}
   return out.sort((a,b)=>a.c-b.c)}
-function pcSlotAt(it,c){const md=pcModel(it);return md.slots.find(s=>s.c===c)||{c,target:"",wt:"",own:true}}
+function pcSlotAt(it,c){const md=pcModel(it),sl=md.slots.find(s=>s.c===c);if(sl)return sl;
+  const raw=pcSplit((it.cells||[])[c]||"").target;return raw?{c,target:raw,wt:raw}:{c,target:"",wt:"",own:true}}
 /* Logged sets and totals for one day (all its paddling rows). */
+const pcIsPart=(it,sl)=>pcEasy(it)||/^(warm|cool|échauff|retour au calme)/i.test(String(sl&&sl.target||""));
 function pcTotals(wn,dn,day){let sec=0,m=0,done=0,total=0;
-  day.items.forEach((it,i)=>{if(!it.paddle)return;pcShown(wn,dn,i,it).forEach(sl=>{total++;const v=S.pc[pcK(wn,dn,i,sl.c)];if(v&&v.done){done++;sec+=v.t||0;m+=v.m||0}})});
+  day.items.forEach((it,i)=>{if(!it.paddle)return;pcShown(wn,dn,i,it).forEach(sl=>{const part=pcIsPart(it,sl),v=S.pc[pcK(wn,dn,i,sl.c)];if(!part)total++;if(v&&v.done){if(!part)done++;sec+=v.t||0;m+=v.m||0}})});
   return {sec,m,done,total}}
 /* Day row, column P: "⏱ 65 min · 2026-11-11 · 12.4 km · HR 152 · RPE 7 · https://…" */
 function pcParseMark(m){m=String(m||"");if(!/⏱|✓|done/i.test(m))return null;const g=re=>(m.match(re)||[])[1]||"";
@@ -1270,7 +1279,7 @@ function paddleCard(wn,dn,it,i){const kind=paddleKind(it),md=pcModel(it),rk=`${w
 function pieceRow(wn,dn,i,sl,n,kind){const k=pcK(wn,dn,i,sl.c),v=S.pc[k]||{};const tS=pcSecs(sl.target,true),tM=pcMeters(sl.target);
   const f=(name,lab,val,ph,mode)=>`<label class="pf"><span>${lab}</span><input data-pf="${name}" inputmode="${mode}" autocomplete="off" value="${esc(val)}" placeholder="${esc(ph)}" aria-label="${lab}, ${S.profile.lang==="fr"?"série":"set"} ${n+1}"></label>`;
   return `<div class="pc ${v.done?"done":""}" data-pk="${k}">
-    <div class="ph"><span class="sn">${n+1}</span><b class="${sl.target?"":"free"}">${esc(sl.target||T("yourSet"))}</b><span class="spd">${pcSpeed(v,kind)}</span><button class="chk" data-pchk aria-label="${T("done")} ${n+1}">${I.check}</button></div>
+    <div class="ph"><span class="sn">${n+1}</span><b class="${sl.target?"":"free"}">${esc(sl.target||T("yourSet"))}</b><span class="spd">${pcSpdTxt(v,kind)}</span><button class="chk" data-pchk aria-label="${T("done")} ${n+1}">${I.check}</button></div>
     <div class="pfs ${kind}">${f("t",T("fTime"),v.t?pcFmtT(v.t):"",tS?pcFmtT(tS):"m:ss","decimal")}${f("m",T("fDist"),v.m||"",tM?String(tM):"m","numeric")}${kind==="perg"?f("w",T("fW"),v.w||"","W","numeric"):""}${f("spm",T("fSpm"),v.spm||"","spm","numeric")}${f("hr",T("fHr"),v.hr||"","bpm","numeric")}</div>
   </div>`}
 /* Session totals, RPE and the watch link, saved in column P of the "Day N" row. */
@@ -1305,7 +1314,7 @@ function pcRowCtx(row){const [w,d,i,c]=row.dataset.pk.split("|");const day=WEEKS
 /* A set with any number is saved right away (leaving the box is enough); the coach's target fills the
    matching box when it's left empty ("4 min" → 4:00). */
 function pcFinish(v,sl){const tS=pcSecs(sl.target,true),tM=pcMeters(sl.target);if(!v.t&&tS)v.t=tS;if(!v.m&&tM&&!tS)v.m=tM;return v}
-function pcRefresh(row,v,kind){row.classList.toggle("done",!!(v&&v.done));const sp=row.querySelector(".spd");if(sp)sp.textContent=pcSpeed(v||{},kind);
+function pcRefresh(row,v,kind){row.classList.toggle("done",!!(v&&v.done));const sp=row.querySelector(".spd");if(sp)sp.textContent=pcSpdTxt(v||{},kind);
   row.querySelectorAll("[data-pf]").forEach(inp=>{const f=inp.dataset.pf,x=v&&v[f];inp.value=x?(f==="t"?pcFmtT(x):String(x)):""});pcCount()}
 function pcCount(){if(VIEW.name!=="workout")return;const W=WEEKS[VIEW.w-1],day=W&&W.days.find(x=>x.day===VIEW.d);if(!day||!isPaddleDay(day))return;
   const t=pcTotals(VIEW.w,VIEW.d,day);const c=document.getElementById("setCount");if(c)c.textContent=t.total?`${t.done} ${T("ofSets")} ${t.total} ${T("sets")}`:"";
@@ -1416,10 +1425,33 @@ function pcShotPlan(wn,dn,day,r){const {slots,free}=pcShotSlots(wn,dn,day);const
   else if(slots.length)matches=pcMatchLaps(slots,laps);
   else if(free)matches=work.slice(0,free.cells.length).map((lap,n)=>({i:free.i,c:free.cells[n],target:"",lap}));
   if(!auto&&!matches.some(m=>m.lap))msg=T("shotNoSets");
+  if(!auto)pcShotParts(day,laps,matches,free);
   const today=isoDay(),old=isoDay(Date.now()-21*864e5);
   const sess={min:r.t?Math.max(1,Math.round(r.t/60)):0,km:r.km?Math.round(r.km*10)/10:0,hr:r.hr||0,date:r.date&&r.date<=today&&r.date>=old?r.date:""};
   if(!sess.min&&!sess.km&&laps.length){const t=laps.reduce((a,l)=>a+(l.t||0),0),m=laps.reduce((a,l)=>a+(l.m||0),0);if(t)sess.min=Math.max(1,Math.round(t/60));if(m)sess.km=Math.round(m/100)/10}
   return {matches,sess,msg}}
+/* Adds the rest of the session to the plan: the recovery after each set goes in that set ("rest 1:00"); the
+   warm-up and cool-down go in the session's warm-up and cool-down rows (after the coach's text, like a set), or,
+   when there is no such row, in the next blank cells of the main row, labelled "Warm-up" / "Cool-down". */
+function pcSum(ls){if(!ls.length)return null;const t=ls.reduce((a,l)=>a+(l.t||0),0),m=ls.reduce((a,l)=>a+(l.m||0),0);
+  const avg=f=>{let w=0,x=0;ls.forEach(l=>{if(l[f]){const k=l.t||1;w+=k;x+=l[f]*k}});return w?Math.round(x/w):0};
+  return {t,m,hr:avg("hr"),spm:avg("spm"),w:avg("w")}}
+function pcShotParts(day,laps,matches,free){
+  matches.forEach(m=>{if(!m.lap)return;let q=laps.indexOf(m.lap)+1,rest=0;while(q>0&&q<laps.length&&laps[q].kind==="rest"){rest+=laps[q].t||0;q++}
+    if(rest)m.lap={...m.lap,rest}});
+  const sets=matches.filter(m=>m.lap),parts=[];
+  [["warmup",/warm/i,"wu"],["cooldown",/cool/i,"cd"]].forEach(([kind,re,lab])=>{const L=pcSum(laps.filter(l=>l.kind===kind));if(!L)return;
+    const i=day.items.findIndex(it=>it.paddle&&re.test(String(it.name||"")));
+    if(i>=0){const raw=pcSplit((day.items[i].cells||[])[0]||"").target;parts.push({i,c:0,target:raw||T(lab),wt:raw||T(lab),part:kind,lap:L});return}
+    const row=sets.length?sets[sets.length-1].i:free?free.i:-1;if(row<0)return;
+    const used=new Set(matches.concat(parts).filter(m=>m.i===row).map(m=>m.c)),cells=pcOwnCells(day.items[row]).filter(c=>!used.has(c));
+    if(!cells.length)return;
+    // on a free row the warm-up goes first: the sets move one cell to the right
+    if(kind==="warmup"&&!slotsIn(day,row)){const own=matches.filter(m=>m.i===row).sort((a,b)=>a.c-b.c),all=pcOwnCells(day.items[row]);
+      if(own.length<all.length){own.forEach((m,k)=>{m.c=all[k+1]});parts.push({i:row,c:all[0],target:T(lab),wt:T(lab),part:kind,lap:L});return}}
+    parts.push({i:row,c:cells[0],target:T(lab),wt:T(lab),part:kind,lap:L})});
+  parts.forEach(p=>{if(p.part==="warmup")matches.unshift(p);else matches.push(p)})}
+const slotsIn=(day,i)=>pcModel(day.items[i]).slots.some(pcIsTgt);
 /* Screenshot → JPEG, longest side 1568 px (what the reader reads best). A long scrolling screenshot is cut
    into phone-height pieces first so the text stays big enough. */
 async function pcShotImgs(files){const out=[];
@@ -1457,14 +1489,15 @@ async function pcShot(inp){const files=[...(inp.files||[])];inp.value="";if(!fil
   if(!plan.matches.some(m=>m.lap)&&!plan.sess.min&&!plan.sess.km){toast(T("shotNothing"),4000);return}
   SHOT={wn,dn,...plan,complete:r.complete!==false,notes:r.notes||""};pcShotSheet()}
 function pcShotSheet(){const R=SHOT;if(!R)return;const day=WEEKS[R.wn-1].days.find(x=>x.day===R.dn);
-  const filled=R.matches.filter(m=>m.lap),redo=filled.filter(m=>S.pc[pcK(R.wn,R.dn,m.i,m.c)]?.done).length;
-  const kindOf=m=>paddleKind(day.items[m.i]);
-  const line=(m,n)=>{const L=m.lap,v=L?pcLogStr({t:L.t,m:L.m,w:kindOf(m)==="perg"?L.w:0,spm:L.spm,hr:L.hr}):"";
-    return `<li class="${L?"":"miss"}"><span class="sn">${n+1}</span><b>${esc(m.target||T("yourSet"))}</b><span class="num">${L?esc(v):T("shotNoLap")}</span></li>`};
+  const filled=R.matches.filter(m=>m.lap&&!m.part),redo=filled.filter(m=>S.pc[pcK(R.wn,R.dn,m.i,m.c)]?.done).length;
+  const kindOf=m=>paddleKind(day.items[m.i]);let n=0;
+  const line=m=>{const L=m.lap,v=L?pcLogStr({t:L.t,m:L.m,w:kindOf(m)==="perg"?L.w:0,spm:L.spm,hr:L.hr,rest:L.rest}):"";
+    const lab=m.part?T(m.part==="warmup"?"wu":"cd"):(m.target||T("yourSet"));
+    return `<li class="${L?"":"miss"}${m.part?" part":""}"><span class="sn">${m.part?"·":++n}</span><b>${esc(lab)}</b><span class="num">${L?esc(v):T("shotNoLap")}</span></li>`};
   const s=R.sess,sl=[s.min?s.min+" min":"",s.km?s.km+" km":"",s.hr?"HR "+s.hr:""].filter(Boolean).join(" · ");
   document.getElementById("overlay").innerHTML=`<div class="scrim" data-close></div><div class="sheet"><div class="inner wrap shotsheet">
     <div class="eyebrow">${T("week")} ${WN(R.wn)} · ${esc(dayTitle(day))}</div><h2>${T("shotTitle")}</h2>
-    ${R.matches.length?`<ol class="shotlist">${R.matches.map(line).join("")}</ol>`:""}
+    ${R.matches.length?`<ol class="shotlist">${R.matches.map(m=>line(m)).join("")}</ol>`:""}
     ${sl?`<div class="shotsess"><span>${T("session")}</span><b class="num">${esc(sl)}</b>${s.date?`<span class="muted">${esc(fmtDate(new Date(s.date+"T00:00"),true))}</span>`:""}</div>`:""}
     ${R.msg?`<p class="phint">${esc(R.msg)}</p>`:""}${!R.complete&&filled.length<R.matches.length?`<p class="phint">${T("shotCut")}</p>`:""}
     ${redo?`<p class="phint">${esc(T("shotReplace")(redo))}</p>`:""}<p class="phint">${T("shotCheck")}</p>
@@ -1473,7 +1506,9 @@ function pcShotSheet(){const R=SHOT;if(!R)return;const day=WEEKS[R.wn-1].days.fi
 function pcShotApply(){const R=SHOT;SHOT=null;if(!R)return;const day=WEEKS[R.wn-1].days.find(x=>x.day===R.dn);let n=0;
   R.matches.forEach(m=>{if(!m.lap)return;const it=day.items[m.i],kind=paddleKind(it),k=pcK(R.wn,R.dn,m.i,m.c),v={done:true};
     ["t","m","spm","hr"].concat(kind==="perg"?["w"]:[]).forEach(f=>{const x=+m.lap[f];if(x>=PC_RANGE[f][0]&&x<=PC_RANGE[f][1])v[f]=Math.round(x)});
-    if(!(v.t||v.m))return;S.pc[k]=v;n++;queuePiece({w:R.wn,d:R.dn,i:m.i,c:m.c,it,k,sl:pcSlotAt(it,m.c),kind})});
+    if(+m.lap.rest>=1&&+m.lap.rest<=3600)v.rest=Math.round(+m.lap.rest);
+    if(!(v.t||v.m))return;S.pc[k]=v;if(!m.part)n++;
+    const sl=m.part?{c:m.c,target:m.wt,wt:m.wt}:pcSlotAt(it,m.c);queuePiece({w:R.wn,d:R.dn,i:m.i,c:m.c,it,k,sl,kind})});
   const sk=`${R.wn}|${R.dn}`,dr={...(S.sessDraft[sk]||{})};
   if(R.sess.min)dr.min=String(R.sess.min);if(R.sess.km)dr.km=String(R.sess.km);if(R.sess.hr)dr.hr=String(R.sess.hr);if(R.sess.date)dr.date=R.sess.date;
   S.sessDraft[sk]=dr;save();
