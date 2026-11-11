@@ -1272,14 +1272,14 @@ function paddleCard(wn,dn,it,i){const kind=paddleKind(it),md=pcModel(it),rk=`${w
       ${it.video?`<a class="demo" href="${esc(it.video)}" target="_blank" rel="noopener">${I.play}${T("demo")}</a>`:""}</div>
     ${it.rpe||(it.rest&&shown.length>1)?`<div class="chips">${it.rpe?`<span class="chip">RPE ${esc(it.rpe)}</span>`:""}${it.rest&&shown.length>1?`<span class="chip">${T("rest")} ${esc(restLabel(it.rest))}</span>`:""}</div>`:""}
     ${md.instr.length||coach?`<div class="pinstr">${md.instr.map(x=>`<p>${esc(x)}</p>`).join("")}${coach?`<p>${esc(coach).replace(/\n/g,"<br>")}</p>`:""}</div>`:""}
-    ${shown.length?`<div class="pcs">${shown.map((sl,n)=>pieceRow(wn,dn,i,sl,n,kind)).join("")}</div>`:""}
+    ${shown.length?`<div class="pcs">${(q=>shown.map(sl=>pieceRow(wn,dn,i,sl,pcIsPart(it,sl)?-1:q++,kind)))(0).join("")}</div>`:""}
     ${canAdd?`<button class="padd" data-padd="${rk}">${T("addSet")}</button>`:""}
     ${room?`<input class="note" data-pnote="${rk}" maxlength="${room}" placeholder="${free?T("pNoteFree"):T("notes")}" value="${esc(ath)}">`:""}
   </article>`}
 function pieceRow(wn,dn,i,sl,n,kind){const k=pcK(wn,dn,i,sl.c),v=S.pc[k]||{};const tS=pcSecs(sl.target,true),tM=pcMeters(sl.target);
-  const f=(name,lab,val,ph,mode)=>`<label class="pf"><span>${lab}</span><input data-pf="${name}" inputmode="${mode}" autocomplete="off" value="${esc(val)}" placeholder="${esc(ph)}" aria-label="${lab}, ${S.profile.lang==="fr"?"série":"set"} ${n+1}"></label>`;
+  const f=(name,lab,val,ph,mode)=>`<label class="pf"><span>${lab}</span><input data-pf="${name}" inputmode="${mode}" autocomplete="off" value="${esc(val)}" placeholder="${esc(ph)}" aria-label="${lab}, ${n<0?esc(sl.target):(S.profile.lang==="fr"?"série ":"set ")+(n+1)}"></label>`;
   return `<div class="pc ${v.done?"done":""}" data-pk="${k}">
-    <div class="ph"><span class="sn">${n+1}</span><b class="${sl.target?"":"free"}">${esc(sl.target||T("yourSet"))}</b><span class="spd">${pcSpdTxt(v,kind)}</span><button class="chk" data-pchk aria-label="${T("done")} ${n+1}">${I.check}</button></div>
+    <div class="ph"><span class="sn">${n<0?"·":n+1}</span><b class="${sl.target?"":"free"}">${esc(sl.target||T("yourSet"))}</b><span class="spd">${pcSpdTxt(v,kind)}</span><button class="chk" data-pchk aria-label="${T("done")} ${n<0?esc(sl.target):n+1}">${I.check}</button></div>
     <div class="pfs ${kind}">${f("t",T("fTime"),v.t?pcFmtT(v.t):"",tS?pcFmtT(tS):"m:ss","decimal")}${f("m",T("fDist"),v.m||"",tM?String(tM):"m","numeric")}${kind==="perg"?f("w",T("fW"),v.w||"","W","numeric"):""}${f("spm",T("fSpm"),v.spm||"","spm","numeric")}${f("hr",T("fHr"),v.hr||"","bpm","numeric")}</div>
   </div>`}
 /* Session totals, RPE and the watch link, saved in column P of the "Day N" row. */
