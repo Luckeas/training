@@ -401,7 +401,7 @@ select{font:500 16px var(--body);padding:12px}
     <div class="head">
       <p class="eyebrow" data-t="s3eye">3 · Your 4 weeks</p>
       <h2 id="h-weeks" data-t="s3h">Your first 4 weeks, in your numbers</h2>
-      <p class="muted" data-t="s3p">Three different bench days each week: heavy, medium and light. Pick your week to see exactly what to do on each day. Every weight comes from the calculator.</p>
+      <p class="muted" data-t="s3p">Three different bench days each week: heavy, light and medium. The top sets get a little heavier each week. Pick your week to see exactly what to do on each day.</p>
     </div>
     <div class="season"><span class="lab" style="margin:0" data-t="seasonK">Best in the off-season</span><span data-t="seasonP">Do this plan in the off-season, when you have time to build strength. It's not recommended during the race season. Spread your 3 days through the week, for example Monday, Wednesday and Friday.</span></div>
     <div class="weektabs" role="group" aria-label="Week" id="wkTabs">
@@ -412,13 +412,14 @@ select{font:500 16px var(--body);padding:12px}
     </div>
     <p class="example" id="planEx" data-t="planEx">Example weights. Put your own set in the calculator above.</p>
     <p class="wknote" id="wkNote"></p>
+    <p class="meta" data-t="rpeNote">RPE is effort out of 10: RPE 7 means about 3 reps left in the tank, RPE 6 about 4. Load the percentage. If a set feels harder than its RPE, take a little weight off.</p>
     <div class="dayplan" id="dayplan" aria-live="polite"></div>
     <p class="addon" data-t="addOn">This plan is your bench only. After it, add your triceps and upper back work, and the rest of your training.</p>
     <div class="week5" id="week5"></div>
     <p class="rule" data-t="rule">No grinding and no missed reps, even on top sets. The fast sets should feel light: that's on purpose. Press every rep as fast as you can.</p>
     <ul class="tips">
       <li><span data-t="tip1">Warm up with a few lighter sets, working up to your top sets.</span></li>
-      <li><span data-t="tip2">Rest about 3 minutes after top sets and 2 minutes between fast sets.</span></li>
+      <li><span data-t="tip2">Rest about 3 minutes after top sets and 2 minutes between the other sets.</span></li>
       <li><span data-t="tip5">Already on a team gym program? Do these bench days in place of the bench work there, not on top of it.</span></li>
       <li><span data-t="tip4">Use a spotter or set the safety pins, especially on top sets.</span></li>
     </ul>
@@ -472,8 +473,15 @@ const BENCH = [["Entry",55,65,75,85,95,125,145,165,185,205],["Regional",70,80,90
 const LV_FR = {"Entry":"Initiation","Regional":"Régional","Provincial":"Provincial","National":"National","CCWC":"CCWC","NT Entry":"Équipe nat. (entrée)","NT Standard":"Équipe nat. (standard)","NT Strong":"Équipe nat. (fort)"};
 // Martin's format (Nov 11): 3 days a week; days 1-2 = 1-3 top sets at 80-90% (singles to triples) + 3-4 fast sets at 60-70% for 4-6 reps;
 // day 3 = muscle building + accessories; week 4 = lighter (days 1-2 only, day 3 off); week 5 = add 5-10 lb and start again.
-const PCT = {single:.90, triple:.80, fast:.65, hyp:.60};
-const WEEKS = [{top:1, fast:3, d3:3}, {top:2, fast:4, d3:3}, {top:3, fast:4, d3:4}, {top:1, fast:2, d3:0}];
+// Martin's format (Nov 11): top sets from singles to triples at 80-90% that get a little heavier each week,
+// then 3-4 fast sets of 4-6 at 60-70%; day 3 close-grip for muscle. Week 4 lighter (day 3 off), week 5 add 5-10 lb.
+// Each set: [sets, reps, % of max, RPE]. Day 1 heavy (Mon), day 2 light (Wed), day 3 medium (Fri).
+const WEEKS = [
+  {d1:[[1,1,.85,7],[4,4,.70,6]],   d2:[[1,3,.75,6],[4,6,.60,5]],   d3:[[1,2,.80,6],[4,8,.65,7]]},
+  {d1:[[1,1,.875,7.5],[4,4,.70,6]], d2:[[1,3,.775,6.5],[4,6,.60,5]], d3:[[1,2,.825,6.5],[4,8,.65,7]]},
+  {d1:[[1,1,.90,8],[4,4,.70,6]],   d2:[[1,3,.80,7],[4,6,.60,5]],   d3:[[1,2,.85,7],[4,8,.65,7]]},
+  {d1:[[1,1,.85,7],[2,4,.70,6]],   d2:[[1,3,.75,6],[2,6,.60,5]],   d3:null}
+];
 let WK = 0;   // week shown in the plan
 const JOIN = {en:"https://app.dbspeed.app/join", fr:"https://app.dbspeed.app/join/fr"};
 
@@ -519,26 +527,26 @@ const T = {
     secB2:"Sleep 7 to 9 hours. That's where most of your recovery happens.",
     secB3:"Eat enough overall. A big calorie deficit and a rising bench rarely go together.",
     s3eye:"3 · Your 4 weeks", s3h:"Your first 4 weeks, in your numbers",
-    s3p:"Three different bench days each week: heavy, medium and light. Pick your week to see exactly what to do on each day. Every weight comes from the calculator.",
+    s3p:"Three different bench days each week: heavy, light and medium. The top sets get a little heavier each week. Pick your week to see exactly what to do on each day.",
     addOn:"This plan is your bench only. After it, add your triceps and upper back work, and the rest of your training.",
     seasonK:"Best in the off-season", seasonP:"Do this plan in the off-season, when you have time to build strength. It's not recommended during the race season. Spread your 3 days through the week, for example Monday, Wednesday and Friday.",
     wk1:"Week 1", wk2:"Week 2", wk3:"Week 3", wk4:"Week 4", lighter:"Lighter",
-    wkNotes:["Week 1: start easy, 1 top set on days 1 and 2.","Week 2: one more top set and one more fast set.","Week 3: your biggest week.","Week 4 is lighter: fewer sets at the same weights, and no bench on day 3."],
+    wkNotes:["Week 1: start here. The top sets may feel lighter than you expect: that's on purpose.","Week 2: the top sets go up a little. Everything else stays the same.","Week 3: your heaviest week.","Week 4 is lighter: week 1 top sets, fewer sets after, and no bench on day 3."],
+    rpeNote:"RPE is effort out of 10: RPE 7 means about 3 reps left in the tank, RPE 6 about 4. Load the percentage. If a set feels harder than its RPE, take a little weight off.",
+    rpeMax:r=>`${r} max`,
     colSR:"Sets × reps", colW:"Weight", day:"Day", heavy:"Heavy", medium:"Medium", light:"Light", restP:"Rest",
-    d1h:"Heavy singles", d1p:"Your heaviest day. A few heavy singles to get used to big weights, then fast sets.",
-    d2h:"Triples", d2p:"A bit lighter than day 1, with more reps. Heavy triples, then the same fast sets.",
-    d3h:"Build muscle", d3p:"Your lightest bench day. More reps to build muscle.",
+    d1h:"Heavy single", d1p:"Your heaviest day. One heavy single, then fast sets.",
+    d2h:"Light triples", d2p:"Your lightest day, between the two harder ones. A paused triple, then light, fast sets.",
+    d3h:"Double and close-grip", d3p:"A heavy double, then close-grip bench to build muscle and triceps.",
     d3offH:"Rest day", d3off:"No bench this day: let your body catch up.",
-    exTop:"Bench press: top sets", exTopS1:"Singles at 90% of your max", exTopS2:"Triples at 80% of your max",
-    exFast:"Paused bench: fast sets", exFastS:"65% · pause 1 s on the chest, press as fast as you can",
-    exHyp:"Bench press", exHypS:"60% · controlled reps",
-    exTri:"Triceps superset", exTriS:"Cable pushdowns, then overhead cable extensions",
-    exUb:"Upper back", exUbS:"Chest-supported rows or seal rows",
-    week5:(add,lo,hi)=>`<span class="lab" style="margin:0">Week 5: start again</span><span>Add ${add} to every weight (top singles: <b>${lo} to ${hi}</b>) and go back to week 1. Then send me your new level: I'll tell you what comes next.</span>`,
+    exSingle:"Bench press: top single", exSets:"Bench press", exTriple:"Bench press: top triple", exFast:"Bench press: fast sets",
+    exDouble:"Bench press: top double", exCG:"Close-grip bench press",
+    pausedChest:"pause on the chest", leaveReps:"leave reps in the tank", pressFast:"pause, then press as fast as you can", cgHow:"hands one hand-width closer",
+    week5:(add,lo,hi)=>`<span class="lab" style="margin:0">Week 5: start again</span><span>Add ${add} to your max (your new max: <b>${lo} to ${hi}</b>), put it in the calculator, and go back to week 1. Then send me your new level: I'll tell you what comes next.</span>`,
     planEx:"Example weights. Put your own set in the calculator above.",
     rule:"No grinding and no missed reps, even on top sets. The fast sets should feel light: that's on purpose. Press every rep as fast as you can.",
     tip0:"Spread your 3 days through the week, for example Monday, Wednesday and Friday.",
-    tip1:"Warm up with a few lighter sets, working up to your top sets.", tip2:"Rest about 3 minutes after top sets and 2 minutes between fast sets.",
+    tip1:"Warm up with a few lighter sets, working up to your top sets.", tip2:"Rest about 3 minutes after top sets and 2 minutes between the other sets.",
     tip3:"On fast sets, pause on your chest, then press as fast as you can.", tip4:"Use a spotter or set the safety pins, especially on top sets.",
     tip5:"Already on a team gym program? Do these bench days in place of the bench work there, not on top of it.",
     s4eye:"4 · Train with me", s4h:"Keep climbing with the DB Speed crew", s4p:"This guide covers 4 weeks. DB Speed covers your whole season.",
@@ -608,26 +616,26 @@ const T = {
     secB2:"Dormez de 7 à 9 heures. C'est là que se fait la majeure partie de votre récupération.",
     secB3:"Mangez assez au total. Un gros déficit calorique et un développé qui monte vont rarement ensemble.",
     s3eye:"3 · Vos 4 semaines", s3h:"Vos 4 premières semaines, avec vos charges",
-    s3p:"Trois journées de développé différentes chaque semaine : lourde, moyenne et légère. Choisissez votre semaine pour voir exactement quoi faire chaque jour. Chaque charge vient du calculateur.",
+    s3p:"Trois journées de développé différentes chaque semaine : lourde, légère et moyenne. Les séries lourdes montent un peu chaque semaine. Choisissez votre semaine pour voir exactement quoi faire chaque jour.",
     addOn:"Ce plan couvre seulement votre développé. Après, ajoutez votre travail de triceps et du haut du dos, et le reste de votre entraînement.",
     seasonK:"Idéal hors saison", seasonP:"Faites ce plan hors saison, quand vous avez le temps de bâtir de la force. Il n'est pas recommandé pendant la saison de course. Répartissez vos 3 jours dans la semaine, par exemple lundi, mercredi et vendredi.",
     wk1:"Sem. 1", wk2:"Sem. 2", wk3:"Sem. 3", wk4:"Sem. 4", lighter:"Plus légère",
-    wkNotes:["Semaine 1 : on commence doucement, 1 série lourde aux jours 1 et 2.","Semaine 2 : une série lourde et une série rapide de plus.","Semaine 3 : votre plus grosse semaine.","La semaine 4 est plus légère : moins de séries aux mêmes charges, et pas de développé au jour 3."],
+    wkNotes:["Semaine 1 : on commence ici. Les séries lourdes peuvent sembler plus légères que prévu : c'est voulu.","Semaine 2 : les séries lourdes montent un peu. Le reste ne change pas.","Semaine 3 : votre semaine la plus lourde.","La semaine 4 est plus légère : séries lourdes de la semaine 1, moins de séries ensuite, et pas de développé au jour 3."],
+    rpeNote:"Le RPE, c'est l'effort sur 10 : RPE 7 = environ 3 répétitions en réserve, RPE 6 = environ 4. Chargez le pourcentage. Si une série semble plus dure que son RPE, enlevez un peu de charge.",
+    rpeMax:r=>`${r} max.`,
     colSR:"Séries × rép.", colW:"Charge", day:"Jour", heavy:"Lourd", medium:"Moyen", light:"Léger", restP:"Repos",
-    d1h:"Simples lourds", d1p:"Votre journée la plus lourde. Quelques simples lourds pour vous habituer aux grosses charges, puis des séries rapides.",
-    d2h:"Triples", d2p:"Un peu plus léger que le jour 1, avec plus de répétitions. Des triples lourds, puis les mêmes séries rapides.",
-    d3h:"Bâtir du muscle", d3p:"Votre journée de développé la plus légère. Plus de répétitions pour bâtir du muscle.",
+    d1h:"Simple lourd", d1p:"Votre journée la plus lourde. Un simple lourd, puis des séries rapides.",
+    d2h:"Triples légers", d2p:"Votre journée la plus légère, entre les deux plus dures. Un triple avec pause, puis des séries légères et rapides.",
+    d3h:"Double et prise serrée", d3p:"Un double lourd, puis du développé prise serrée pour bâtir du muscle et des triceps.",
     d3offH:"Jour de repos", d3off:"Pas de développé ce jour-là : laissez votre corps récupérer.",
-    exTop:"Développé couché : séries lourdes", exTopS1:"Simples à 90 % de votre max", exTopS2:"Triples à 80 % de votre max",
-    exFast:"Développé avec pause : séries rapides", exFastS:"65 % · pause d'une seconde sur la poitrine, poussez le plus vite possible",
-    exHyp:"Développé couché", exHypS:"60 % · répétitions contrôlées",
-    exTri:"Superset de triceps", exTriS:"Extensions à la poulie vers le bas, puis au-dessus de la tête",
-    exUb:"Haut du dos", exUbS:"Rowing appuyé sur banc ou seal row",
-    week5:(add,lo,hi)=>`<span class="lab" style="margin:0">Semaine 5 : on recommence</span><span>Ajoutez ${add} à chaque charge (simples lourds : <b>${lo} à ${hi}</b>) et revenez à la semaine 1. Puis envoyez-moi votre nouveau niveau : je vous dirai la suite.</span>`,
+    exSingle:"Développé : simple lourd", exSets:"Développé couché", exTriple:"Développé : triple lourd", exFast:"Développé : séries rapides",
+    exDouble:"Développé : double lourd", exCG:"Développé prise serrée",
+    pausedChest:"pause sur la poitrine", leaveReps:"gardez des répétitions en réserve", pressFast:"pause, puis poussez le plus vite possible", cgHow:"mains une largeur de main plus proches",
+    week5:(add,lo,hi)=>`<span class="lab" style="margin:0">Semaine 5 : on recommence</span><span>Ajoutez ${add} à votre max (nouveau max : <b>${lo} à ${hi}</b>), entrez-le dans le calculateur et revenez à la semaine 1. Puis envoyez-moi votre nouveau niveau : je vous dirai la suite.</span>`,
     planEx:"Charges d'exemple. Entrez votre propre série dans le calculateur plus haut.",
     rule:"Pas de répétition forcée, pas de répétition ratée, même sur les séries lourdes. Les séries rapides devraient sembler légères : c'est voulu. Poussez chaque répétition le plus vite possible.",
     tip0:"Répartissez vos 3 jours dans la semaine, par exemple lundi, mercredi et vendredi.",
-    tip1:"Échauffez-vous avec quelques séries plus légères, jusqu'à vos séries lourdes.", tip2:"Reposez-vous environ 3 minutes après les séries lourdes et 2 minutes entre les séries rapides.",
+    tip1:"Échauffez-vous avec quelques séries plus légères, jusqu'à vos séries lourdes.", tip2:"Reposez-vous environ 3 minutes après les séries lourdes et 2 minutes entre les autres séries.",
     tip3:"Aux séries rapides, faites une pause sur la poitrine, puis poussez le plus vite possible.", tip4:"Ayez un pareur ou réglez les barres de sécurité, surtout pour les séries lourdes.",
     tip5:"Déjà sur un programme de gym d'équipe? Faites ces journées de développé à la place du développé de ce programme, pas en plus.",
     s4eye:"4 · S'entraîner avec moi", s4h:"Continuez à progresser avec l'équipage DB Speed", s4p:"Ce guide couvre 4 semaines. DB Speed couvre toute votre saison.",
@@ -733,28 +741,29 @@ function render(){
   }
 
   // the plan's weights
-  const W = k => oneRm ? fmtLoad(oneRm * PCT[k]) : "—";
-  const sgl = W("single"), tri = W("triple"), fast = W("fast"), hyp = W("hyp");
-  const kg = unit() === "kg";
-  const plus = d => !oneRm ? "—" : kg ? kgStr(loadKg(oneRm * PCT.single) + d * 2.5) : `${Math.round(oneRm * PCT.single / 5) * 5 + d * 5} lb`;
-  const add = kg ? (L === "fr" ? "2,5 à 5 kg" : "2.5 to 5 kg") : (L === "fr" ? "5 à 10 lb" : "5 to 10 lb");
   // the plan: one card per day for the chosen week
   const wk = WEEKS[WK];
+  const kg = unit() === "kg";
+  const pctS = x => `${n2s(x * 100, (x * 1000) % 10 ? 1 : 0)}${L === "fr" ? " %" : "%"}`;
+  const rpeS = x => `RPE ${n2s(x, x % 1 ? 1 : 0)}`;
+  const load = x => oneRm ? fmtLoad(oneRm * x) : "";
   const row = (name, sub, sx, wt) => `<li><span class="exn">${name}<small>${sub}</small></span><span class="sx">${sx}</span><span class="wt${wt ? "" : " none"}">${wt || "—"}</span></li>`;
+  const set = (name, extra, [n, r, x, e], cap) => row(name, `${pctS(x)} · ${cap ? t.rpeMax(rpeS(e)) : rpeS(e)}${extra ? " · " + extra : ""}`, `${n} × ${r}`, load(x));
   const cols = `<div class="exhead"><span></span><span>${t.colSR}</span><span>${t.colW}</span></div>`;
   const head = (n, cls, label) => `<div class="dhead"><span class="dnum">${t.day} ${n}</span><span class="pill ${cls}">${label}</span></div>`;
-  const show = v => oneRm ? v : "";
   $("wkNote").textContent = t.wkNotes[WK];
   $("planEx").hidden = touched;
   $("dayplan").innerHTML = `
     <article class="card dcard">${head(1, "heavy", t.heavy)}<h3>${t.d1h}</h3><p class="purpose">${t.d1p}</p>${cols}
-      <ol class="ex">${row(t.exTop, t.exTopS1, `${wk.top} × 1`, show(sgl))}${row(t.exFast, t.exFastS, `${wk.fast} × 5`, show(fast))}</ol></article>
-    <article class="card dcard">${head(2, "medium", t.medium)}<h3>${t.d2h}</h3><p class="purpose">${t.d2p}</p>${cols}
-      <ol class="ex">${row(t.exTop, t.exTopS2, `${wk.top} × 3`, show(tri))}${row(t.exFast, t.exFastS, `${wk.fast} × 5`, show(fast))}</ol></article>
-    ${wk.d3 ? `<article class="card dcard">${head(3, "light", t.light)}<h3>${t.d3h}</h3><p class="purpose">${t.d3p}</p>${cols}
-      <ol class="ex">${row(t.exHyp, t.exHypS, `${wk.d3} × 8–10`, show(hyp))}</ol></article>`
+      <ol class="ex">${set(t.exSingle, t.pausedChest, wk.d1[0])}${set(t.exFast, t.pressFast, wk.d1[1], true)}</ol></article>
+    <article class="card dcard">${head(2, "light", t.light)}<h3>${t.d2h}</h3><p class="purpose">${t.d2p}</p>${cols}
+      <ol class="ex">${set(t.exTriple, t.pausedChest, wk.d2[0])}${set(t.exFast, t.pressFast, wk.d2[1], true)}</ol></article>
+    ${wk.d3 ? `<article class="card dcard">${head(3, "medium", t.medium)}<h3>${t.d3h}</h3><p class="purpose">${t.d3p}</p>${cols}
+      <ol class="ex">${set(t.exDouble, t.pausedChest, wk.d3[0])}${set(t.exCG, t.cgHow, wk.d3[1], true)}</ol></article>`
     : `<article class="card dcard off">${head(3, "rest", t.restP)}<h3>${t.d3offH}</h3><p class="purpose">${t.d3off}</p></article>`}`;
-  $("week5").innerHTML = t.week5(add, plus(1), plus(2));
+  const newMax = d => !oneRm ? "—" : kg ? kgStr(Math.round(oneRm * KG * 2) / 2 + d * 2.5) : `${Math.round(oneRm) + d * 5} lb`;
+  const add = kg ? (L === "fr" ? "2,5 à 5 kg" : "2.5 to 5 kg") : (L === "fr" ? "5 à 10 lb" : "5 to 10 lb");
+  $("week5").innerHTML = t.week5(add, newMax(1), newMax(2));
 
   const g = bwLb ? Math.ceil(bwLb * 0.8 / 5) * 5 : 0;   // 0.8 g per lb, Martin's minimum
   $("secB1").innerHTML = t.secB1(g);
