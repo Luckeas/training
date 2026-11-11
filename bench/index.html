@@ -165,6 +165,8 @@ select{font:500 16px var(--body);padding:12px}
 .weektabs button{background:none;border:0;border-radius:8px;color:var(--muted);font:800 19px/1 var(--display);text-transform:uppercase;letter-spacing:.04em;padding:9px 4px;min-height:52px;cursor:pointer;display:grid;gap:4px;justify-items:center;align-content:center}
 .weektabs button small{font:600 11px/1 var(--body);letter-spacing:0;text-transform:none}
 .weektabs button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.season{display:grid;gap:4px;background:var(--surface);border:1px solid var(--line);border-left:3px solid #f2b233;border-radius:12px;padding:14px 16px;font-weight:600}
+.season .lab{color:#f2b233}
 .wknote{font-weight:600}
 .dayplan{display:grid;gap:12px}
 .dcard{display:grid;gap:8px}
@@ -416,6 +418,7 @@ select{font:500 16px var(--body);padding:12px}
       <h2 id="h-weeks" data-t="s3h">Your first 4 weeks, in your numbers</h2>
       <p class="muted" data-t="s3p">Three different bench days each week: heavy, medium and light. Pick your week to see exactly what to do on each day. Every weight comes from the calculator.</p>
     </div>
+    <div class="season"><span class="lab" style="margin:0" data-t="seasonK">Best in the off-season</span><span data-t="seasonP">Do this plan in the off-season, when you have time to build strength. It's not recommended during the race season.</span></div>
     <div class="weektabs" role="group" aria-label="Week" id="wkTabs">
       <button type="button" data-w="0" aria-pressed="true"><span data-t="wk1">Week 1</span></button>
       <button type="button" data-w="1" aria-pressed="false"><span data-t="wk2">Week 2</span></button>
@@ -541,6 +544,7 @@ const T = {
     secB3:"Eat enough overall. A big calorie deficit and a rising bench rarely go together.",
     s3eye:"3 · Your 4 weeks", s3h:"Your first 4 weeks, in your numbers",
     s3p:"Three different bench days each week: heavy, medium and light. Pick your week to see exactly what to do on each day. Every weight comes from the calculator.",
+    seasonK:"Best in the off-season", seasonP:"Do this plan in the off-season, when you have time to build strength. It's not recommended during the race season.",
     wk1:"Week 1", wk2:"Week 2", wk3:"Week 3", wk4:"Week 4", lighter:"Lighter",
     wkNotes:["Week 1: start easy, 1 top set on days 1 and 2.","Week 2: one more top set and one more fast set.","Week 3: your biggest week.","Week 4 is lighter: fewer sets at the same weights, your accessories move to days 1 and 2, and day 3 is a rest day."],
     colSR:"Sets × reps", colW:"Weight", day:"Day", heavy:"Heavy", medium:"Medium", light:"Light", restP:"Rest",
@@ -628,6 +632,7 @@ const T = {
     secB3:"Mangez assez au total. Un gros déficit calorique et un développé qui monte vont rarement ensemble.",
     s3eye:"3 · Vos 4 semaines", s3h:"Vos 4 premières semaines, avec vos charges",
     s3p:"Trois journées de développé différentes chaque semaine : lourde, moyenne et légère. Choisissez votre semaine pour voir exactement quoi faire chaque jour. Chaque charge vient du calculateur.",
+    seasonK:"Idéal hors saison", seasonP:"Faites ce plan hors saison, quand vous avez le temps de bâtir de la force. Il n'est pas recommandé pendant la saison de course.",
     wk1:"Sem. 1", wk2:"Sem. 2", wk3:"Sem. 3", wk4:"Sem. 4", lighter:"Plus légère",
     wkNotes:["Semaine 1 : on commence doucement, 1 série lourde aux jours 1 et 2.","Semaine 2 : une série lourde et une série rapide de plus.","Semaine 3 : votre plus grosse semaine.","La semaine 4 est plus légère : moins de séries aux mêmes charges, vos accessoires passent aux jours 1 et 2, et le jour 3 est un jour de repos."],
     colSR:"Séries × rép.", colW:"Charge", day:"Jour", heavy:"Lourd", medium:"Moyen", light:"Léger", restP:"Repos",
