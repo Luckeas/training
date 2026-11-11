@@ -159,6 +159,8 @@ select{font:500 16px var(--body);padding:12px}
 .secret ul{margin:0;padding-left:20px;display:grid;gap:6px;color:#3b3c40}
 .secret ul b{color:var(--bg)}
 .secret .lab{color:#5b5c60;margin-top:4px}
+.secret .protein{font-weight:600;border-top:1px solid #d8d3c8;padding-top:12px}
+.secret .protein b{color:var(--accent)}
 
 /* plan */
 .weektabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:6px;position:sticky;top:calc(57px + env(safe-area-inset-top,0px));z-index:3}
@@ -223,6 +225,9 @@ select{font:500 16px var(--body);padding:12px}
 .price span{color:#4a4b4f}
 .price .or{margin:0 6px}
 .contact{font-weight:600}
+.more p{margin:0}
+.more b{color:var(--accent)}
+.more a{color:inherit;text-underline-offset:3px}
 .contact b{color:var(--accent)}
 .contact a{color:inherit;text-underline-offset:3px}
 
@@ -264,7 +269,6 @@ select{font:500 16px var(--body);padding:12px}
       <div class="bars" aria-hidden="true"><i><b></b></i><i><b></b></i></div>
     </div>
     <p class="lead" data-t="lead">Most paddlers try to build their bench by maxing out every session. They fail reps, they plateau, and they get frustrated. One of my athletes did the opposite and went from 85 lb to 160 lb. Today she sits in seat 1, pacing Team Canada in both the mixed and women's crews.</p>
-    <p class="muted" data-t="lead2">This guide gives you the three things that got her there, the secret that makes them work, a calculator to see where your bench stands, and your first 4 weeks in your own numbers.</p>
     <p class="by"><b>Martin Shih · DB Speed</b><span data-t="cred1">Team Canada Premier world champion</span><span data-t="cred2">Strength coach of 22 Dragons, CCWC gold</span></p>
     <ul class="jump">
       <li><a href="#level"><span>1</span><em data-t="nav1">Your level</em></a></li>
@@ -279,7 +283,7 @@ select{font:500 16px var(--body);padding:12px}
     <div class="head">
       <p class="eyebrow" data-t="s1eye">1 · Your level</p>
       <h2 id="h-level" data-t="s1h">Where does your bench stand?</h2>
-      <p class="muted" data-t="s1p">Put in your bodyweight and a recent hard set. You get your estimated max, your level from Entry to National Team, and the weights for the plan below.</p>
+      <p class="muted" data-t="s1p">Put in your bodyweight and a recent hard set. You get your max, your level from Entry to National Team, and the weights for the plan below.</p>
     </div>
 
     <form id="f" class="card" novalidate>
@@ -307,19 +311,19 @@ select{font:500 16px var(--body);padding:12px}
         </div>
         <div class="inp">
           <label class="lab" for="bWt" data-t="weight">Bench weight</label>
-          <input type="text" id="bWt" inputmode="decimal" autocomplete="off" value="100">
+          <input type="text" id="bWt" inputmode="decimal" autocomplete="off" value="125">
         </div>
         <div class="inp">
           <label class="lab" for="bReps" data-t="reps">Reps</label>
-          <input type="text" id="bReps" inputmode="numeric" autocomplete="off" value="5">
+          <input type="text" id="bReps" inputmode="numeric" autocomplete="off" value="1">
         </div>
       </div>
       <div class="inp">
         <label class="lab" for="bType" data-t="setType">What kind of set was it?</label>
         <select id="bType">
+          <option value="max" data-t="trueMax" selected>A true max (tested 1RM)</option>
           <option value="set" data-t="hardSet">A hard set, 1–2 reps left</option>
           <option value="fail" data-t="failSet">A set to failure</option>
-          <option value="max" data-t="trueMax">A true max (tested 1RM)</option>
         </select>
       </div>
       <p class="private" data-t="private">Everything updates as you type. Nothing you type is sent anywhere.</p>
@@ -335,15 +339,6 @@ select{font:500 16px var(--body);padding:12px}
         <p class="lab" style="margin:0" data-t="ladK">Bench 1RM by level, at your bodyweight</p>
         <div id="ladder" class="ladder"></div>
         <p class="gap" id="gap"></p>
-      </div>
-      <div>
-        <p class="lab" data-t="yoursK">Your numbers for the plan</p>
-        <div class="yours">
-          <div class="stat"><span class="k" data-t="sglK">Singles · 90%</span><span class="v" id="sglV">—</span></div>
-          <div class="stat"><span class="k" data-t="triK">Triples · 80%</span><span class="v" id="triV">—</span></div>
-          <div class="stat"><span class="k" data-t="fastK2">Fast sets · 65%</span><span class="v" id="fastV">—</span></div>
-          <div class="stat"><span class="k" data-t="hypK">Day 3 bench · 60%</span><span class="v" id="hypV">—</span></div>
-        </div>
       </div>
       <div class="share">
         <p class="lab" style="margin:0" data-t="shareK">Send me your level</p>
@@ -371,8 +366,7 @@ select{font:500 16px var(--body);padding:12px}
         <span class="no" aria-hidden="true">1</span>
         <div class="body">
           <h3 data-t="c1h">More volume</h3>
-          <p class="muted" data-t="c1p">She benched 3 days a week, 5 to 8 sets each time. Each week she did a little more work at the same weight.</p>
-          <div class="how"><span class="k" data-t="howK">How</span><p data-t="c1how">Bench 3 days a week. Days 1 and 2 start with 1 to 3 heavy top sets, then 3 to 4 lighter sets done fast. Day 3 is for building muscle.</p></div>
+          <p class="muted" data-t="c1p">She benched 3 days a week, 5 to 8 sets each time.</p>
         </div>
       </article>
       <article class="card lever">
@@ -380,8 +374,6 @@ select{font:500 16px var(--body);padding:12px}
         <div class="body">
           <h3 data-t="c2h">Never skip the accessories</h3>
           <p class="muted" data-t="c2p">Triceps supersets to drive the bar up, and upper back work to keep her stable, on the bench and in the boat.</p>
-          <div class="how"><span class="k" data-t="howK">How</span><p data-t="c2how">A triceps superset (cable pushdowns, then overhead cable extensions) and upper back work (chest-supported rows or seal rows), 3 sets of 10 to 12 each. In the plan below, they go on day 3.</p></div>
-          <p class="muted" data-t="c2why">Strong triceps finish the press. A strong upper back gives you a stable base to press from, and helps your posture in the boat.</p>
         </div>
       </article>
       <article class="card lever twist">
@@ -390,9 +382,6 @@ select{font:500 16px var(--body);padding:12px}
           <p><span class="chip" data-t="twist">The opposite of most paddlers</span></p>
           <h3 data-t="c3h">Every set lighter than her max, with a pause</h3>
           <p class="muted" data-t="c3p">All of her sets were submaximal, with a pause on the chest to build stability. Every session she got a little stronger and the reps moved faster. Only then did she add weight and start the whole process again.</p>
-          <div class="how"><span class="k" data-t="howK">How</span><p data-t="c3how">Top sets stay between 80 and 90% of your max, from singles to triples: heavy, but never a grind. The rest are lighter sets at 60 to 70%, paused on your chest and pressed as fast as you can. After a lighter 4th week, add 5 to 10 lb (2.5 to 5 kg) and start again.</p></div>
-          <p class="muted" data-t="c3why">Why it works: the pause takes away the bounce, so you learn to own the bottom, where most reps get stuck. And because you never miss, you recover fast enough to bench 3 days a week.</p>
-          <p class="yourw" id="c3you"></p>
         </div>
       </article>
     </div>
@@ -403,12 +392,7 @@ select{font:500 16px var(--body);padding:12px}
     <p class="eyebrow" data-t="secEye">The secret</p>
     <h2 id="h-secret" data-t="secH">Consistency beats maxing out</h2>
     <p class="lead" data-t="secP">She trained hard, and she kept showing up. Every week built on the one before. Consistency compounds.</p>
-    <p class="lab" data-t="secK">What makes showing up easier</p>
-    <ul>
-      <li id="secB1"></li>
-      <li data-t="secB2">Sleep 7 to 9 hours. That's where most of your recovery happens.</li>
-      <li data-t="secB3">Eat enough overall. A big calorie deficit and a rising bench rarely go together.</li>
-    </ul>
+    <p class="protein" id="secB1"></p>
   </section>
 
   <!-- 3. Four weeks -->
@@ -418,7 +402,7 @@ select{font:500 16px var(--body);padding:12px}
       <h2 id="h-weeks" data-t="s3h">Your first 4 weeks, in your numbers</h2>
       <p class="muted" data-t="s3p">Three different bench days each week: heavy, medium and light. Pick your week to see exactly what to do on each day. Every weight comes from the calculator.</p>
     </div>
-    <div class="season"><span class="lab" style="margin:0" data-t="seasonK">Best in the off-season</span><span data-t="seasonP">Do this plan in the off-season, when you have time to build strength. It's not recommended during the race season.</span></div>
+    <div class="season"><span class="lab" style="margin:0" data-t="seasonK">Best in the off-season</span><span data-t="seasonP">Do this plan in the off-season, when you have time to build strength. It's not recommended during the race season. Spread your 3 days through the week, for example Monday, Wednesday and Friday.</span></div>
     <div class="weektabs" role="group" aria-label="Week" id="wkTabs">
       <button type="button" data-w="0" aria-pressed="true"><span data-t="wk1">Week 1</span></button>
       <button type="button" data-w="1" aria-pressed="false"><span data-t="wk2">Week 2</span></button>
@@ -431,10 +415,8 @@ select{font:500 16px var(--body);padding:12px}
     <div class="week5" id="week5"></div>
     <p class="rule" data-t="rule">No grinding and no missed reps, even on top sets. The fast sets should feel light: that's on purpose. Press every rep as fast as you can.</p>
     <ul class="tips">
-      <li><span data-t="tip0">Spread your 3 days through the week, for example Monday, Wednesday and Friday.</span></li>
       <li><span data-t="tip1">Warm up with a few lighter sets, working up to your top sets.</span></li>
       <li><span data-t="tip2">Rest about 3 minutes after top sets and 2 minutes between fast sets.</span></li>
-      <li><span data-t="tip3">On fast sets, pause on your chest, then press as fast as you can.</span></li>
       <li><span data-t="tip5">Already on a team gym program? Do these bench days in place of the bench work there, not on top of it.</span></li>
       <li><span data-t="tip4">Use a spotter or set the safety pins, especially on top sets.</span></li>
     </ul>
@@ -445,7 +427,7 @@ select{font:500 16px var(--body);padding:12px}
     <div class="head">
       <p class="eyebrow" data-t="s4eye">4 · Train with me</p>
       <h2 id="h-coach" data-t="s4h">Keep climbing with the DB Speed crew</h2>
-      <p class="muted" data-t="s4p">This guide covers 4 weeks. DB Speed covers your whole season: the program, the community, and my eyes on your lifts.</p>
+      <p class="muted" data-t="s4p">This guide covers 4 weeks. DB Speed covers your whole season.</p>
     </div>
     <div class="offers">
       <article class="card offer main">
@@ -466,24 +448,16 @@ select{font:500 16px var(--body);padding:12px}
         <a class="textlink" href="https://www.skool.com/dragon-boat-engine-room-6134/about" target="_blank" rel="noopener" data-t="o2btn">Look inside the community</a>
 
       </article>
-      <article class="card offer">
-        <p class="eyebrow" data-t="o3eye">1:1 coaching</p>
-        <h3 data-t="o3h">Train with me personally</h3>
-        <p class="muted" data-t="o3p">A program built around you, every lift reviewed on video, and your training adjusted week to week. I only take a few athletes at a time.</p>
-        <p class="contact" id="o3how"></p>
-      </article>
-      <article class="card offer">
-        <p class="eyebrow" data-t="o4eye">For captains and coaches</p>
-        <h3 data-t="o4h">Want this for your whole crew?</h3>
-        <p class="muted" data-t="o4p">I build gym programs for whole teams, around your coaches and your race season. 22 Dragons and the Immortals train on them.</p>
-        <p class="contact" id="o4how"></p>
+      <article class="card offer more">
+        <p class="eyebrow" data-t="moreEye">More ways to work with me</p>
+        <p id="o3how"></p>
+        <p id="o4how"></p>
       </article>
     </div>
   </section>
 
   <footer class="notes">
     <p data-t="n1">How your max is estimated: from a hard set with 1 to 2 reps left, 1 rep ≈ 91% of your max, 2 reps ≈ 88.5%, 3 reps ≈ 86%, then the same curve up to 12 reps. A set to failure uses the standard Epley formula. A tested max is used as it is.</p>
-    <p data-t="n2">Levels are the DB Speed bench standards that DB Speed athletes train against, set by bodyweight class for women and men.</p>
     <p data-t="n4">This guide is general training information. If you have pain or an injury, check with a health professional before you start.</p>
     <p class="foot">DB Speed · Montréal · dbspeed.app</p>
   </footer>
@@ -525,7 +499,7 @@ const T = {
     s2eye:"2 · The three things", s2h:"What took her from 85 to 160",
     howK:"How",
     c1h:"More volume",
-    c1p:"She benched 3 days a week, 5 to 8 sets each time. Each week she did a little more work at the same weight.",
+    c1p:"She benched 3 days a week, 5 to 8 sets each time.",
     c1how:"Bench 3 days a week. Days 1 and 2 start with 1 to 3 heavy top sets, then 3 to 4 lighter sets done fast. Day 3 is for building muscle.",
     c2h:"Never skip the accessories",
     c2p:"Triceps supersets to drive the bar up, and upper back work to keep her stable, on the bench and in the boat.",
@@ -539,12 +513,12 @@ const T = {
     secEye:"The secret", secH:"Consistency beats maxing out",
     secP:"She trained hard, and she kept showing up. Every week built on the one before. Consistency compounds.",
     secK:"What makes showing up easier",
-    secB1:g=>`Protein at every meal: about 1.6 g per kg of bodyweight a day (0.7 g per lb)${g ? `. For you, that's about <b>${g} g</b> a day.` : "."}`,
+    secB1:g=>`Eat at least 0.8 g of protein per lb of bodyweight a day (about 1.8 g per kg). That's the minimum${g ? `: for you, at least <b>${g} g</b> a day.` : "."}`,
     secB2:"Sleep 7 to 9 hours. That's where most of your recovery happens.",
     secB3:"Eat enough overall. A big calorie deficit and a rising bench rarely go together.",
     s3eye:"3 · Your 4 weeks", s3h:"Your first 4 weeks, in your numbers",
     s3p:"Three different bench days each week: heavy, medium and light. Pick your week to see exactly what to do on each day. Every weight comes from the calculator.",
-    seasonK:"Best in the off-season", seasonP:"Do this plan in the off-season, when you have time to build strength. It's not recommended during the race season.",
+    seasonK:"Best in the off-season", seasonP:"Do this plan in the off-season, when you have time to build strength. It's not recommended during the race season. Spread your 3 days through the week, for example Monday, Wednesday and Friday.",
     wk1:"Week 1", wk2:"Week 2", wk3:"Week 3", wk4:"Week 4", lighter:"Lighter",
     wkNotes:["Week 1: start easy, 1 top set on days 1 and 2.","Week 2: one more top set and one more fast set.","Week 3: your biggest week.","Week 4 is lighter: fewer sets at the same weights, your accessories move to days 1 and 2, and day 3 is a rest day."],
     colSR:"Sets × reps", colW:"Weight", day:"Day", heavy:"Heavy", medium:"Medium", light:"Light", restP:"Rest",
@@ -564,7 +538,7 @@ const T = {
     tip1:"Warm up with a few lighter sets, working up to your top sets.", tip2:"Rest about 3 minutes after top sets and 2 minutes between fast sets.",
     tip3:"On fast sets, pause on your chest, then press as fast as you can.", tip4:"Use a spotter or set the safety pins, especially on top sets.",
     tip5:"Already on a team gym program? Do these bench days in place of the bench work there, not on top of it.",
-    s4eye:"4 · Train with me", s4h:"Keep climbing with the DB Speed crew", s4p:"This guide covers 4 weeks. DB Speed covers your whole season: the program, the community, and my eyes on your lifts.",
+    s4eye:"4 · Train with me", s4h:"Keep climbing with the DB Speed crew", s4p:"This guide covers 4 weeks. DB Speed covers your whole season.",
     o1eye:"DB Speed membership", o1h:"Your program and your community, in one place",
     f1h:"A full season, not just bench", f1p:"Bench, pulling, legs and power, in the app. A new week every Monday, built around the race season, with suggested weights from your best logged sets.",
     f2h:"The DB Speed community on Skool", f2p:"Post your lifts, ask questions and follow other paddlers' progress. Training is easier to keep up when your crew is watching.",
@@ -576,10 +550,10 @@ const T = {
     spots:"Only 3 founding spots left",
     o3eye:"1:1 coaching", o3h:"Train with me personally",
     o3p:"A program built around you, every lift reviewed on video, and your training adjusted week to week. I only take a few athletes at a time.",
-    o3how:`<a href="https://ig.me/m/martishih" target="_blank" rel="noopener">DM me <b>SPEED</b> on Instagram</a>, or email <a href="mailto:hello@dbspeed.app">hello@dbspeed.app</a>.`,
-    o4eye:"For captains and coaches", o4h:"Want this for your whole crew?",
+    o3how:`<b>1:1 coaching.</b> A program built around you, with every lift reviewed on video. <a href="https://ig.me/m/martishih" target="_blank" rel="noopener">DM me SPEED on Instagram</a>.`,
+    moreEye:"More ways to work with me", o4eye:"For captains and coaches", o4h:"Want this for your whole crew?",
     o4p:"I build gym programs for whole teams, around your coaches and your race season. 22 Dragons and the Immortals train on them.",
-    o4how:`<a href="https://ig.me/m/martishih" target="_blank" rel="noopener">Send me a DM on Instagram</a>, or email <a href="mailto:hello@dbspeed.app">hello@dbspeed.app</a>.`,
+    o4how:`<b>Captains and coaches.</b> Gym programs for whole crews, like 22 Dragons and the Immortals. <a href="https://ig.me/m/martishih" target="_blank" rel="noopener">Send me a DM</a> or email hello@dbspeed.app.`,
     n1:"How your max is estimated: from a hard set with 1 to 2 reps left, 1 rep ≈ 91% of your max, 2 reps ≈ 88.5%, 3 reps ≈ 86%, then the same curve up to 12 reps. A set to failure uses the standard Epley formula. A tested max is used as it is.",
     n2:"Levels are the DB Speed bench standards that DB Speed athletes train against, set by bodyweight class for women and men.",
     n4:"This guide is general training information. If you have pain or an injury, check with a health professional before you start.",
@@ -613,7 +587,7 @@ const T = {
     s2eye:"2 · Les trois clés", s2h:"Ce qui l'a menée de 85 à 160",
     howK:"Comment",
     c1h:"Plus de volume",
-    c1p:"Elle faisait du développé 3 jours par semaine, de 5 à 8 séries chaque fois. Chaque semaine, elle faisait un peu plus de travail à la même charge.",
+    c1p:"Elle faisait du développé 3 jours par semaine, de 5 à 8 séries chaque fois.",
     c1how:"Développé 3 jours par semaine. Les jours 1 et 2 commencent par 1 à 3 séries lourdes, puis 3 à 4 séries plus légères faites vite. Le jour 3 sert à bâtir du muscle.",
     c2h:"Ne jamais sauter les accessoires",
     c2p:"Des supersets de triceps pour pousser la barre jusqu'en haut, et du travail du haut du dos pour rester stable, au développé comme dans le bateau.",
@@ -627,12 +601,12 @@ const T = {
     secEye:"Le secret", secH:"La constance bat le max",
     secP:"Elle s'entraînait fort, et elle était là chaque semaine. Chaque semaine s'appuyait sur la précédente. Et la constance, ça se cumule.",
     secK:"Ce qui aide à être là chaque semaine",
-    secB1:g=>`Des protéines à chaque repas : environ 1,6 g par kg de poids corporel par jour (0,7 g par lb)${g ? `. Pour vous, c'est environ <b>${g} g</b> par jour.` : "."}`,
+    secB1:g=>`Mangez au moins 0,8 g de protéines par lb de poids corporel par jour (environ 1,8 g par kg). C'est le minimum${g ? ` : pour vous, au moins <b>${g} g</b> par jour.` : "."}`,
     secB2:"Dormez de 7 à 9 heures. C'est là que se fait la majeure partie de votre récupération.",
     secB3:"Mangez assez au total. Un gros déficit calorique et un développé qui monte vont rarement ensemble.",
     s3eye:"3 · Vos 4 semaines", s3h:"Vos 4 premières semaines, avec vos charges",
     s3p:"Trois journées de développé différentes chaque semaine : lourde, moyenne et légère. Choisissez votre semaine pour voir exactement quoi faire chaque jour. Chaque charge vient du calculateur.",
-    seasonK:"Idéal hors saison", seasonP:"Faites ce plan hors saison, quand vous avez le temps de bâtir de la force. Il n'est pas recommandé pendant la saison de course.",
+    seasonK:"Idéal hors saison", seasonP:"Faites ce plan hors saison, quand vous avez le temps de bâtir de la force. Il n'est pas recommandé pendant la saison de course. Répartissez vos 3 jours dans la semaine, par exemple lundi, mercredi et vendredi.",
     wk1:"Sem. 1", wk2:"Sem. 2", wk3:"Sem. 3", wk4:"Sem. 4", lighter:"Plus légère",
     wkNotes:["Semaine 1 : on commence doucement, 1 série lourde aux jours 1 et 2.","Semaine 2 : une série lourde et une série rapide de plus.","Semaine 3 : votre plus grosse semaine.","La semaine 4 est plus légère : moins de séries aux mêmes charges, vos accessoires passent aux jours 1 et 2, et le jour 3 est un jour de repos."],
     colSR:"Séries × rép.", colW:"Charge", day:"Jour", heavy:"Lourd", medium:"Moyen", light:"Léger", restP:"Repos",
@@ -652,7 +626,7 @@ const T = {
     tip1:"Échauffez-vous avec quelques séries plus légères, jusqu'à vos séries lourdes.", tip2:"Reposez-vous environ 3 minutes après les séries lourdes et 2 minutes entre les séries rapides.",
     tip3:"Aux séries rapides, faites une pause sur la poitrine, puis poussez le plus vite possible.", tip4:"Ayez un pareur ou réglez les barres de sécurité, surtout pour les séries lourdes.",
     tip5:"Déjà sur un programme de gym d'équipe? Faites ces journées de développé à la place du développé de ce programme, pas en plus.",
-    s4eye:"4 · S'entraîner avec moi", s4h:"Continuez à progresser avec l'équipage DB Speed", s4p:"Ce guide couvre 4 semaines. DB Speed couvre toute votre saison : le programme, la communauté et mon regard sur vos levées.",
+    s4eye:"4 · S'entraîner avec moi", s4h:"Continuez à progresser avec l'équipage DB Speed", s4p:"Ce guide couvre 4 semaines. DB Speed couvre toute votre saison.",
     o1eye:"Abonnement DB Speed", o1h:"Votre programme et votre communauté, au même endroit",
     f1h:"Toute la saison, pas juste le développé", f1p:"Développé, tirage, jambes et puissance, dans l'application. Une nouvelle semaine chaque lundi, pensée autour de la saison de course, avec des charges suggérées à partir de vos meilleures séries.",
     f2h:"La communauté DB Speed sur Skool", f2p:"Publiez vos levées, posez vos questions et suivez les progrès des autres pagayeurs. C'est plus facile de rester constant quand votre équipage vous suit.",
@@ -664,10 +638,10 @@ const T = {
     spots:"Plus que 3 places de membre fondateur",
     o3eye:"Coaching individuel", o3h:"Entraînez-vous avec moi",
     o3p:"Un programme bâti pour vous, chaque levée revue en vidéo, et votre entraînement ajusté chaque semaine. Je prends seulement quelques athlètes à la fois.",
-    o3how:`<a href="https://ig.me/m/martishih" target="_blank" rel="noopener">Écrivez-moi <b>SPEED</b> sur Instagram</a>, ou à <a href="mailto:hello@dbspeed.app">hello@dbspeed.app</a>.`,
-    o4eye:"Capitaines et entraîneurs", o4h:"Vous le voulez pour tout votre équipage?",
+    o3how:`<b>Coaching individuel.</b> Un programme bâti pour vous, chaque levée revue en vidéo. <a href="https://ig.me/m/martishih" target="_blank" rel="noopener">Écrivez-moi SPEED sur Instagram</a>.`,
+    moreEye:"Autres façons de travailler avec moi", o4eye:"Capitaines et entraîneurs", o4h:"Vous le voulez pour tout votre équipage?",
     o4p:"Je bâtis des programmes de gym pour des équipes entières, autour de vos entraîneurs et de votre saison de course. 22 Dragons et les Immortals s'entraînent avec.",
-    o4how:`<a href="https://ig.me/m/martishih" target="_blank" rel="noopener">Écrivez-moi sur Instagram</a>, ou à <a href="mailto:hello@dbspeed.app">hello@dbspeed.app</a>.`,
+    o4how:`<b>Capitaines et entraîneurs.</b> Des programmes de gym pour des équipages entiers, comme 22 Dragons et les Immortals. <a href="https://ig.me/m/martishih" target="_blank" rel="noopener">Écrivez-moi</a> ou à hello@dbspeed.app.`,
     n1:"Estimation du maximum : à partir d'une série difficile où il restait 1 à 2 répétitions, 1 rép. ≈ 91 % du max, 2 rép. ≈ 88,5 %, 3 rép. ≈ 86 %, puis la même courbe jusqu'à 12 rép. Une série jusqu'à l'échec utilise la formule d'Epley. Un maximum testé est utilisé tel quel.",
     n2:"Les niveaux sont les standards de développé couché visés par les athlètes DB Speed, par catégorie de poids, pour femmes et hommes.",
     n4:"Ce guide donne de l'information générale sur l'entraînement. En cas de douleur ou de blessure, consultez un professionnel de la santé avant de commencer.",
@@ -757,11 +731,6 @@ function render(){
   // the plan's weights
   const W = k => oneRm ? fmtLoad(oneRm * PCT[k]) : "—";
   const sgl = W("single"), tri = W("triple"), fast = W("fast"), hyp = W("hyp");
-  [["sglV",sgl],["triV",tri],["fastV",fast],["hypV",hyp]]
-    .forEach(([id, v]) => { $(id).innerHTML = unitSmall(v); });
-  $("c3you").innerHTML = oneRm ? t.c3you(sgl, fast, fmtExact(oneRm)) : "";
-  const g = bwLb ? Math.round(bwLb * KG * 1.6 / 5) * 5 : 0;
-  $("secB1").innerHTML = t.secB1(g);
   const kg = unit() === "kg";
   const plus = d => !oneRm ? "—" : kg ? kgStr(loadKg(oneRm * PCT.single) + d * 2.5) : `${Math.round(oneRm * PCT.single / 5) * 5 + d * 5} lb`;
   const add = kg ? (L === "fr" ? "2,5 à 5 kg" : "2.5 to 5 kg") : (L === "fr" ? "5 à 10 lb" : "5 to 10 lb");
@@ -783,6 +752,8 @@ function render(){
     : `<article class="card dcard off">${head(3, "rest", t.restP)}<h3>${t.d3offH}</h3><p class="purpose">${t.d3off}</p></article>`}`;
   $("week5").innerHTML = t.week5(add, plus(1), plus(2));
 
+  const g = bwLb ? Math.ceil(bwLb * 0.8 / 5) * 5 : 0;   // 0.8 g per lb, Martin's minimum
+  $("secB1").innerHTML = t.secB1(g);
   $("o3how").innerHTML = t.o3how;
   $("o4how").innerHTML = t.o4how;
   const lvl = !oneRm || !bwLb ? "—" : idx < 0 ? t.below : lvName(BENCH[idx][0]);
@@ -804,6 +775,15 @@ function setLang(l, fromUser){
 }
 
 let touched = false;
+// Default is a tested max. More than 1 rep can't be a max, so switch to "hard set" unless the reader picked a type themselves.
+let typeManual = false;
+$("bType").addEventListener("change", () => { typeManual = true; });
+$("bReps").addEventListener("input", () => {
+  if (typeManual) return;
+  const r = Math.round(num("bReps"));
+  if (r === 1) $("bType").value = "max";
+  else if (r > 1 && $("bType").value === "max") $("bType").value = "set";
+});
 $("f").addEventListener("input", () => { if (!touched) { touched = true; $("exNote").hidden = true; } render(); });
 $("f").addEventListener("change", () => { if (!touched) { touched = true; $("exNote").hidden = true; } });
 $("f").addEventListener("change", render);
