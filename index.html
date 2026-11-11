@@ -908,7 +908,7 @@ function pcShown(wn,dn,i,it,md){md=md||pcModel(it);const out=md.slots.slice(),ha
   for(let c=0;c<PC_N;c++){if(has.has(c))continue;const own=md.free.includes(c);
     if(!(S.pc[pcK(wn,dn,i,c)]||(own&&add.includes(c))))continue;
     // a cell with coach text ("10 min easy" on a warm-up row) that got numbers from a screenshot: shown as a set under that text
-    const raw=own?"":pcSplit((it.cells||[])[c]||"").target;out.push(raw?{c,target:raw,wt:raw}:{c,target:"",wt:"",own:true})}
+    const raw=own?((S.pc[pcK(wn,dn,i,c)]||{}).lab||""):pcSplit((it.cells||[])[c]||"").target;out.push(raw?{c,target:raw,wt:raw}:{c,target:"",wt:"",own:true})}
   return out.sort((a,b)=>a.c-b.c)}
 function pcSlotAt(it,c){const md=pcModel(it),sl=md.slots.find(s=>s.c===c);if(sl)return sl;
   const raw=pcSplit((it.cells||[])[c]||"").target;return raw?{c,target:raw,wt:raw}:{c,target:"",wt:"",own:true}}
@@ -1310,7 +1310,9 @@ function pcInT(str,tgt){str=String(str||"").trim().replace(",",".");if(!str)retu
 function pcInM(str){str=String(str||"").trim().toLowerCase().replace(",",".");if(!str)return 0;
   if(/k/.test(str))return Math.round(parseFloat(str)*1000)||0;const n=parseFloat(str);if(!(n>0))return 0;return /\./.test(str)&&n<60?Math.round(n*1000):Math.round(n)}
 const PC_RANGE={t:[1,6*3600],m:[1,60000],w:[10,2000],spm:[10,160],hr:[30,230]};
-function pcRowCtx(row){const [w,d,i,c]=row.dataset.pk.split("|");const day=WEEKS[w-1].days.find(x=>x.day===d);const it=day.items[+i];return {w:+w,d,i:+i,c:+c,it,k:row.dataset.pk,sl:pcSlotAt(it,+c),kind:paddleKind(it)}}
+function pcRowCtx(row){const [w,d,i,c]=row.dataset.pk.split("|");const day=WEEKS[w-1].days.find(x=>x.day===d);const it=day.items[+i];
+  let sl=pcSlotAt(it,+c);const lab=(S.pc[row.dataset.pk]||{}).lab;if(!sl.wt&&lab)sl={c:+c,target:lab,wt:lab};
+  return {w:+w,d,i:+i,c:+c,it,k:row.dataset.pk,sl,kind:paddleKind(it)}}
 /* A set with any number is saved right away (leaving the box is enough); the coach's target fills the
    matching box when it's left empty ("4 min" → 4:00). */
 function pcFinish(v,sl){const tS=pcSecs(sl.target,true),tM=pcMeters(sl.target);if(!v.t&&tS)v.t=tS;if(!v.m&&tM&&!tS)v.m=tM;return v}
@@ -1507,6 +1509,7 @@ function pcShotApply(){const R=SHOT;SHOT=null;if(!R)return;const day=WEEKS[R.wn-
   R.matches.forEach(m=>{if(!m.lap)return;const it=day.items[m.i],kind=paddleKind(it),k=pcK(R.wn,R.dn,m.i,m.c),v={done:true};
     ["t","m","spm","hr"].concat(kind==="perg"?["w"]:[]).forEach(f=>{const x=+m.lap[f];if(x>=PC_RANGE[f][0]&&x<=PC_RANGE[f][1])v[f]=Math.round(x)});
     if(+m.lap.rest>=1&&+m.lap.rest<=3600)v.rest=Math.round(+m.lap.rest);
+    if(m.part)v.lab=m.wt;
     if(!(v.t||v.m))return;S.pc[k]=v;if(!m.part)n++;
     const sl=m.part?{c:m.c,target:m.wt,wt:m.wt}:pcSlotAt(it,m.c);queuePiece({w:R.wn,d:R.dn,i:m.i,c:m.c,it,k,sl,kind})});
   const sk=`${R.wn}|${R.dn}`,dr={...(S.sessDraft[sk]||{})};
@@ -2576,7 +2579,7 @@ function applyLive(data){
   for(const q of Object.values(S.queue||{})){if(!q.tab||(q.pc===undefined&&q.pnote==null&&!q.sess))continue;const W=WEEKS.find(x=>x.tab===q.tab);if(!W)continue;
     for(const d of W.days){if(q.sess&&q.col===16&&dayRowOf(d)===q.row&&isPaddleDay(d)){S.sess[`${W.week}|${d.day}`]={...q.sess};break}
       const i=d.items.findIndex(it=>it.row===q.row);if(i<0)continue;const it=d.items[i];if(!it.paddle)break;
-      if(q.pc!==undefined&&q.col>=6&&q.col<=15){const c=q.col-6,k=pcK(W.week,d.day,i,c);if(q.pc&&q.pc.done)S.pc[k]={...q.pc};else delete S.pc[k];q.value=pcCellValue(pcSlotAt(it,c).wt,q.pc)}
+      if(q.pc!==undefined&&q.col>=6&&q.col<=15){const c=q.col-6,k=pcK(W.week,d.day,i,c);if(q.pc&&q.pc.done)S.pc[k]={...q.pc};else delete S.pc[k];q.value=pcCellValue(pcSlotAt(it,c).wt||(q.pc&&q.pc.lab)||"",q.pc)}
       if(q.pnote!=null&&q.col===16){S.pnote[`${W.week}|${d.day}|${i}`]=q.pnote;q.value=pcNoteJoin(it.coachNote,q.pnote)}
       break}}
   if((S.startWeek||0)!==START){S.days={};S.timers={};S.startWeek=START}
