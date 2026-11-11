@@ -193,6 +193,7 @@ select{font:500 16px var(--body);padding:12px}
 .wt.none{color:var(--faint);font-size:16px}
 @media (max-width:440px){.ex li{grid-template-columns:minmax(0,1fr) auto 70px;gap:8px}.sx,.wt{font-size:21px}}
 .dcard.off .purpose{color:var(--fg)}
+.addon{font-weight:600;border-left:3px solid var(--accent);padding:2px 0 2px 12px}
 .week5{display:grid;gap:4px;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--good);border-radius:12px;padding:14px 16px}
 .week5 b{color:var(--accent);white-space:nowrap}
 .rule{font-weight:600}
@@ -412,6 +413,7 @@ select{font:500 16px var(--body);padding:12px}
     <p class="example" id="planEx" data-t="planEx">Example weights. Put your own set in the calculator above.</p>
     <p class="wknote" id="wkNote"></p>
     <div class="dayplan" id="dayplan" aria-live="polite"></div>
+    <p class="addon" data-t="addOn">This plan is your bench only. After it, add your triceps and upper back work, and the rest of your training.</p>
     <div class="week5" id="week5"></div>
     <p class="rule" data-t="rule">No grinding and no missed reps, even on top sets. The fast sets should feel light: that's on purpose. Press every rep as fast as you can.</p>
     <ul class="tips">
@@ -518,14 +520,15 @@ const T = {
     secB3:"Eat enough overall. A big calorie deficit and a rising bench rarely go together.",
     s3eye:"3 · Your 4 weeks", s3h:"Your first 4 weeks, in your numbers",
     s3p:"Three different bench days each week: heavy, medium and light. Pick your week to see exactly what to do on each day. Every weight comes from the calculator.",
+    addOn:"This plan is your bench only. After it, add your triceps and upper back work, and the rest of your training.",
     seasonK:"Best in the off-season", seasonP:"Do this plan in the off-season, when you have time to build strength. It's not recommended during the race season. Spread your 3 days through the week, for example Monday, Wednesday and Friday.",
     wk1:"Week 1", wk2:"Week 2", wk3:"Week 3", wk4:"Week 4", lighter:"Lighter",
-    wkNotes:["Week 1: start easy, 1 top set on days 1 and 2.","Week 2: one more top set and one more fast set.","Week 3: your biggest week.","Week 4 is lighter: fewer sets at the same weights, your accessories move to days 1 and 2, and day 3 is a rest day."],
+    wkNotes:["Week 1: start easy, 1 top set on days 1 and 2.","Week 2: one more top set and one more fast set.","Week 3: your biggest week.","Week 4 is lighter: fewer sets at the same weights, and no bench on day 3."],
     colSR:"Sets × reps", colW:"Weight", day:"Day", heavy:"Heavy", medium:"Medium", light:"Light", restP:"Rest",
     d1h:"Heavy singles", d1p:"Your heaviest day. A few heavy singles to get used to big weights, then fast sets.",
     d2h:"Triples", d2p:"A bit lighter than day 1, with more reps. Heavy triples, then the same fast sets.",
-    d3h:"Build muscle", d3p:"Your lightest bench day. More reps to build muscle, then your accessories.",
-    d3offH:"Rest day", d3off:"No training this day: let your body catch up. Your accessories are on days 1 and 2 this week.",
+    d3h:"Build muscle", d3p:"Your lightest bench day. More reps to build muscle.",
+    d3offH:"Rest day", d3off:"No bench this day: let your body catch up.",
     exTop:"Bench press: top sets", exTopS1:"Singles at 90% of your max", exTopS2:"Triples at 80% of your max",
     exFast:"Paused bench: fast sets", exFastS:"65% · pause 1 s on the chest, press as fast as you can",
     exHyp:"Bench press", exHypS:"60% · controlled reps",
@@ -606,14 +609,15 @@ const T = {
     secB3:"Mangez assez au total. Un gros déficit calorique et un développé qui monte vont rarement ensemble.",
     s3eye:"3 · Vos 4 semaines", s3h:"Vos 4 premières semaines, avec vos charges",
     s3p:"Trois journées de développé différentes chaque semaine : lourde, moyenne et légère. Choisissez votre semaine pour voir exactement quoi faire chaque jour. Chaque charge vient du calculateur.",
+    addOn:"Ce plan couvre seulement votre développé. Après, ajoutez votre travail de triceps et du haut du dos, et le reste de votre entraînement.",
     seasonK:"Idéal hors saison", seasonP:"Faites ce plan hors saison, quand vous avez le temps de bâtir de la force. Il n'est pas recommandé pendant la saison de course. Répartissez vos 3 jours dans la semaine, par exemple lundi, mercredi et vendredi.",
     wk1:"Sem. 1", wk2:"Sem. 2", wk3:"Sem. 3", wk4:"Sem. 4", lighter:"Plus légère",
-    wkNotes:["Semaine 1 : on commence doucement, 1 série lourde aux jours 1 et 2.","Semaine 2 : une série lourde et une série rapide de plus.","Semaine 3 : votre plus grosse semaine.","La semaine 4 est plus légère : moins de séries aux mêmes charges, vos accessoires passent aux jours 1 et 2, et le jour 3 est un jour de repos."],
+    wkNotes:["Semaine 1 : on commence doucement, 1 série lourde aux jours 1 et 2.","Semaine 2 : une série lourde et une série rapide de plus.","Semaine 3 : votre plus grosse semaine.","La semaine 4 est plus légère : moins de séries aux mêmes charges, et pas de développé au jour 3."],
     colSR:"Séries × rép.", colW:"Charge", day:"Jour", heavy:"Lourd", medium:"Moyen", light:"Léger", restP:"Repos",
     d1h:"Simples lourds", d1p:"Votre journée la plus lourde. Quelques simples lourds pour vous habituer aux grosses charges, puis des séries rapides.",
     d2h:"Triples", d2p:"Un peu plus léger que le jour 1, avec plus de répétitions. Des triples lourds, puis les mêmes séries rapides.",
-    d3h:"Bâtir du muscle", d3p:"Votre journée de développé la plus légère. Plus de répétitions pour bâtir du muscle, puis vos accessoires.",
-    d3offH:"Jour de repos", d3off:"Pas d'entraînement ce jour-là : laissez votre corps récupérer. Vos accessoires sont aux jours 1 et 2 cette semaine.",
+    d3h:"Bâtir du muscle", d3p:"Votre journée de développé la plus légère. Plus de répétitions pour bâtir du muscle.",
+    d3offH:"Jour de repos", d3off:"Pas de développé ce jour-là : laissez votre corps récupérer.",
     exTop:"Développé couché : séries lourdes", exTopS1:"Simples à 90 % de votre max", exTopS2:"Triples à 80 % de votre max",
     exFast:"Développé avec pause : séries rapides", exFastS:"65 % · pause d'une seconde sur la poitrine, poussez le plus vite possible",
     exHyp:"Développé couché", exHypS:"60 % · répétitions contrôlées",
@@ -744,11 +748,11 @@ function render(){
   $("planEx").hidden = touched;
   $("dayplan").innerHTML = `
     <article class="card dcard">${head(1, "heavy", t.heavy)}<h3>${t.d1h}</h3><p class="purpose">${t.d1p}</p>${cols}
-      <ol class="ex">${row(t.exTop, t.exTopS1, `${wk.top} × 1`, show(sgl))}${row(t.exFast, t.exFastS, `${wk.fast} × 5`, show(fast))}${wk.d3 ? "" : row(t.exTri, t.exTriS, "3 × 10–12", "")}</ol></article>
+      <ol class="ex">${row(t.exTop, t.exTopS1, `${wk.top} × 1`, show(sgl))}${row(t.exFast, t.exFastS, `${wk.fast} × 5`, show(fast))}</ol></article>
     <article class="card dcard">${head(2, "medium", t.medium)}<h3>${t.d2h}</h3><p class="purpose">${t.d2p}</p>${cols}
-      <ol class="ex">${row(t.exTop, t.exTopS2, `${wk.top} × 3`, show(tri))}${row(t.exFast, t.exFastS, `${wk.fast} × 5`, show(fast))}${wk.d3 ? "" : row(t.exUb, t.exUbS, "3 × 10–12", "")}</ol></article>
+      <ol class="ex">${row(t.exTop, t.exTopS2, `${wk.top} × 3`, show(tri))}${row(t.exFast, t.exFastS, `${wk.fast} × 5`, show(fast))}</ol></article>
     ${wk.d3 ? `<article class="card dcard">${head(3, "light", t.light)}<h3>${t.d3h}</h3><p class="purpose">${t.d3p}</p>${cols}
-      <ol class="ex">${row(t.exHyp, t.exHypS, `${wk.d3} × 8–10`, show(hyp))}${row(t.exTri, t.exTriS, "3 × 10–12", "")}${row(t.exUb, t.exUbS, "3 × 10–12", "")}</ol></article>`
+      <ol class="ex">${row(t.exHyp, t.exHypS, `${wk.d3} × 8–10`, show(hyp))}</ol></article>`
     : `<article class="card dcard off">${head(3, "rest", t.restP)}<h3>${t.d3offH}</h3><p class="purpose">${t.d3off}</p></article>`}`;
   $("week5").innerHTML = t.week5(add, plus(1), plus(2));
 
