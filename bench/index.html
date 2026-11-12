@@ -170,6 +170,7 @@ select{font:500 16px var(--body);padding:12px}
 .season{display:grid;gap:4px;background:var(--surface);border:1px solid var(--line);border-left:3px solid #f2b233;border-radius:12px;padding:14px 16px;font-weight:600}
 .season .lab{color:#f2b233}
 .wknote{font-weight:600}
+.wknote b{color:var(--accent)}
 .dayplan{display:grid;gap:12px}
 .dcard{display:grid;gap:8px}
 .dhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -533,7 +534,7 @@ const T = {
     addOn:"This plan is your bench only. After it, add your triceps and upper back work, and your training for the rest of your body.",
     seasonK:"Best in the off-season", seasonP:"Do this plan in the off-season, when you have time to build strength. It's not recommended during the race season. Spread your 3 days through the week, for example Monday, Wednesday and Friday.",
     wk1:"Week 1", wk2:"Week 2", wk3:"Week 3", wk4:"Week 4", lighter:"Lighter",
-    wkNotes:["Week 1: start here. The top sets may feel lighter than you expect: that's on purpose.","Week 2: the top sets go up a little. Everything else stays the same.","Week 3: your heaviest week.","Week 4 is lighter: week 1 top sets, fewer sets after, and no bench on day 3."],
+    wkNotes:["Week 1: the top sets may feel lighter than you expect. That's on purpose: move them <b>as fast as you can</b>.","Week 2: the top sets go up a little. Everything else stays the same.","Week 3: your heaviest week.","Week 4 is lighter: week 1 top sets, fewer sets after, and no bench on day 3."],
     rpeNote:"RPE is effort out of 10: RPE 7 means about 3 reps left in the tank, RPE 6 about 4. Load the percentage. If a set feels harder than its RPE, take a little weight off.",
     rpeMax:r=>`${r} max`,
     colSR:"Sets × reps", colW:"Weight", day:"Day", heavy:"Heavy", medium:"Medium", light:"Light", restP:"Rest",
@@ -623,7 +624,7 @@ const T = {
     addOn:"Ce plan couvre seulement votre développé. Après, ajoutez votre travail de triceps et du haut du dos, et votre entraînement pour le reste du corps.",
     seasonK:"Idéal hors saison", seasonP:"Faites ce plan hors saison, quand vous avez le temps de bâtir de la force. Il n'est pas recommandé pendant la saison de course. Répartissez vos 3 jours dans la semaine, par exemple lundi, mercredi et vendredi.",
     wk1:"Sem. 1", wk2:"Sem. 2", wk3:"Sem. 3", wk4:"Sem. 4", lighter:"Plus légère",
-    wkNotes:["Semaine 1 : on commence ici. Les séries lourdes peuvent sembler plus légères que prévu : c'est voulu.","Semaine 2 : les séries lourdes montent un peu. Le reste ne change pas.","Semaine 3 : votre semaine la plus lourde.","La semaine 4 est plus légère : séries lourdes de la semaine 1, moins de séries ensuite, et pas de développé au jour 3."],
+    wkNotes:["Semaine 1 : les séries lourdes peuvent sembler plus légères que prévu. C'est voulu : poussez-les <b>le plus vite possible</b>.","Semaine 2 : les séries lourdes montent un peu. Le reste ne change pas.","Semaine 3 : votre semaine la plus lourde.","La semaine 4 est plus légère : séries lourdes de la semaine 1, moins de séries ensuite, et pas de développé au jour 3."],
     rpeNote:"Le RPE, c'est l'effort sur 10 : RPE 7 = environ 3 répétitions en réserve, RPE 6 = environ 4. Chargez le pourcentage. Si une série semble plus dure que son RPE, enlevez un peu de charge.",
     rpeMax:r=>`${r} max.`,
     colSR:"Séries × rép.", colW:"Charge", day:"Jour", heavy:"Lourd", medium:"Moyen", light:"Léger", restP:"Repos",
@@ -755,7 +756,7 @@ function render(){
   const set = (name, extra, [n, r, x, e], cap) => row(name, `${pctS(x)} · ${cap ? t.rpeMax(rpeS(e)) : rpeS(e)}${extra ? " · " + extra : ""}`, `${n} × ${r}`, load(x));
   const cols = `<div class="exhead"><span></span><span>${t.colSR}</span><span>${t.colW}</span></div>`;
   const head = (n, cls, label) => `<div class="dhead"><span class="dnum">${t.day} ${n}</span><span class="pill ${cls}">${label}</span></div>`;
-  $("wkNote").textContent = t.wkNotes[WK];
+  $("wkNote").innerHTML = t.wkNotes[WK];
   $("planEx").hidden = touched;
   $("dayplan").innerHTML = `
     <article class="card dcard">${head(1, "heavy", t.heavy)}<h3>${t.d1h}</h3><p class="purpose">${t.d1p}</p>${cols}
