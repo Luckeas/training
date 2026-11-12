@@ -91,8 +91,8 @@ section{display:grid;gap:16px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
 form{display:grid;gap:16px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.row3{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:12px}
-@media (max-width:520px){.row3{grid-template-columns:1fr 1fr}.row3 .bwbox{grid-column:1/-1}}
+.row4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:560px){.row4{grid-template-columns:1fr 1fr}}
 fieldset{border:0;margin:0;padding:0;display:grid;gap:6px;min-width:0}
 legend{font:700 14px/1.2 var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:0;margin:0 0 6px}
 .seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg)}
@@ -287,7 +287,7 @@ select{font:500 16px var(--body);padding:12px}
     <div class="head">
       <p class="eyebrow" data-t="s1eye">1 · Your level</p>
       <h2 id="h-level" data-t="s1h">Where does your bench stand?</h2>
-      <p class="muted" data-t="s1p">Put in your bodyweight and a recent hard set. You get your max, your level from Entry to National Team, and the weights for the plan below.</p>
+      <p class="muted" data-t="s1p">Put in your age, bodyweight and a recent set. You get your max, your level from Entry to National Team for your age group, and the weights for the plan below.</p>
     </div>
 
     <form id="f" class="card" novalidate>
@@ -308,8 +308,12 @@ select{font:500 16px var(--body);padding:12px}
           </div>
         </fieldset>
       </div>
-      <div class="row3">
-        <div class="inp bwbox">
+      <div class="row4">
+        <div class="inp">
+          <label class="lab" for="age" data-t="age">Age</label>
+          <input type="text" id="age" inputmode="numeric" autocomplete="off" value="30">
+        </div>
+        <div class="inp">
           <label class="lab" for="bw" data-t="bw">Bodyweight</label>
           <input type="text" id="bw" inputmode="decimal" autocomplete="off" value="145">
         </div>
@@ -340,7 +344,7 @@ select{font:500 16px var(--body);padding:12px}
         <div class="stat lvlbox"><span class="k" data-t="lvlK">Your bench level</span><span class="v" id="lvlV">—</span><span class="note" id="lvlNote"></span></div>
       </div>
       <div class="ladder">
-        <p class="lab" style="margin:0" data-t="ladK">Bench 1RM by level, at your bodyweight</p>
+        <p class="lab" style="margin:0" id="ladK">Bench 1RM by level, at your bodyweight</p>
         <div id="ladder" class="ladder"></div>
         <p class="gap" id="gap"></p>
       </div>
@@ -463,7 +467,6 @@ select{font:500 16px var(--body);padding:12px}
   </section>
 
   <footer class="notes">
-    <p data-t="n1">How your max is estimated: from a hard set with 1 to 2 reps left, 1 rep ≈ 91% of your max, 2 reps ≈ 88.5%, 3 reps ≈ 86%, then the same curve up to 12 reps. A set to failure uses the standard Epley formula. A tested max is used as it is.</p>
     <p data-t="n4">This guide is general training information. If you have pain or an injury, check with a health professional before you start.</p>
     <p class="foot">DB Speed · Montréal · dbspeed.app</p>
   </footer>
@@ -473,6 +476,17 @@ select{font:500 16px var(--body);padding:12px}
 // Bench 1RM standards (lb), from the DB Speed Bench Marks tab (same table as the Paddler Strength Standards calculator).
 // Columns 1-5: women <115, <130, <145, <160, 160+ lb. Columns 6-10: men <145, <160, <175, <190, 190+ lb.
 const BENCH = [["Entry",55,65,75,85,95,125,145,165,185,205],["Regional",70,80,90,100,110,145,165,185,205,225],["Provincial",85,95,105,115,125,165,185,205,225,245],["National",100,110,120,130,140,185,205,225,245,265],["CCWC",115,125,135,145,155,205,225,245,265,285],["NT Entry",130,140,150,160,170,225,245,265,285,305],["NT Standard",145,155,165,175,185,245,265,285,305,325],["NT Strong",160,170,180,190,200,265,285,305,325,345]];
+// Age groups.
+const GROUPS = [
+  {k:"jr",  max:17,  w:.65,  m:.65},
+  {k:"u24", max:24,  w:.90,  m:.95},
+  {k:"pr",  max:39,  w:1,    m:1},
+  {k:"sa",  max:49,  w:.925, m:.925},
+  {k:"sb",  max:59,  w:.875, m:.875},
+  {k:"sc",  max:69,  w:.825, m:.825},
+  {k:"sd",  max:79,  w:.75,  m:.75},
+  {k:"se",  max:999, w:.65,  m:.65}
+];
 const LV_EN = {"NT Entry":"National Team Entry","NT Standard":"National Team Standard","NT Strong":"National Team Strong"};
 const LV_FR = {"Entry":"Initiation","Regional":"Régional","Provincial":"Provincial","National":"National","CCWC":"CCWC","NT Entry":"Équipe nationale (entrée)","NT Standard":"Équipe nationale (standard)","NT Strong":"Équipe nationale (fort)"};
 // Martin's format (Nov 11): 3 days a week; days 1-2 = 1-3 top sets at 80-90% (singles to triples) + 3-4 fast sets at 60-70% for 4-6 reps;
@@ -499,13 +513,14 @@ const T = {
     cred1:"Team Canada Premier world champion", cred2:"Strength coach of 22 Dragons, CCWC gold",
     nav1:"Your level", nav2:"The 3 things", nav3:"Your 4 weeks", nav4:"Train with me",
     s1eye:"1 · Your level", s1h:"Where does your bench stand?",
-    s1p:"Put in your bodyweight and a recent hard set. You get your estimated max, your level from Entry to National Team, and the weights for the plan below.",
+    s1p:"Put in your age, bodyweight and a recent set. You get your max, your level from Entry to National Team for your age group, and the weights for the plan below.",
     example:"Example numbers loaded. Replace them with yours.",
     standards:"Standards", women:"Women", men:"Men", units:"Units", bw:"Bodyweight", weight:"Bench weight", reps:"Reps",
     setType:"What kind of set was it?", hardSet:"A hard set, 1–2 reps left", failSet:"A set to failure", trueMax:"A true max (tested 1RM)",
     private:"Everything updates as you type. Nothing you type is sent anywhere.",
     maxEst:"Estimated max", maxTrue:"Your max", ratioK:"Times bodyweight", lvlK:"Your bench level",
     ladK:"Bench 1RM by level, at your bodyweight",
+    age:"Age", groups:{jr:"Junior (under 18)", u24:"U24 (24 and under)", pr:"Premier (25 to 39)", sa:"Senior A (40+)", sb:"Senior B (50+)", sc:"Senior C (60+)", sd:"Senior D (70+)", se:"Senior E (80+)"},
     yoursK:"Your numbers for the plan", sglK:"Singles · 90%", triK:"Triples · 80%", fastK2:"Fast sets · 65%", hypK:"Day 3 bench · 60%",
     shareK:"Send me your level", shareP:"Tap the button: your level is copied and our Instagram chat opens. Paste it and I'll tell you what I'd work on first.",
     copy:"Copy and send on Instagram", copied:"Copied. Paste it in our chat",
@@ -590,13 +605,14 @@ const T = {
     cred1:"Champion du monde Premier avec Équipe Canada", cred2:"Préparateur physique de 22 Dragons, or aux CCWC",
     nav1:"Votre niveau", nav2:"Les 3 clés", nav3:"Vos 4 semaines", nav4:"S'entraîner avec moi",
     s1eye:"1 · Votre niveau", s1h:"Où se situe votre développé?",
-    s1p:"Entrez votre poids corporel et une série difficile récente. Vous obtenez votre maximum estimé, votre niveau, de l'initiation à l'équipe nationale, et les charges pour le plan plus bas.",
+    s1p:"Entrez votre âge, votre poids corporel et une série récente. Vous obtenez votre maximum, votre niveau pour votre groupe d'âge, de l'initiation à l'équipe nationale, et les charges pour le plan plus bas.",
     example:"Exemple chargé. Remplacez par vos chiffres.",
     standards:"Standards", women:"Femmes", men:"Hommes", units:"Unités", bw:"Poids corporel", weight:"Charge", reps:"Répétitions",
     setType:"Quel genre de série?", hardSet:"Une série difficile (il restait 1-2 rép.)", failSet:"Une série jusqu'à l'échec", trueMax:"Un vrai maximum testé (1RM)",
     private:"Tout se met à jour pendant que vous tapez. Rien n'est envoyé.",
     maxEst:"Maximum estimé", maxTrue:"Votre maximum", ratioK:"Fois le poids corporel", lvlK:"Votre niveau au développé",
     ladK:"1RM au développé par niveau, à votre poids",
+    age:"Âge", groups:{jr:"Junior (moins de 18 ans)", u24:"U24 (24 ans et moins)", pr:"Premier (25 à 39 ans)", sa:"Senior A (40+)", sb:"Senior B (50+)", sc:"Senior C (60+)", sd:"Senior D (70+)", se:"Senior E (80+)"},
     yoursK:"Vos chiffres pour le plan", sglK:"Simples · 90 %", triK:"Triples · 80 %", fastK2:"Séries rapides · 65 %", hypK:"Développé jour 3 · 60 %",
     shareK:"Envoyez-moi votre niveau", shareP:"Touchez le bouton : votre niveau est copié et notre conversation Instagram s'ouvre. Collez-le et je vous dirai sur quoi je travaillerais en premier.",
     copy:"Copier et envoyer sur Instagram", copied:"Copié. Collez-le dans notre conversation",
@@ -710,7 +726,9 @@ function est1rm(w, r, type){
   const pct = ({1:.91, 2:.885, 3:.86})[r] || 1 / (1 + (r + 2) / 30);
   return w / pct;
 }
-function place(val, c){ let i = -1; BENCH.forEach((row, k) => { if (val >= row[c]) i = k; }); return i; }
+function group(){ const a = Math.round(num("age")); return (a > 0 && GROUPS.find(g => a <= g.max)) || GROUPS[2]; }
+function std(k, c){ const g = group(); return Math.round(BENCH[k][c] * (sex() === "women" ? g.w : g.m)); }
+function place(val, c){ let i = -1; BENCH.forEach((row, k) => { if (val >= std(k, c)) i = k; }); return i; }
 
 function render(){
   const t = T[L];
@@ -724,11 +742,13 @@ function render(){
   $("maxV").innerHTML = oneRm ? unitSmall(fmtExact(oneRm)) : "—";
   $("ratioV").textContent = oneRm && bwLb ? `${n2s(oneRm / bwLb, 2)}×` : "—";
 
-  // level ladder
+  // level ladder, for the reader's age group
+  const gName = t.groups[group().k];
+  $("ladK").textContent = `${t.ladK} · ${gName}`;
   $("ladder").innerHTML = BENCH.map((row, k) => {
     const cls = [oneRm && k <= idx ? "hit" : "", k === idx ? "cur" : ""].join(" ");
-    const w = oneRm ? Math.max(0, Math.min(100, oneRm / row[c] * 100)) : 0;
-    return `<div class="rung ${cls}"><span class="n">${lvName(row[0])}</span><span class="bar"><i style="width:${w}%"></i></span><span class="v">${fmtLoad(row[c])}</span></div>`;
+    const v = std(k, c), w = oneRm ? Math.max(0, Math.min(100, oneRm / v * 100)) : 0;
+    return `<div class="rung ${cls}"><span class="n">${lvName(row[0])}</span><span class="bar"><i style="width:${w}%"></i></span><span class="v">${fmtExact(v)}</span></div>`;
   }).join("");
 
   if (!oneRm || !bwLb) {
@@ -741,9 +761,10 @@ function render(){
     const next = BENCH[idx + 1];
     if (next) {
       // the gap between the two numbers the reader can see
+      const nv = std(idx + 1, c);
       const diff = unit() === "kg"
-        ? kgStr(Math.max(.5, loadKg(next[c]) - Math.round(oneRm * KG * 2) / 2))
-        : `${Math.max(1, next[c] - Math.round(oneRm))} lb`;
+        ? kgStr(Math.max(.5, Math.round(nv * KG * 2) / 2 - Math.round(oneRm * KG * 2) / 2))
+        : `${Math.max(1, nv - Math.round(oneRm))} lb`;
       $("gap").innerHTML = `<b>+${diff}</b> ${t.to} ${lvName(next[0])}`;
     } else $("gap").textContent = t.top;
   }
@@ -778,7 +799,7 @@ function render(){
   $("o3how").innerHTML = t.o3how;
   $("o4how").innerHTML = t.o4how;
   const lvl = !oneRm || !bwLb ? "—" : idx < 0 ? t.below : lvName(BENCH[idx][0]);
-  $("shareText").textContent = bwLb ? t.share(lvl, oneRm ? fmtExact(oneRm) : "—", fmtExact(bwLb), isMax) : t.shareNoBw(oneRm ? fmtExact(oneRm) : "—", isMax);
+  $("shareText").textContent = bwLb ? t.share(`${lvl}, ${gName}`, oneRm ? fmtExact(oneRm) : "—", fmtExact(bwLb), isMax) : t.shareNoBw(oneRm ? fmtExact(oneRm) : "—", isMax);
 }
 
 function setLang(l, fromUser){
