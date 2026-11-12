@@ -71,6 +71,7 @@ section{display:grid;gap:16px}
 .score .bars i b{display:block;height:100%;border-radius:3px}
 .score .bars i:first-child b{width:53%;background:var(--muted)}
 .score .bars i:last-child b{width:100%;background:var(--accent)}
+.when{justify-self:start;font:800 15px/1.2 var(--display);letter-spacing:.08em;text-transform:uppercase;color:#1a1405;background:#f2b233;padding:7px 10px;border-radius:6px}
 .by{font-size:14px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px}
 .by b{color:var(--fg);font-weight:600}
 .others{display:grid;gap:10px}
@@ -271,6 +272,7 @@ select{font:500 16px var(--body);padding:12px}
       <div class="bars" aria-hidden="true"><i><b></b></i><i><b></b></i></div>
     </div>
     <p class="lead" data-t="lead">Most paddlers try to build their bench by maxing out every session. They fail reps, they plateau, and they get frustrated. One of my athletes did the opposite and went from 85 lb to 160 lb. Today she sits in seat 1, pacing Team Canada in both the mixed and women's crews.</p>
+    <p class="when" data-t="when">Built for the start of the off-season. Not for race season.</p>
     <p class="by"><b>Martin Shih · DB Speed</b><span data-t="cred1">Team Canada Premier world champion</span><span data-t="cred2">Strength coach of 22 Dragons, CCWC gold</span></p>
     <ul class="jump">
       <li><a href="#level"><span>1</span><em data-t="nav1">Your level</em></a></li>
@@ -404,7 +406,7 @@ select{font:500 16px var(--body);padding:12px}
       <h2 id="h-weeks" data-t="s3h">Your first 4 weeks, in your numbers</h2>
       <p class="muted" data-t="s3p">Three different bench days each week: heavy, light and medium. The top sets get a little heavier each week. Pick your week to see exactly what to do on each day.</p>
     </div>
-    <div class="season"><span class="lab" style="margin:0" data-t="seasonK">Best in the off-season</span><span data-t="seasonP">Do this plan in the off-season, when you have time to build strength. It's not recommended during the race season. Spread your 3 days through the week, for example Monday, Wednesday and Friday.</span></div>
+    <div class="season"><span class="lab" style="margin:0" data-t="seasonK">Start of the off-season</span><span data-t="seasonP">Do this plan at the start of the off-season, when you have time to build strength. It's not recommended during the race season. Spread your 3 days through the week, for example Monday, Wednesday and Friday.</span></div>
     <div class="weektabs" role="group" aria-label="Week" id="wkTabs">
       <button type="button" data-w="0" aria-pressed="true"><span data-t="wk1">Week 1</span></button>
       <button type="button" data-w="1" aria-pressed="false"><span data-t="wk2">Week 2</span></button>
@@ -493,6 +495,7 @@ const T = {
     heroA:"Her bench, day one", heroB:"Her bench now",
     lead:"Most paddlers try to build their bench by maxing out every session. They fail reps, they plateau, and they get frustrated. One of my athletes did the opposite and went from 85 lb to 160 lb. Today she sits in seat 1, pacing Team Canada in both the mixed and women's crews.",
     lead2:"This guide gives you the three things that got her there, the secret that makes them work, a calculator to see where your bench stands, and your first 4 weeks in your own numbers.",
+    when:"Built for the start of the off-season. Not for race season.",
     cred1:"Team Canada Premier world champion", cred2:"Strength coach of 22 Dragons, CCWC gold",
     nav1:"Your level", nav2:"The 3 things", nav3:"Your 4 weeks", nav4:"Train with me",
     s1eye:"1 · Your level", s1h:"Where does your bench stand?",
@@ -531,7 +534,7 @@ const T = {
     s3eye:"3 · Your 4 weeks", s3h:"Your first 4 weeks, in your numbers",
     s3p:"Three different bench days each week: heavy, light and medium. The top sets get a little heavier each week. Pick your week to see exactly what to do on each day.",
     addOn:"This plan is your bench only. After it, add your triceps and upper back work, and your training for the rest of your body.",
-    seasonK:"Best in the off-season", seasonP:"Do this plan in the off-season, when you have time to build strength. It's not recommended during the race season. Spread your 3 days through the week, for example Monday, Wednesday and Friday.",
+    seasonK:"Start of the off-season", seasonP:"Do this plan at the start of the off-season, when you have time to build strength. It's not recommended during the race season. Spread your 3 days through the week, for example Monday, Wednesday and Friday.",
     wk1:"Week 1", wk2:"Week 2", wk3:"Week 3", wk4:"Week 4", lighter:"Lighter",
     wkNotes:["Week 1: the top sets may feel lighter than you expect. That's on purpose: move them <b>as fast as you can</b>.","Week 2: the top sets go up a little. Everything else stays the same.","Week 3: your heaviest week.","Week 4 is lighter: week 1 top sets, fewer sets after, and no bench on day 3."],
     rpeNote:"RPE is effort out of 10: RPE 7 means about 3 reps left in the tank, RPE 6 about 4. Load the percentage. If a set feels harder than its RPE, take a little weight off.",
@@ -583,6 +586,7 @@ const T = {
     heroA:"Son développé, au départ", heroB:"Son développé, aujourd'hui",
     lead:"La plupart des pagayeurs essaient de faire monter leur développé couché en allant au max à chaque séance. Ils ratent des répétitions, plafonnent et finissent frustrés. Une de mes athlètes a fait l'inverse et est passée de 85 lb à 160 lb. Aujourd'hui, elle est au siège 1 et donne la cadence à Équipe Canada, en mixte comme chez les femmes.",
     lead2:"Ce guide vous donne les trois choses qui l'ont menée là, le secret qui les fait fonctionner, un calculateur pour situer votre développé, et vos 4 premières semaines avec vos propres charges.",
+    when:"Conçu pour le début de la hors-saison. Pas pour la saison de course.",
     cred1:"Champion du monde Premier avec Équipe Canada", cred2:"Préparateur physique de 22 Dragons, or aux CCWC",
     nav1:"Votre niveau", nav2:"Les 3 clés", nav3:"Vos 4 semaines", nav4:"S'entraîner avec moi",
     s1eye:"1 · Votre niveau", s1h:"Où se situe votre développé?",
@@ -621,7 +625,7 @@ const T = {
     s3eye:"3 · Vos 4 semaines", s3h:"Vos 4 premières semaines, avec vos charges",
     s3p:"Trois journées de développé différentes chaque semaine : lourde, légère et moyenne. Les séries lourdes montent un peu chaque semaine. Choisissez votre semaine pour voir exactement quoi faire chaque jour.",
     addOn:"Ce plan couvre seulement votre développé. Après, ajoutez votre travail de triceps et du haut du dos, et votre entraînement pour le reste du corps.",
-    seasonK:"Idéal hors saison", seasonP:"Faites ce plan hors saison, quand vous avez le temps de bâtir de la force. Il n'est pas recommandé pendant la saison de course. Répartissez vos 3 jours dans la semaine, par exemple lundi, mercredi et vendredi.",
+    seasonK:"Début de la hors-saison", seasonP:"Faites ce plan au début de la hors-saison, quand vous avez le temps de bâtir de la force. Il n'est pas recommandé pendant la saison de course. Répartissez vos 3 jours dans la semaine, par exemple lundi, mercredi et vendredi.",
     wk1:"Sem. 1", wk2:"Sem. 2", wk3:"Sem. 3", wk4:"Sem. 4", lighter:"Plus légère",
     wkNotes:["Semaine 1 : les séries lourdes peuvent sembler plus légères que prévu. C'est voulu : poussez-les <b>le plus vite possible</b>.","Semaine 2 : les séries lourdes montent un peu. Le reste ne change pas.","Semaine 3 : votre semaine la plus lourde.","La semaine 4 est plus légère : séries lourdes de la semaine 1, moins de séries ensuite, et pas de développé au jour 3."],
     rpeNote:"Le RPE, c'est l'effort sur 10 : RPE 7 = environ 3 répétitions en réserve, RPE 6 = environ 4. Chargez le pourcentage. Si une série semble plus dure que son RPE, enlevez un peu de charge.",
