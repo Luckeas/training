@@ -478,7 +478,8 @@ select{font:500 16px var(--body);padding:12px}
 const BENCH = [["Entry",55,65,75,85,95,125,145,165,185,205],["Regional",70,80,90,100,110,145,165,185,205,225],["Provincial",85,95,105,115,125,165,185,205,225,245],["National",100,110,120,130,140,185,205,225,245,265],["CCWC",115,125,135,145,155,205,225,245,265,285],["NT Entry",130,140,150,160,170,225,245,265,285,305],["NT Standard",145,155,165,175,185,245,265,285,305,325],["NT Strong",160,170,180,190,200,265,285,305,325,345]];
 // Age groups.
 const GROUPS = [
-  {k:"jr",  max:17,  w:.65,  m:.65},
+  {k:"jb",  max:16,  w:.575, m:.575},
+  {k:"ja",  max:18,  w:.65,  m:.65},
   {k:"u24", max:24,  w:.90,  m:.95},
   {k:"pr",  max:39,  w:1,    m:1},
   {k:"sa",  max:49,  w:.925, m:.925},
@@ -520,7 +521,7 @@ const T = {
     private:"Everything updates as you type. Nothing you type is sent anywhere.",
     maxEst:"Estimated max", maxTrue:"Your max", ratioK:"Times bodyweight", lvlK:"Your bench level",
     ladK:"Bench 1RM by level, at your bodyweight",
-    age:"Age", groups:{jr:"Junior (under 18)", u24:"U24 (24 and under)", pr:"Premier (25 to 39)", sa:"Senior A (40+)", sb:"Senior B (50+)", sc:"Senior C (60+)", sd:"Senior D (70+)", se:"Senior E (80+)"},
+    age:"Age", groups:{jb:"Junior B (16 and under)", ja:"Junior A (18 and under)", u24:"U24 (24 and under)", pr:"Premier (25 to 39)", sa:"Senior A (40+)", sb:"Senior B (50+)", sc:"Senior C (60+)", sd:"Senior D (70+)", se:"Senior E (80+)"},
     yoursK:"Your numbers for the plan", sglK:"Singles · 90%", triK:"Triples · 80%", fastK2:"Fast sets · 65%", hypK:"Day 3 bench · 60%",
     shareK:"Send me your level", shareP:"Tap the button: your level is copied and our Instagram chat opens. Paste it and I'll tell you what I'd work on first.",
     copy:"Copy and send on Instagram", copied:"Copied. Paste it in our chat",
@@ -612,7 +613,7 @@ const T = {
     private:"Tout se met à jour pendant que vous tapez. Rien n'est envoyé.",
     maxEst:"Maximum estimé", maxTrue:"Votre maximum", ratioK:"Fois le poids corporel", lvlK:"Votre niveau au développé",
     ladK:"1RM au développé par niveau, à votre poids",
-    age:"Âge", groups:{jr:"Junior (moins de 18 ans)", u24:"U24 (24 ans et moins)", pr:"Premier (25 à 39 ans)", sa:"Senior A (40+)", sb:"Senior B (50+)", sc:"Senior C (60+)", sd:"Senior D (70+)", se:"Senior E (80+)"},
+    age:"Âge", groups:{jb:"Junior B (16 ans et moins)", ja:"Junior A (18 ans et moins)", u24:"U24 (24 ans et moins)", pr:"Premier (25 à 39 ans)", sa:"Senior A (40+)", sb:"Senior B (50+)", sc:"Senior C (60+)", sd:"Senior D (70+)", se:"Senior E (80+)"},
     yoursK:"Vos chiffres pour le plan", sglK:"Simples · 90 %", triK:"Triples · 80 %", fastK2:"Séries rapides · 65 %", hypK:"Développé jour 3 · 60 %",
     shareK:"Envoyez-moi votre niveau", shareP:"Touchez le bouton : votre niveau est copié et notre conversation Instagram s'ouvre. Collez-le et je vous dirai sur quoi je travaillerais en premier.",
     copy:"Copier et envoyer sur Instagram", copied:"Copié. Collez-le dans notre conversation",
@@ -726,7 +727,7 @@ function est1rm(w, r, type){
   const pct = ({1:.91, 2:.885, 3:.86})[r] || 1 / (1 + (r + 2) / 30);
   return w / pct;
 }
-function group(){ const a = Math.round(num("age")); return (a > 0 && GROUPS.find(g => a <= g.max)) || GROUPS[2]; }
+function group(){ const a = Math.round(num("age")); return (a > 0 && GROUPS.find(g => a <= g.max)) || GROUPS.find(g => g.k === "pr"); }
 function std(k, c){ const g = group(); return Math.round(BENCH[k][c] * (sex() === "women" ? g.w : g.m)); }
 function place(val, c){ let i = -1; BENCH.forEach((row, k) => { if (val >= std(k, c)) i = k; }); return i; }
 
