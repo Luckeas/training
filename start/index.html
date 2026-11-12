@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<title>DB Speed · Gym training for dragon boat paddlers</title>
+<meta name="description" content="Year-round gym programs for dragon boat paddlers, in an app, coached by Team Canada Premier world champion Martin Shih. First 7 days free.">
+<meta property="og:title" content="DB Speed · Get faster in the boat">
+<meta property="og:description" content="Year-round gym programs for dragon boat paddlers, in an app, coached by Martin Shih. First 7 days free.">
+<meta property="og:image" content="https://app.dbspeed.app/apple-touch-icon.png">
+<meta property="og:url" content="https://app.dbspeed.app/start/">
+<link rel="icon" href="https://app.dbspeed.app/icon-192.png">
+<link rel="apple-touch-icon" href="https://app.dbspeed.app/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+/* DB Speed landing page (Nov 12, 2026). Same "Scoreboard" look as the app, the join page and the bench guide.
+   Order, from the coach study (Sam Dutney, Jack Burns, Dark Horse, Paddle Monster):
+   hero with video and one button -> proof strip -> who it's for -> what you get -> how it works -> coach -> crews
+   -> price -> 1:1 by application -> free guide -> FAQ -> last button. */
+:root{
+  --bg:#121315; --surface:#1b1d20; --raised:#24272b; --line:#30343a;
+  --fg:#f3efe6; --muted:#9b9a93; --faint:#8e8f92; --accent:#d64124; --accent-text:#ee6146; --seal:#e5482b; --good:#43c08a;
+  --display:"Barlow Condensed","Arial Narrow","Helvetica Neue",Arial,sans-serif;
+  --body:"Barlow","Helvetica Neue",Arial,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--bg);scroll-padding-top:calc(64px + env(safe-area-inset-top,0px))}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 16px/1.5 var(--body);-webkit-text-size-adjust:100%;
+  padding:0 max(16px,env(safe-area-inset-right,0px)) calc(40px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent-text);outline-offset:2px}
+.wrap{max-width:720px;margin:0 auto;display:grid;gap:44px}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);
+  margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:calc(10px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
+.top .in{max-width:720px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;font:800 18px/1 var(--display);letter-spacing:.08em;text-decoration:none}
+.brand b{color:var(--accent-text);font-weight:800}
+.brand svg{width:32px;height:32px;flex:none}
+.lang{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.lang button{background:none;border:0;color:var(--muted);font:600 14px var(--body);padding:8px 14px;min-height:40px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+
+/* type */
+h1,h2,h3{font-family:var(--display);text-transform:uppercase;margin:0;text-wrap:balance}
+h1{font-weight:800;font-size:clamp(52px,12vw,92px);line-height:.9;letter-spacing:-.005em}
+h2{font-weight:800;font-size:clamp(32px,6vw,44px);line-height:1;letter-spacing:.01em}
+h3{font-weight:700;font-size:23px;line-height:1.05;letter-spacing:.02em}
+p{margin:0}
+.eyebrow{font:700 14px/1.2 var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--accent-text)}
+.lead{font-size:18px;line-height:1.5;max-width:60ch}
+.muted{color:var(--muted)}
+.fine{font-size:14px;color:var(--muted)}
+section{display:grid;gap:18px}
+.head{display:grid;gap:8px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px}
+
+/* buttons */
+.btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font:800 19px/1 var(--display);letter-spacing:.08em;text-transform:uppercase;
+  padding:15px 22px;min-height:52px;border-radius:12px;background:var(--accent);color:#fff;border:2px solid var(--accent);text-align:center}
+.btn.ghost{background:transparent;color:var(--fg);border-color:var(--line)}
+.btn.ghost:hover{border-color:var(--fg)}
+.btn.light{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.textlink{font-weight:600;text-underline-offset:3px}
+
+/* hero */
+.hero{display:grid;gap:20px;padding-top:30px}
+.by{font-size:15px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px}
+.by b{color:var(--fg);font-weight:600}
+.video{position:relative;border-radius:14px;overflow:hidden;background:var(--surface);border:1px solid var(--line);aspect-ratio:9/16;max-width:360px;width:100%}
+.video.wide{aspect-ratio:16/9;max-width:none}
+.video iframe,.video video{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;object-fit:cover}
+.video.draft{display:grid;place-items:center;text-align:center;padding:24px;border:2px dashed var(--faint);background:transparent;aspect-ratio:16/9;max-width:none;color:var(--muted)}
+.video.draft b{display:block;font:800 22px/1.1 var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--fg);margin-bottom:6px}
+
+/* proof strip */
+.board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:560px){.board{grid-template-columns:1fr}}
+.cell{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;gap:6px;align-content:start;min-width:0;overflow-wrap:break-word}
+.cell .big{font:800 clamp(30px,5.2vw,38px)/.95 var(--display);text-transform:uppercase;letter-spacing:.01em}
+.cell .big em{font-style:normal;color:var(--accent-text)}
+.cell .sub{font-size:15px;color:var(--muted);line-height:1.35}
+
+/* lists */
+.ticks{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.ticks li{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;align-items:start}
+.ticks svg{width:26px;height:26px}
+.ticks b{display:block;font:800 19px/1.1 var(--display);letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.not{border-left:3px solid var(--faint);padding:2px 0 2px 14px;color:var(--muted);font-size:15px}
+
+/* app preview (an illustration of the Today screen, not real athlete data) */
+.split{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:20px;align-items:start}
+@media (max-width:640px){.split{grid-template-columns:1fr}.phone{justify-self:center}}
+.phone{width:250px;background:var(--bg);border:1px solid var(--line);border-radius:26px;padding:14px 12px 16px;display:grid;gap:10px;box-shadow:0 0 0 6px var(--surface)}
+.phone .bar{display:flex;justify-content:space-between;align-items:center;font:700 12px/1 var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.phone .wk{font:800 52px/.82 var(--display);font-variant-numeric:tabular-nums}
+.phone .wk small{font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-right:6px;vertical-align:top}
+.phone .pill{justify-self:start;font:700 12px/1 var(--display);letter-spacing:.08em;text-transform:uppercase;background:var(--raised);border-radius:999px;padding:5px 9px}
+.phone .pill i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#3d7bd9;margin-right:6px}
+.phone .seas{display:grid;grid-template-columns:repeat(16,1fr);gap:2px}
+.phone .seas i{height:8px;border-radius:2px;background:var(--raised)}
+.phone .seas i.on{background:var(--fg)}
+.phone .seas i.now{background:var(--accent)}
+.phone .ex{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 10px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;align-items:center}
+.phone .ex .n{font:700 15px/1.1 var(--display);letter-spacing:.03em;text-transform:uppercase}
+.phone .ex .s{font-size:12px;color:var(--muted);grid-column:1}
+.phone .ex .ok{grid-row:1/3;grid-column:2;font:800 11px/1 var(--display);letter-spacing:.08em;text-transform:uppercase;border-radius:6px;padding:5px 7px;background:var(--raised);color:var(--muted)}
+.phone .ex .ok.done{background:var(--good);color:#06150e}
+.phone .cap{font-size:12px;color:var(--faint);text-align:center}
+
+/* steps */
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:s}
+.steps li{counter-increment:s;display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.steps li::before{content:counter(s);font:800 40px/.85 var(--display);color:var(--accent-text)}
+.steps b{display:block;font:800 19px/1.1 var(--display);letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+
+/* coach */
+.coach{display:grid;grid-template-columns:96px minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:480px){.coach{grid-template-columns:1fr}}
+.coach .face{width:96px;height:96px;border-radius:50%;overflow:hidden;background:var(--raised);display:grid;place-items:center}
+.coach .face img{width:100%;height:100%;object-fit:cover}
+.coach .face svg{width:96px;height:96px}
+.coach p+p{margin-top:10px}
+
+/* crews */
+.crews{display:flex;flex-wrap:wrap;gap:8px}
+.crews span{font:800 20px/1 var(--display);letter-spacing:.05em;text-transform:uppercase;border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--surface)}
+.crews span small{font:600 14px var(--body);letter-spacing:0;text-transform:none;color:var(--muted);margin-left:6px}
+
+/* price */
+.offer{background:var(--fg);color:var(--bg);border-color:var(--fg);display:grid;gap:16px;padding:24px 22px}
+.offer .eyebrow{color:#b02f14}
+.offer .fine,.offer .muted{color:#4a4b4f}
+.prices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:440px){.prices{grid-template-columns:1fr}}
+.price{border:1px solid #cfcac0;border-radius:12px;padding:14px 16px;display:grid;gap:4px}
+.price .k{font:700 14px/1 var(--display);letter-spacing:.12em;text-transform:uppercase;color:#4a4b4f}
+.price .v{font:800 46px/1 var(--display);font-variant-numeric:tabular-nums;white-space:nowrap}
+.price .v small{font:500 15px var(--body);color:#4a4b4f;margin-left:4px}
+.price .n{font-size:14px;color:#4a4b4f}
+.founding{justify-self:start;font:800 15px/1.2 var(--display);letter-spacing:.06em;text-transform:uppercase;background:var(--accent);color:#fff;padding:8px 11px;border-radius:6px}
+.offer .ticks span{color:#3b3c40}
+
+/* more ways */
+.ways{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:600px){.ways{grid-template-columns:1fr}}
+.way{display:grid;gap:10px;align-content:start}
+.way .btns{margin-top:4px}
+
+/* faq */
+.faq{display:grid;gap:8px}
+.faq details{background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;min-height:52px;font:700 19px/1.15 var(--display);letter-spacing:.03em;text-transform:uppercase}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font:800 26px/1 var(--display);color:var(--accent-text);flex:none}
+.faq details[open] summary::after{content:"–"}
+.faq details p{padding:0 16px 16px;color:var(--muted)}
+
+/* last call */
+.last{text-align:center;justify-items:center;padding:28px 20px;border-radius:16px;background:var(--surface);border:1px solid var(--line)}
+.last .btns{justify-content:center}
+
+footer{border-top:1px solid var(--line);padding-top:18px;display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--muted)}
+footer a{color:var(--muted)}
+.foot{font:700 13px/1.2 var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--faint);width:100%}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="in">
+    <a class="brand" href="#top" id="brandLink"><span id="seal"></span><span>DB <b>SPEED</b></span></a>
+    <div class="lang" role="group" aria-label="Language / Langue">
+      <button type="button" id="langEn" aria-pressed="true">English</button>
+      <button type="button" id="langFr" aria-pressed="false" lang="fr">Français</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" id="top">
+
+  <!-- 1. Hero: say who it's for, one video, one button (Jack Burns' apply page is just this) -->
+  <section class="hero" aria-labelledby="h1">
+    <p class="eyebrow" data-t="heroEye">Gym training for dragon boat paddlers</p>
+    <h1 id="h1" data-t="h1">Get faster in the boat</h1>
+    <p class="lead" data-t="lead">Year-round gym programs for dragon boat paddlers, in an app on your phone. Built around your season and your level, from your first day in a gym to the national team.</p>
+    <div id="videoBox" hidden></div>
+    <div class="btns">
+      <a class="btn" data-join href="https://app.dbspeed.app/join/" data-t="ctaJoin">Start your free week</a>
+      <a class="btn ghost" data-dm href="https://ig.me/m/martishih" target="_blank" rel="noopener" data-t="ctaDm">DM me SPEED</a>
+    </div>
+    <p class="by"><b>Martin Shih</b><span data-t="cred1">Team Canada Premier world champion</span><span data-t="cred2">Strength coach of 22 Dragons, CCWC gold</span></p>
+  </section>
+
+  <!-- 2. Proof strip: numbers first, like a scoreboard -->
+  <section aria-label="Martin's results">
+    <div class="board">
+      <div class="cell"><div class="big" data-t="b1">World <em>champion</em></div><div class="sub" data-t="b1s">Team Canada Premier. 13 years in the boat, still racing for my crew and my country.</div></div>
+      <div class="cell"><div class="big" data-t="b2">CCWC <em>gold</em></div><div class="sub" data-t="b2s">Strength coach of 22 Dragons, 500 m mixed.</div></div>
+      <div class="cell"><div class="big" data-t="b3">Since <em>2015</em></div><div class="sub" data-t="b3s">Coaching athletes from their first gym session to the Worlds and the World Cup.</div></div>
+    </div>
+  </section>
+
+  <!-- 3. Who it's for (Dark Horse "Who is The Crew for?") -->
+  <section aria-labelledby="h-who">
+    <div class="head">
+      <p class="eyebrow" data-t="whoEye">Who it's for</p>
+      <h2 id="h-who" data-t="whoH">Every paddler who wants more speed</h2>
+      <p class="muted" data-t="whoP">It's not about going hardcore. It's a clear plan to get faster, look and feel stronger, and a crew of paddlers sharing the work.</p>
+    </div>
+    <ul class="ticks">
+      <li><span data-tick></span><p><b data-t="w1h">You paddle dragon boat and you have a gym</b><span class="muted" data-t="w1p">Rec crew, club crew or national team, at home or abroad.</span></p></li>
+      <li><span data-tick></span><p><b data-t="w2h">You want a plan, not random workouts</b><span class="muted" data-t="w2p">Your training follows the race season, so you peak when it counts.</span></p></li>
+      <li><span data-tick></span><p><b data-t="w3h">Any level, any age</b><span class="muted" data-t="w3p">Brand new to the gym? You start with a 12-week beginner program. Over 40, a student, or chasing the national team? Your program is built for where you are.</span></p></li>
+    </ul>
+    <p class="not" data-t="notFor">Not for you if you don't have access to a gym.</p>
+  </section>
+
+  <!-- 4. What you get -->
+  <section aria-labelledby="h-get">
+    <div class="head">
+      <p class="eyebrow" data-t="getEye">What you get</p>
+      <h2 id="h-get" data-t="getH">Your program and your crew, in one place</h2>
+    </div>
+    <div class="split">
+      <ul class="ticks">
+        <li><span data-tick></span><p><b data-t="g1h">Your program in the DB Speed app</b><span class="muted" data-t="g1p">Bench, pulling, legs and power. A new week every Monday, with suggested weights from your best sets. Log as you lift.</span></p></li>
+        <li><span data-tick></span><p><b data-t="g2h">Built for you</b><span class="muted" data-t="g2p">After a few questions about your training, your schedule and your goals, I build your own program.</span></p></li>
+        <li><span data-tick></span><p><b data-t="g3h">Form Check Friday</b><span class="muted" data-t="g3p">Film a lift, post it, and I send you video feedback.</span></p></li>
+        <li><span data-tick></span><p><b data-t="g4h">The DB Speed community on Skool</b><span class="muted" data-t="g4p">Post your lifts, ask questions and follow other paddlers' progress. It's easier to keep going when your crew is watching.</span></p></li>
+        <li><span data-tick></span><p><b data-t="g5h">Add-ons coming this season</b><span class="muted" data-t="g5p">PERG, OC and mobility, at no extra cost.</span></p></li>
+      </ul>
+      <figure class="phone" aria-label="Example of the Today screen in the DB Speed app" style="margin:0">
+        <div class="bar"><span>DB Speed</span><span data-t="phToday">Today</span></div>
+        <div class="wk"><small data-t="phWeek">Week</small>7</div>
+        <span class="pill"><i></i><span data-t="phPhase">Strength 1 · Day 1</span></span>
+        <div class="seas" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="now"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="ex"><span class="n" data-t="phE1">Bench press</span><span class="s">4 × 4 · 135 lb</span><span class="ok done">✓ 4/4</span></div>
+        <div class="ex"><span class="n" data-t="phE2">Weighted pull-ups</span><span class="s">4 × 5 · +25 lb</span><span class="ok done">✓ 4/4</span></div>
+        <div class="ex"><span class="n" data-t="phE3">Bulgarian split squat</span><span class="s">3 × 8 · 40 lb</span><span class="ok">0/3</span></div>
+        <figcaption class="cap" data-t="phCap">Example screen, sample numbers</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 5. How it works -->
+  <section aria-labelledby="h-how">
+    <div class="head">
+      <p class="eyebrow" data-t="howEye">How it works</p>
+      <h2 id="h-how" data-t="howH">Set up in minutes</h2>
+    </div>
+    <ol class="steps">
+      <li><p><b data-t="s1h">Start your free week</b><span class="muted" data-t="s1p">Check out securely with Stripe. The first 7 days are free and you can cancel anytime.</span></p></li>
+      <li><p><b data-t="s2h">Get the app</b><span class="muted" data-t="s2p">Fill in a 1-minute form and your app link arrives by email. You can train the same day with a starter program.</span></p></li>
+      <li><p><b data-t="s3h">Get your own program</b><span class="muted" data-t="s3p">I send you a few questions, build your program around your answers and tell you when it's ready. Then a new week lands every Monday.</span></p></li>
+    </ol>
+  </section>
+
+  <!-- 6. The coach (Sam's About page, Dark Horse "Hi, I'm Shane") -->
+  <section aria-labelledby="h-coach">
+    <div class="head">
+      <p class="eyebrow" data-t="coachEye">Your coach</p>
+      <h2 id="h-coach" data-t="coachH">Hi, I'm Martin</h2>
+    </div>
+    <div class="card coach">
+      <div class="face" id="face"></div>
+      <div>
+        <p data-t="c1">I've paddled for 13 years and I still race for my crew and for Canada. I have a kinesiology degree from McGill, and I've coached athletes since 2015, from their first day in a gym to the World Championships and the World Cup.</p>
+        <p data-t="c2">I write the gym programs for 22 Dragons and the Immortals. DB Speed is how I coach paddlers everywhere else, in English and in French.</p>
+      </div>
+    </div>
+    <div class="head">
+      <p class="eyebrow" data-t="crewEye">Crews that train on my programs</p>
+    </div>
+    <div class="crews">
+      <span>22 Dragons <small data-t="crew22">Premier and Senior</small></span>
+      <span>Immortals</span>
+    </div>
+  </section>
+
+  <!-- 7. Price: a buy button, no call (Dark Horse The Crew, Paddle Monster) -->
+  <section aria-labelledby="h-price" id="join">
+    <div class="card offer">
+      <p class="eyebrow" data-t="priceEye">DB Speed membership</p>
+      <h2 id="h-price" data-t="priceH">Start with a free week</h2>
+      <span class="founding" data-t="founding">Founding price for the first 10 members</span>
+      <div class="prices">
+        <div class="price"><span class="k" data-t="pMonthK">Monthly</span><span class="v" id="pMonth">$140<small data-t="pMonthU">/ month</small></span><span class="n" data-t="pMonthN">First 7 days free</span></div>
+        <div class="price"><span class="k" data-t="pYearK">Yearly</span><span class="v" id="pYear">$1,390<small data-t="pYearU">/ year</small></span><span class="n" data-t="pYearN">2 months free · first 7 days free</span></div>
+      </div>
+      <ul class="ticks">
+        <li><span data-tick></span><p><span data-t="i1">Your own program in the app, a new week every Monday</span></p></li>
+        <li><span data-tick></span><p><span data-t="i2">Form Check Friday video feedback</span></p></li>
+        <li><span data-tick></span><p><span data-t="i3">The DB Speed community on Skool</span></p></li>
+        <li><span data-tick></span><p><span data-t="i4">Founding members keep their price for as long as they stay</span></p></li>
+      </ul>
+      <div class="btns"><a class="btn" data-join href="https://app.dbspeed.app/join/" data-t="ctaJoin">Start your free week</a></div>
+      <p class="fine" data-t="priceFine">Prices in CAD, plus GST/QST or HST in Canada. Outside Canada, checkout shows US dollars. Cancel anytime.</p>
+    </div>
+  </section>
+
+  <!-- 8. More ways: 1:1 by application (how Sam and Jack sell their top tier), free guide (their free tools), crews -->
+  <section aria-labelledby="h-more">
+    <div class="head">
+      <p class="eyebrow" data-t="moreEye">More ways to train with me</p>
+      <h2 id="h-more" data-t="moreH">Other ways to start</h2>
+    </div>
+    <div class="ways">
+      <article class="card way">
+        <h3 data-t="vipH">1:1 coaching</h3>
+        <p class="muted" data-t="vipP">For paddlers with a big goal, like a crew or national team spot. A program built around you, every lift reviewed on video, and your training adjusted week to week. I only take a few athletes at a time.</p>
+        <div class="btns"><a class="btn light" id="vipLink" href="https://docs.google.com/forms/d/e/1FAIpQLSfHA96OLmmK4Vmdlb_MlDVJjemZMe6aisNZlV1tBzwBoAwH5g/viewform" target="_blank" rel="noopener" data-t="vipBtn">Apply (3 minutes)</a></div>
+      </article>
+      <article class="card way">
+        <h3 data-t="freeH">Free bench guide</h3>
+        <p class="muted" data-t="freeP">Find where your bench stands for your age and bodyweight, and get your first 4 weeks in your own numbers.</p>
+        <div class="btns"><a class="btn ghost" id="benchLink" href="https://app.dbspeed.app/bench/" data-t="freeBtn">Get the free guide</a></div>
+      </article>
+    </div>
+    <p class="muted" data-h="crewLine"></p>
+  </section>
+
+  <!-- 9. FAQ (Dark Horse has 10; these are the questions paddlers actually ask) -->
+  <section aria-labelledby="h-faq">
+    <div class="head">
+      <p class="eyebrow" data-t="faqEye">Questions</p>
+      <h2 id="h-faq" data-t="faqH">Before you start</h2>
+    </div>
+    <div class="faq">
+      <details><summary data-t="q1">What do I need?</summary><p data-t="a1">A regular gym and your phone. Tell me what your gym has and I build around it.</p></details>
+      <details><summary data-t="q2">I've never lifted before. Is it for me?</summary><p data-t="a2">Yes. If you're brand new to the gym, you start with Foundations, a 12-week beginner program, then move onto the main program.</p></details>
+      <details><summary data-t="q3">How many days a week?</summary><p data-t="a3">Usually 3 gym days a week, planned around your practices and your season.</p></details>
+      <details><summary data-t="q4">I'm not in Canada. Does it work?</summary><p data-t="a4">Yes, it's fully online. Checkout shows US dollars, and your new week arrives at midnight in your own time zone.</p></details>
+      <details><summary data-t="q5">Is it in French?</summary><p data-t="a5">Yes. The app, this page and my answers are in English and French.</p></details>
+      <details><summary data-t="q6">Can I cancel?</summary><p data-t="a6">Yes, anytime, from your billing page. No contract. If you cancel during your free week, you're not charged.</p></details>
+    </div>
+  </section>
+
+  <!-- 10. Last call -->
+  <section class="last" aria-labelledby="h-last">
+    <h2 id="h-last" data-t="lastH">Your next season starts in the gym</h2>
+    <p class="muted" data-t="lastP">First 7 days free. Questions? DM me SPEED on Instagram.</p>
+    <div class="btns">
+      <a class="btn" data-join href="https://app.dbspeed.app/join/" data-t="ctaJoin">Start your free week</a>
+      <a class="btn ghost" data-dm href="https://ig.me/m/martishih" target="_blank" rel="noopener" data-t="ctaDm">DM me SPEED</a>
+    </div>
+  </section>
+
+  <footer>
+    <span><span data-t="qMail">Questions?</span> <a href="mailto:hello@dbspeed.app">hello@dbspeed.app</a></span>
+    <a href="https://app.dbspeed.app/privacy/" data-t="privacy">Privacy</a>
+    <a href="https://www.instagram.com/martishih/" target="_blank" rel="noopener">Instagram</a>
+    <p class="foot">DB Speed · Montréal · dbspeed.app</p>
+  </footer>
+</main>
+
+<script>
+/* ---- Things Martin may change ---- */
+// The hero video. Paste a YouTube link (watch, youtu.be or shorts) or a .mp4 address. Empty = no video block.
+// Add ?draft to the page address to see where the video goes before it's filmed.
+const VIDEO = "";
+// A photo of Martin for "Hi, I'm Martin". Empty = the DB Speed seal.
+const PHOTO = "";
+const JOIN  = {en:"https://app.dbspeed.app/join/", fr:"https://app.dbspeed.app/join/fr/"};
+const BENCH = {en:"https://app.dbspeed.app/bench/", fr:"https://app.dbspeed.app/bench/#fr"};
+const PRICE = {en:{m:"$140", y:"$1,390"}, fr:{m:"140 $", y:"1 390 $"}};
+
+const T = {
+  en:{
+    heroEye:"Gym training for dragon boat paddlers", h1:"Get faster in the boat",
+    lead:"Year-round gym programs for dragon boat paddlers, in an app on your phone. Built around your season and your level, from your first day in a gym to the national team.",
+    ctaJoin:"Start your free week", ctaDm:"DM me SPEED",
+    cred1:"Team Canada Premier world champion", cred2:"Strength coach of 22 Dragons, CCWC gold",
+    b1:"World <em>champion</em>", b1s:"Team Canada Premier. 13 years in the boat, still racing for my crew and my country.",
+    b2:"CCWC <em>gold</em>", b2s:"Strength coach of 22 Dragons, 500 m mixed.",
+    b3:"Since <em>2015</em>", b3s:"Coaching athletes from their first gym session to the Worlds and the World Cup.",
+    whoEye:"Who it's for", whoH:"Every paddler who wants more speed",
+    whoP:"It's not about going hardcore. It's a clear plan to get faster, look and feel stronger, and a crew of paddlers sharing the work.",
+    w1h:"You paddle dragon boat and you have a gym", w1p:"Rec crew, club crew or national team, at home or abroad.",
+    w2h:"You want a plan, not random workouts", w2p:"Your training follows the race season, so you peak when it counts.",
+    w3h:"Any level, any age", w3p:"Brand new to the gym? You start with a 12-week beginner program. Over 40, a student, or chasing the national team? Your program is built for where you are.",
+    notFor:"Not for you if you don't have access to a gym.",
+    getEye:"What you get", getH:"Your program and your crew, in one place",
+    g1h:"Your program in the DB Speed app", g1p:"Bench, pulling, legs and power. A new week every Monday, with suggested weights from your best sets. Log as you lift.",
+    g2h:"Built for you", g2p:"After a few questions about your training, your schedule and your goals, I build your own program.",
+    g3h:"Form Check Friday", g3p:"Film a lift, post it, and I send you video feedback.",
+    g4h:"The DB Speed community on Skool", g4p:"Post your lifts, ask questions and follow other paddlers' progress. It's easier to keep going when your crew is watching.",
+    g5h:"Add-ons coming this season", g5p:"PERG, OC and mobility, at no extra cost.",
+    phToday:"Today", phWeek:"Week", phPhase:"Strength 1 · Day 1", phE1:"Bench press", phE2:"Weighted pull-ups", phE3:"Bulgarian split squat", phCap:"Example screen, sample numbers",
+    howEye:"How it works", howH:"Set up in minutes",
+    s1h:"Start your free week", s1p:"Check out securely with Stripe. The first 7 days are free and you can cancel anytime.",
+    s2h:"Get the app", s2p:"Fill in a 1-minute form and your app link arrives by email. You can train the same day with a starter program.",
+    s3h:"Get your own program", s3p:"I send you a few questions, build your program around your answers and tell you when it's ready. Then a new week lands every Monday.",
+    coachEye:"Your coach", coachH:"Hi, I'm Martin",
+    c1:"I've paddled for 13 years and I still race for my crew and for Canada. I have a kinesiology degree from McGill, and I've coached athletes since 2015, from their first day in a gym to the World Championships and the World Cup.",
+    c2:"I write the gym programs for 22 Dragons and the Immortals. DB Speed is how I coach paddlers everywhere else, in English and in French.",
+    crewEye:"Crews that train on my programs", crew22:"Premier and Senior",
+    priceEye:"DB Speed membership", priceH:"Start with a free week", founding:"Founding price for the first 10 members",
+    pMonthK:"Monthly", pMonthU:"/ month", pMonthN:"First 7 days free",
+    pYearK:"Yearly", pYearU:"/ year", pYearN:"2 months free · first 7 days free",
+    i1:"Your own program in the app, a new week every Monday", i2:"Form Check Friday video feedback", i3:"The DB Speed community on Skool", i4:"Founding members keep their price for as long as they stay",
+    priceFine:"Prices in CAD, plus GST/QST or HST in Canada. Outside Canada, checkout shows US dollars. Cancel anytime.",
+    moreEye:"More ways to train with me", moreH:"Other ways to start",
+    vipH:"1:1 coaching", vipP:"For paddlers with a big goal, like a crew or national team spot. A program built around you, every lift reviewed on video, and your training adjusted week to week. I only take a few athletes at a time.", vipBtn:"Apply (3 minutes)",
+    freeH:"Free bench guide", freeP:"Find where your bench stands for your age and bodyweight, and get your first 4 weeks in your own numbers.", freeBtn:"Get the free guide",
+    crewLine:`<b>Captains and coaches:</b> gym programs for whole crews, like 22 Dragons and the Immortals. <a href="https://ig.me/m/martishih" target="_blank" rel="noopener">Send me a DM</a> or email <a href="mailto:hello@dbspeed.app">hello@dbspeed.app</a>.`,
+    faqEye:"Questions", faqH:"Before you start",
+    q1:"What do I need?", a1:"A regular gym and your phone. Tell me what your gym has and I build around it.",
+    q2:"I've never lifted before. Is it for me?", a2:"Yes. If you're brand new to the gym, you start with Foundations, a 12-week beginner program, then move onto the main program.",
+    q3:"How many days a week?", a3:"Usually 3 gym days a week, planned around your practices and your season.",
+    q4:"I'm not in Canada. Does it work?", a4:"Yes, it's fully online. Checkout shows US dollars, and your new week arrives at midnight in your own time zone.",
+    q5:"Is it in French?", a5:"Yes. The app, this page and my answers are in English and French.",
+    q6:"Can I cancel?", a6:"Yes, anytime, from your billing page. No contract. If you cancel during your free week, you're not charged.",
+    lastH:"Your next season starts in the gym", lastP:"First 7 days free. Questions? DM me SPEED on Instagram.",
+    qMail:"Questions?", privacy:"Privacy",
+    draftB:"Your video goes here", draftP:"60 to 90 seconds, filmed vertically. Set VIDEO at the bottom of this page to show it.",
+    title:"DB Speed · Gym training for dragon boat paddlers"
+  },
+  fr:{
+    heroEye:"Entraînement en gym pour pagayeurs de bateau-dragon", h1:"Plus vite dans le bateau",
+    lead:"Des programmes de gym à l'année pour les pagayeurs de bateau-dragon, dans une application sur votre téléphone. Pensés pour votre saison et votre niveau, de votre première séance en gym jusqu'à l'équipe nationale.",
+    ctaJoin:"Commencer la semaine gratuite", ctaDm:"Écrivez-moi SPEED",
+    cred1:"Champion du monde Premier avec Équipe Canada", cred2:"Préparateur physique de 22 Dragons, or aux CCWC",
+    b1:"Champion <em>du monde</em>", b1s:"Premier avec Équipe Canada. 13 ans dans le bateau, et je cours encore pour mon équipage et mon pays.",
+    b2:"Or aux <em>CCWC</em>", b2s:"Préparateur physique de 22 Dragons, 500 m mixte.",
+    b3:"Depuis <em>2015</em>", b3s:"J'entraîne des athlètes de leur première séance en gym jusqu'aux Championnats du monde et à la Coupe du monde.",
+    whoEye:"Pour qui", whoH:"Tous les pagayeurs qui veulent aller plus vite",
+    whoP:"Pas besoin d'être extrême. C'est un plan clair pour aller plus vite, vous sentir plus fort, et un équipage de pagayeurs qui s'entraînent ensemble.",
+    w1h:"Vous faites du bateau-dragon et vous avez accès à un gym", w1p:"Équipage récréatif, de club ou national, ici comme à l'étranger.",
+    w2h:"Vous voulez un plan, pas des séances au hasard", w2p:"Votre entraînement suit la saison de course, pour être au sommet au bon moment.",
+    w3h:"Tous les niveaux, tous les âges", w3p:"Nouveau au gym? Vous commencez par un programme débutant de 12 semaines. Plus de 40 ans, étudiant ou visant l'équipe nationale? Votre programme est bâti pour vous.",
+    notFor:"Ce n'est pas pour vous si vous n'avez pas accès à un gym.",
+    getEye:"Ce que vous obtenez", getH:"Votre programme et votre équipage, au même endroit",
+    g1h:"Votre programme dans l'application DB Speed", g1p:"Développé, tirage, jambes et puissance. Une nouvelle semaine chaque lundi, avec des charges suggérées à partir de vos meilleures séries. Vous notez tout en levant.",
+    g2h:"Bâti pour vous", g2p:"Après quelques questions sur votre entraînement, votre horaire et vos objectifs, je bâtis votre propre programme.",
+    g3h:"Form Check Friday", g3p:"Filmez une levée, publiez-la, et je vous envoie une rétroaction vidéo.",
+    g4h:"La communauté DB Speed sur Skool", g4p:"Publiez vos levées, posez vos questions et suivez les progrès des autres pagayeurs. C'est plus facile de rester constant quand votre équipage vous suit.",
+    g5h:"Modules à venir cette saison", g5p:"PERG, OC et mobilité, sans frais de plus.",
+    phToday:"Aujourd'hui", phWeek:"Semaine", phPhase:"Force 1 · Jour 1", phE1:"Développé couché", phE2:"Tractions lestées", phE3:"Squat bulgare", phCap:"Exemple d'écran, chiffres fictifs",
+    howEye:"Comment ça marche", howH:"Prêt en quelques minutes",
+    s1h:"Commencez votre semaine gratuite", s1p:"Paiement sécurisé avec Stripe. Les 7 premiers jours sont gratuits et vous pouvez annuler en tout temps.",
+    s2h:"Recevez l'application", s2p:"Remplissez un formulaire d'une minute et votre lien arrive par courriel. Vous pouvez vous entraîner le jour même avec un programme de départ.",
+    s3h:"Recevez votre propre programme", s3p:"Je vous envoie quelques questions, je bâtis votre programme selon vos réponses et je vous avise quand il est prêt. Ensuite, une nouvelle semaine arrive chaque lundi.",
+    coachEye:"Votre coach", coachH:"Bonjour, moi c'est Martin",
+    c1:"Je pagaie depuis 13 ans et je cours encore pour mon équipage et pour le Canada. J'ai un baccalauréat en kinésiologie de McGill et j'entraîne des athlètes depuis 2015, de leur première séance en gym jusqu'aux Championnats du monde et à la Coupe du monde.",
+    c2:"J'écris les programmes de gym de 22 Dragons et des Immortals. DB Speed, c'est comme ça que j'entraîne les pagayeurs partout ailleurs, en français et en anglais.",
+    crewEye:"Des équipages qui s'entraînent avec mes programmes", crew22:"Premier et Senior",
+    priceEye:"Abonnement DB Speed", priceH:"Commencez par une semaine gratuite", founding:"Prix fondateur pour les 10 premiers membres",
+    pMonthK:"Mensuel", pMonthU:"/ mois", pMonthN:"7 premiers jours gratuits",
+    pYearK:"Annuel", pYearU:"/ an", pYearN:"2 mois gratuits · 7 premiers jours gratuits",
+    i1:"Votre propre programme dans l'application, une nouvelle semaine chaque lundi", i2:"La rétroaction vidéo du Form Check Friday", i3:"La communauté DB Speed sur Skool", i4:"Les membres fondateurs gardent leur prix tant qu'ils restent membres",
+    priceFine:"Prix en dollars canadiens, plus TPS/TVQ ou TVH au Canada. Hors Canada, le paiement s'affiche en dollars américains. Annulez en tout temps.",
+    moreEye:"Autres façons de s'entraîner avec moi", moreH:"D'autres façons de commencer",
+    vipH:"Coaching individuel", vipP:"Pour les pagayeurs qui ont un grand objectif, comme une place dans un équipage ou en équipe nationale. Un programme bâti pour vous, chaque levée revue en vidéo, et un entraînement ajusté semaine après semaine. Je ne prends que quelques athlètes à la fois.", vipBtn:"Postuler (3 minutes)",
+    freeH:"Guide gratuit du développé couché", freeP:"Voyez où se situe votre développé pour votre âge et votre poids, et obtenez vos 4 premières semaines avec vos propres charges.", freeBtn:"Obtenir le guide gratuit",
+    crewLine:`<b>Capitaines et entraîneurs :</b> des programmes de gym pour des équipages entiers, comme 22 Dragons et les Immortals. <a href="https://ig.me/m/martishih" target="_blank" rel="noopener">Écrivez-moi</a> ou à <a href="mailto:hello@dbspeed.app">hello@dbspeed.app</a>.`,
+    faqEye:"Questions", faqH:"Avant de commencer",
+    q1:"De quoi ai-je besoin?", a1:"Un gym standard et votre téléphone. Dites-moi ce que votre gym a, et je bâtis autour.",
+    q2:"Je n'ai jamais fait de musculation. C'est pour moi?", a2:"Oui. Si vous êtes nouveau au gym, vous commencez par Foundations, un programme débutant de 12 semaines, puis vous passez au programme principal.",
+    q3:"Combien de jours par semaine?", a3:"Habituellement 3 jours de gym par semaine, planifiés autour de vos entraînements sur l'eau et de votre saison.",
+    q4:"Je ne suis pas au Canada. Ça fonctionne?", a4:"Oui, tout se fait en ligne. Le paiement s'affiche en dollars américains, et votre nouvelle semaine arrive à minuit dans votre propre fuseau horaire.",
+    q5:"C'est en français?", a5:"Oui. L'application, cette page et mes réponses sont en français et en anglais.",
+    q6:"Puis-je annuler?", a6:"Oui, en tout temps, depuis votre page de facturation. Aucun contrat. Si vous annulez pendant votre semaine gratuite, vous n'êtes pas facturé.",
+    lastH:"Votre prochaine saison commence au gym", lastP:"7 premiers jours gratuits. Des questions? Écrivez-moi SPEED sur Instagram.",
+    qMail:"Des questions?", privacy:"Confidentialité",
+    draftB:"Votre vidéo ici", draftP:"60 à 90 secondes, filmée à la verticale. Indiquez VIDEO au bas de cette page pour l'afficher.",
+    title:"DB Speed · Entraînement en gym pour pagayeurs de bateau-dragon"
+  }
+};
+
+const $ = id => document.getElementById(id);
+let L = "en";
+
+// The DB Speed lane seal, drawn exactly like dbMark() in the app.
+function seal(px){
+  const sm = px < 48, o = sm ? [0,19] : [0,13,26], w = sm ? 11 : 8.5, rh = sm ? 9 : 7;
+  const D = k => `M${14+k} ${40+k}H44A${60-k} ${60-k} 0 0 1 44 ${160-k}H${14+k}Z`;
+  const B = k => { const r = 30 - k/2; return `M${112+k} ${40+k}H150A${r} ${r} 0 0 1 150 100A${r} ${r} 0 0 1 150 ${160-k}H${112+k}Z`; };
+  return `<svg width="${px}" height="${px}" viewBox="0 0 200 200" role="img" aria-label="DB Speed"><circle cx="100" cy="100" r="94" fill="#e5482b"/><path transform="translate(100 92) scale(.62) translate(-97 -100)" fill="none" stroke="#121315" stroke-width="${w}" stroke-linejoin="round" d="${o.map(k => D(k) + B(k)).join("")}"/><rect x="58" y="150" width="84" height="${rh}" fill="#f3efe6"/></svg>`;
+}
+const TICK = `<svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="14" fill="#e5482b"/><path d="M8 14.5l4 4 8-9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+function videoHtml(u){
+  const yt = u.match(/(?:youtu\.be\/|v=|shorts\/|embed\/)([\w-]{11})/);
+  if (yt) {
+    const vertical = /shorts\//.test(u);
+    return `<div class="video${vertical ? "" : " wide"}"><iframe src="https://www.youtube-nocookie.com/embed/${yt[1]}?rel=0&playsinline=1" title="Martin Shih · DB Speed" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe></div>`;
+  }
+  return `<div class="video"><video src="${u}" controls playsinline preload="metadata"></video></div>`;
+}
+
+function setLang(l, fromUser){
+  L = l === "fr" ? "fr" : "en";
+  const t = T[L];
+  document.documentElement.lang = L === "fr" ? "fr-CA" : "en";
+  document.title = t.title;
+  $("langEn").setAttribute("aria-pressed", String(L === "en"));
+  $("langFr").setAttribute("aria-pressed", String(L === "fr"));
+  document.querySelectorAll("[data-t]").forEach(el => {
+    const v = t[el.dataset.t]; if (typeof v !== "string") return;
+    if (v.includes("<")) el.innerHTML = v; else el.textContent = v;
+  });
+  document.querySelectorAll("[data-h]").forEach(el => { el.innerHTML = t[el.dataset.h]; });
+  document.querySelectorAll("[data-join]").forEach(a => { a.href = JOIN[L]; });
+  $("benchLink").href = BENCH[L];
+  $("pMonth").firstChild.nodeValue = PRICE[L].m;
+  $("pYear").firstChild.nodeValue = PRICE[L].y;
+  const draft = $("videoBox").querySelector(".draft");
+  if (draft) draft.innerHTML = `<p><b>${t.draftB}</b>${t.draftP}</p>`;
+  if (fromUser) {
+    try { localStorage.setItem("dbs-start-lang", L); } catch (e) {}
+    try { history.replaceState(null, "", location.pathname + location.search + "#" + L); } catch (e) {}
+  }
+}
+
+// Seal in the top bar, ticks in the lists, photo or seal for the coach.
+$("seal").innerHTML = seal(32);
+document.querySelectorAll("[data-tick]").forEach(el => { el.outerHTML = TICK; });
+$("face").innerHTML = PHOTO ? `<img src="${PHOTO}" alt="Martin Shih">` : seal(96);
+
+// Video, or a dashed frame with ?draft
+if (VIDEO) { $("videoBox").innerHTML = videoHtml(VIDEO); $("videoBox").hidden = false; }
+else if (/[?&]draft\b/.test(location.search)) { $("videoBox").innerHTML = `<div class="video draft"></div>`; $("videoBox").hidden = false; }
+
+$("langEn").addEventListener("click", () => setLang("en", true));
+$("langFr").addEventListener("click", () => setLang("fr", true));
+window.addEventListener("hashchange", () => { const h = location.hash.slice(1); if (h === "fr" || h === "en") setLang(h); });
+
+// Start language: #fr / #en in the link, then the reader's last choice, then their browser.
+let start = "en";
+try {
+  const h = location.hash.slice(1);
+  start = (h === "fr" || h === "en") ? h : (localStorage.getItem("dbs-start-lang") || ((navigator.language || "").toLowerCase().startsWith("fr") ? "fr" : "en"));
+} catch (e) { start = (navigator.language || "").toLowerCase().startsWith("fr") ? "fr" : "en"; }
+setLang(start);
+</script>
+</body>
+</html>
