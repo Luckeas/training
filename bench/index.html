@@ -116,8 +116,8 @@ select{font:500 16px var(--body);padding:12px}
 .lvlbox .v{color:var(--accent);text-transform:uppercase}
 .lvlbox .note{font-size:14px;color:var(--muted)}
 .ladder{display:grid;gap:6px}
-.rung{display:grid;grid-template-columns:132px minmax(0,1fr) 72px;gap:10px;align-items:center;font-variant-numeric:tabular-nums}
-@media (max-width:440px){.rung{grid-template-columns:104px minmax(0,1fr) 64px;gap:8px}}
+.rung{display:grid;grid-template-columns:150px minmax(0,1fr) 72px;gap:10px;align-items:center;font-variant-numeric:tabular-nums}
+@media (max-width:440px){.rung{grid-template-columns:118px minmax(0,1fr) 64px;gap:8px}}
 .rung .n{font:700 15px/1.1 var(--display);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
 .rung .bar{height:12px;background:var(--raised);border-radius:3px;overflow:hidden}
 .rung .bar i{display:block;height:100%;background:var(--faint);border-radius:3px;transition:width .3s ease}
@@ -471,7 +471,8 @@ select{font:500 16px var(--body);padding:12px}
 // Bench 1RM standards (lb), from the DB Speed Bench Marks tab (same table as the Paddler Strength Standards calculator).
 // Columns 1-5: women <115, <130, <145, <160, 160+ lb. Columns 6-10: men <145, <160, <175, <190, 190+ lb.
 const BENCH = [["Entry",55,65,75,85,95,125,145,165,185,205],["Regional",70,80,90,100,110,145,165,185,205,225],["Provincial",85,95,105,115,125,165,185,205,225,245],["National",100,110,120,130,140,185,205,225,245,265],["CCWC",115,125,135,145,155,205,225,245,265,285],["NT Entry",130,140,150,160,170,225,245,265,285,305],["NT Standard",145,155,165,175,185,245,265,285,305,325],["NT Strong",160,170,180,190,200,265,285,305,325,345]];
-const LV_FR = {"Entry":"Initiation","Regional":"Régional","Provincial":"Provincial","National":"National","CCWC":"CCWC","NT Entry":"Équipe nat. (entrée)","NT Standard":"Équipe nat. (standard)","NT Strong":"Équipe nat. (fort)"};
+const LV_EN = {"NT Entry":"National Team Entry","NT Standard":"National Team Standard","NT Strong":"National Team Strong"};
+const LV_FR = {"Entry":"Initiation","Regional":"Régional","Provincial":"Provincial","National":"National","CCWC":"CCWC","NT Entry":"Équipe nationale (entrée)","NT Standard":"Équipe nationale (standard)","NT Strong":"Équipe nationale (fort)"};
 // Martin's format (Nov 11): 3 days a week; days 1-2 = 1-3 top sets at 80-90% (singles to triples) + 3-4 fast sets at 60-70% for 4-6 reps;
 // day 3 = muscle building + accessories; week 4 = lighter (days 1-2 only, day 3 off); week 5 = add 5-10 lb and start again.
 // Martin's format (Nov 11): top sets from singles to triples at 80-90% that get a little heavier each week,
@@ -574,8 +575,8 @@ const T = {
     start:"Everyone starts somewhere. Entry is your first goal.",
     tooMany:"For a set over 12 reps, use a heavier weight for a better estimate.",
     needBw:"Add your bodyweight to see your level.",
-    share:(l,m,bw)=>`My bench level: ${l}. Estimated max ${m} at ${bw} bodyweight. (DB Speed bench guide)`,
-    shareNoBw:m=>`My estimated bench max: ${m}. (DB Speed bench guide)`
+    share:(l,m,bw,mx)=>`My bench level: ${l}. ${mx ? "Max" : "Estimated max"} ${m} at ${bw} bodyweight. (DB Speed bench guide)`,
+    shareNoBw:(m,mx)=>`My ${mx ? "" : "estimated "}bench max: ${m}. (DB Speed bench guide)`
   },
   fr:{
     heroEye:"Guide gratuit hors saison · Développé couché pour le bateau-dragon", h1:"Le développé couché du pagayeur",
@@ -664,8 +665,8 @@ const T = {
     start:"Tout le monde commence quelque part. L'initiation est votre premier objectif.",
     tooMany:"Pour une série de plus de 12 répétitions, prenez une charge plus lourde pour une meilleure estimation.",
     needBw:"Ajoutez votre poids corporel pour voir votre niveau.",
-    share:(l,m,bw)=>`Mon niveau au développé couché : ${l}. Maximum estimé ${m} à ${bw} de poids corporel. (Guide DB Speed)`,
-    shareNoBw:m=>`Mon maximum estimé au développé couché : ${m}. (Guide DB Speed)`
+    share:(l,m,bw,mx)=>`Mon niveau au développé couché : ${l}. ${mx ? "Maximum" : "Maximum estimé"} ${m} à ${bw} de poids corporel. (Guide DB Speed)`,
+    shareNoBw:(m,mx)=>`Mon maximum ${mx ? "" : "estimé "}au développé couché : ${m}. (Guide DB Speed)`
   }
 };
 
@@ -687,7 +688,7 @@ const fmtLoad = lb => unit() === "kg" ? kgStr(loadKg(lb)) : `${Math.round(lb / 5
 // the week-5 load: working load + one plate jump (5 lb or 2.5 kg)
 const fmtNext = lb => unit() === "kg" ? kgStr(loadKg(lb) + 2.5) : `${Math.round(lb / 5) * 5 + 5} lb`;
 const unitSmall = s => s.replace(/ (lb|kg)$/, "<small>$1</small>");
-const lvName = n => L === "fr" ? (LV_FR[n] || n) : n;
+const lvName = n => L === "fr" ? (LV_FR[n] || n) : (LV_EN[n] || n);
 
 function col(bwLb){
   if (sex() === "women") return 1 + (bwLb < 115 ? 0 : bwLb < 130 ? 1 : bwLb < 145 ? 2 : bwLb < 160 ? 3 : 4);
@@ -773,7 +774,7 @@ function render(){
   $("o3how").innerHTML = t.o3how;
   $("o4how").innerHTML = t.o4how;
   const lvl = !oneRm || !bwLb ? "—" : idx < 0 ? t.below : lvName(BENCH[idx][0]);
-  $("shareText").textContent = bwLb ? t.share(lvl, oneRm ? fmtExact(oneRm) : "—", fmtExact(bwLb)) : t.shareNoBw(oneRm ? fmtExact(oneRm) : "—");
+  $("shareText").textContent = bwLb ? t.share(lvl, oneRm ? fmtExact(oneRm) : "—", fmtExact(bwLb), isMax) : t.shareNoBw(oneRm ? fmtExact(oneRm) : "—", isMax);
 }
 
 function setLang(l, fromUser){
