@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>Part 1: From Zero to 12 Pull-Ups · DB Speed</title>
+<meta name="description" content="Free pull-up guide for dragon boat paddlers: start from what you do in the gym, get your level and your first 4 weeks.">
+<meta property="og:title" content="The Paddler's Pull-Up Guide · DB Speed">
+<meta property="og:description" content="From zero to 12 pull-ups: your level and your first 4 weeks. Free, in English and French.">
+<meta property="og:image" content="https://app.dbspeed.app/apple-touch-icon.png">
+<meta property="og:url" content="https://app.dbspeed.app/pull/guide/">
+<link rel="icon" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+/* DB Speed "Scoreboard" look, copied from the bench guide (app.dbspeed.app/bench) so the two guides match.
+   Layout: one 720px column. Welcome -> story -> your level -> the 3 levels -> the long road -> your week -> exercises -> train with me. */
+:root{
+  --bg:#121315; --surface:#1b1d20; --raised:#24272b; --line:#30343a;
+  --fg:#f3efe6; --muted:#9b9a93; --faint:#64666b; --accent:#e5482b; --good:#43c08a; --amber:#f2b233;
+  --display:"Barlow Condensed","Arial Narrow","Helvetica Neue",Arial,sans-serif;
+  --body:"Barlow","Helvetica Neue",Arial,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--bg);scroll-padding-top:calc(64px + env(safe-area-inset-top,0px))}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 16px/1.5 var(--body);-webkit-text-size-adjust:100%;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 calc(40px + env(safe-area-inset-bottom,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:720px;margin:0 auto;display:grid;gap:40px}
+
+/* draft banner (preview only) */
+.draft{max-width:720px;margin:14px auto 0;border:1px dashed var(--amber);border-radius:12px;padding:12px 14px;color:var(--amber);font-size:14px;display:grid;gap:6px}
+.draft b{font:800 15px/1.2 var(--display);letter-spacing:.08em;text-transform:uppercase}
+.draft ol{margin:0;padding-left:18px;display:grid;gap:3px}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);
+  margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
+.top .in{max-width:720px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{font:800 18px/1 var(--display);letter-spacing:.08em;text-decoration:none}
+.brand b{color:var(--accent);font-weight:800}
+.lang{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.lang button{background:none;border:0;color:var(--muted);font:600 14px var(--body);padding:8px 14px;min-height:36px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+
+/* type */
+.eyebrow{font:700 14px/1.2 var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0}
+h1,h2,h3{font-family:var(--display);text-transform:uppercase;margin:0;text-wrap:balance}
+h1{font-weight:800;font-size:clamp(44px,9vw,72px);line-height:1;letter-spacing:.005em}
+h2{font-weight:800;font-size:clamp(30px,5.6vw,40px);line-height:1;letter-spacing:.01em}
+h3{font-weight:700;font-size:23px;line-height:1.05;letter-spacing:.02em}
+p{margin:0}
+.lead{font-size:18px;line-height:1.5;max-width:62ch}
+.muted{color:var(--muted)}
+section{display:grid;gap:16px}
+.head{display:grid;gap:8px}
+.lab{font:700 14px/1.2 var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+
+/* welcome (people arriving from the PULL DM) */
+.welcome{margin-top:24px;display:grid;gap:14px;background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:14px;padding:18px}
+.welcome h2{font-size:clamp(28px,5.4vw,36px)}
+.steps2{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.steps2 li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;align-items:start}
+.steps2 .n{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font:800 16px/1 var(--display)}
+.steps2 b{display:block;font:800 19px/1.15 var(--display);letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.mail{display:grid;gap:10px;margin-top:4px}
+.mail .line{display:flex;gap:8px;flex-wrap:wrap}
+input[type=email]{flex:1 1 220px;min-width:0;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;min-height:48px;font:500 16px var(--body);padding:10px 12px}
+.consent{display:grid;grid-template-columns:22px minmax(0,1fr);gap:8px;font-size:14px;color:var(--muted);align-items:start}
+.consent input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--accent)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.ok{font-weight:600;color:var(--good)}
+.err{font-weight:600;color:var(--accent)}
+
+/* hero */
+.hero{display:grid;gap:18px}
+.score{display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 18px 16px}
+.score .side{display:grid;gap:6px}
+.score .side:last-child{text-align:right}
+.score .lbl{font:700 13px/1.2 var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.score .big{font:800 clamp(64px,15vw,104px)/.82 var(--display);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.score .arrow{font:800 34px/1 var(--display);color:var(--faint);padding-bottom:14px}
+.score .bars{grid-column:1/-1;display:grid;gap:6px;margin-top:6px}
+.score .bars i{display:block;height:10px;border-radius:3px;background:var(--raised)}
+.score .bars i b{display:block;height:100%;border-radius:3px}
+.score .bars i:first-child b{width:2%;background:var(--muted)}
+.score .bars i:last-child b{width:100%;background:var(--accent)}
+.by{font-size:14px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px}
+.by b{color:var(--fg);font-weight:600}
+.jump{display:flex;flex-wrap:wrap;gap:8px;padding:0;margin:0;list-style:none}
+.jump a{display:flex;align-items:center;gap:8px;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:8px 14px 8px 8px;font:600 15px var(--body);min-height:40px}
+.jump a span{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--raised);font:800 14px/1 var(--display);color:var(--accent)}
+.jump a em{font-style:normal}
+
+/* calculator */
+.calc{display:grid;gap:14px}
+form{display:grid;gap:16px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:460px){.row2{grid-template-columns:1fr}}
+.inp{display:grid;gap:6px;min-width:0}
+input[type=text]{width:100%;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;min-height:48px;font:700 24px/1 var(--display);letter-spacing:.02em;padding:10px 12px;font-variant-numeric:tabular-nums}
+.example{font-size:14px;color:var(--accent);font-weight:600}
+.private{font-size:13px;color:var(--muted)}
+.result{display:grid;gap:16px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:520px){.stats{grid-template-columns:1fr 1fr}.stats .lvlbox{grid-column:1/-1;order:-1}}
+.stat{background:var(--raised);border-radius:12px;padding:12px 14px;display:grid;gap:6px;align-content:start}
+.stat .k{font:700 13px/1.2 var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.stat .v{font:800 34px/1 var(--display);font-variant-numeric:tabular-nums}
+.lvlbox .v{color:var(--accent);text-transform:uppercase}
+.lvlbox .note{font-size:14px;color:var(--muted)}
+.ladder{display:grid;gap:6px}
+.rung{display:grid;grid-template-columns:150px minmax(0,1fr) 72px;gap:10px;align-items:center;font-variant-numeric:tabular-nums}
+@media (max-width:440px){.rung{grid-template-columns:112px minmax(0,1fr) 58px;gap:8px}}
+.rung .n{font:700 15px/1.1 var(--display);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.rung .bar{height:12px;background:var(--raised);border-radius:3px;overflow:hidden}
+.rung .bar i{display:block;height:100%;background:var(--faint);border-radius:3px;transition:width .3s ease}
+.rung .v{text-align:right;font-weight:600;color:var(--muted);white-space:nowrap}
+.rung.hit .n,.rung.hit .v{color:var(--fg)}
+.rung.hit .bar i{background:var(--fg)}
+.rung.cur .n{color:var(--accent)}
+.rung.cur .bar i{background:var(--accent)}
+.gap{font-weight:600}
+.gap b{color:var(--accent);font-variant-numeric:tabular-nums}
+.share{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:14px}
+.share .line{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap}
+.share code{flex:1 1 260px;font:500 14px/1.4 var(--body);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;overflow-wrap:anywhere}
+
+/* why */
+.why{border-left:3px solid var(--accent);padding:4px 0 4px 16px;display:grid;gap:8px}
+
+/* the three levels */
+.levers{display:grid;gap:14px}
+.lever{display:grid;grid-template-columns:72px minmax(0,1fr);gap:4px 14px}
+.lever .no{font:800 40px/.9 var(--display);color:var(--faint);font-variant-numeric:tabular-nums}
+.lever.twist{border-color:var(--accent)}
+.lever.twist .no{color:var(--accent)}
+.lever .body{display:grid;gap:10px;min-width:0}
+.chip{display:inline-block;font:800 15px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;background:var(--accent);color:#fff;padding:6px 9px;border-radius:6px}
+.how{background:var(--raised);border-radius:10px;padding:12px 14px;display:grid;gap:4px}
+.how .k{font:700 13px/1.2 var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+@media (max-width:440px){.lever{grid-template-columns:1fr}.lever .no{font-size:34px}}
+
+/* the long road */
+.secret{background:var(--fg);color:var(--bg);border-radius:16px;padding:22px 20px;display:grid;gap:12px}
+.secret h2{font-size:clamp(34px,6.4vw,48px)}
+.secret .lead{color:var(--bg)}
+.secret ul{margin:0;padding-left:20px;display:grid;gap:6px;color:#3b3c40}
+.secret ul b{color:var(--bg)}
+.secret .eyebrow{color:var(--accent)}
+
+/* plan */
+.weektabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:6px}
+.weektabs button{background:none;border:0;border-radius:8px;color:var(--muted);font:800 19px/1 var(--display);text-transform:uppercase;letter-spacing:.04em;padding:9px 4px;min-height:52px;cursor:pointer;display:grid;gap:4px;justify-items:center;align-content:center}
+.weektabs button small{font:600 11px/1 var(--body);letter-spacing:0;text-transform:none}
+.weektabs button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.wknote{font-weight:600}
+.wknote b{color:var(--accent)}
+.dcard{display:grid;gap:8px}
+.dhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.dnum{font:800 34px/1 var(--display);letter-spacing:.02em;text-transform:uppercase}
+.pill{font:800 14px/1 var(--display);letter-spacing:.1em;text-transform:uppercase;padding:6px 9px;border-radius:6px}
+.pill.heavy{background:var(--accent);color:#fff}
+.pill.medium{background:var(--amber);color:#1a1405}
+.pill.light{background:var(--good);color:#06150e}
+.purpose{color:var(--muted)}
+.ex{list-style:none;margin:4px 0 0;padding:0;display:grid}
+.ex li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.exhead{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;font:700 12px/1.2 var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.exn{font-weight:600;min-width:0}
+.exn small{display:block;font-weight:400;font-size:13px;color:var(--muted);margin-top:2px}
+.sx{font:800 24px/1 var(--display);white-space:nowrap;font-variant-numeric:tabular-nums;text-align:right}
+.ex li.main .sx{color:var(--accent)}
+@media (max-width:440px){.sx{font-size:21px}}
+.week5{display:grid;gap:4px;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--good);border-radius:12px;padding:14px 16px}
+.tips{margin:0;padding-left:20px;display:grid;gap:6px;color:var(--muted)}
+.tips li span{color:var(--fg)}
+
+/* exercises */
+.xl{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:x}
+.xl > li{counter-increment:x;display:grid;grid-template-columns:40px minmax(0,1fr);gap:4px 12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.xl > li::before{content:counter(x);font:800 30px/1 var(--display);color:var(--faint);font-variant-numeric:tabular-nums}
+.xl .body{display:grid;gap:6px;min-width:0}
+.xl h3{font-size:21px}
+.xl .for{font-size:13px;color:var(--muted)}
+.xl ul{margin:0;padding-left:18px;display:grid;gap:3px;font-size:15px}
+.xl li.fav{border-color:var(--accent)}
+.xl li.fav::before{color:var(--accent)}
+.rr{display:flex;flex-wrap:wrap;gap:6px}
+.rr span{font:600 13px/1 var(--body);border-radius:999px;padding:6px 10px;background:var(--raised);white-space:nowrap}
+.rr b{font:800 15px/1 var(--display);margin-right:4px}
+
+/* offers */
+.offers{display:grid;gap:12px}
+.offer{display:grid;gap:10px}
+.offer.main{background:var(--fg);color:var(--bg);border-color:var(--fg);padding:22px 20px;gap:14px}
+.offer.main .eyebrow{color:var(--accent)}
+.offer.main h3{font-size:clamp(28px,5.4vw,36px);line-height:1}
+.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font:800 19px/1 var(--display);letter-spacing:.08em;text-transform:uppercase;padding:14px 20px;min-height:48px;border-radius:12px;background:var(--accent);color:#fff;border:2px solid var(--accent);justify-self:start;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--fg);border-color:var(--fg)}
+.feats{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.feats li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;align-items:start}
+.feats svg{width:28px;height:28px;flex:none}
+.feats b{display:block;font:800 19px/1.1 var(--display);letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.feats span{color:#3b3c40}
+.btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.textlink{font-weight:600;color:var(--bg);text-underline-offset:3px;justify-self:start}
+.offer.main .fine{color:#4a4b4f;font-size:14px}
+.more p{margin:0}
+.more.small{display:grid;gap:6px;font-size:14px;color:var(--muted);padding:0 4px}
+.modes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:6px}
+.modes button{background:none;border:0;border-radius:8px;color:var(--muted);font:600 14px/1.2 var(--body);padding:10px 6px;min-height:44px;cursor:pointer}
+.modes button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.row3{display:grid;grid-template-columns:1fr 1fr 1.5fr;gap:12px;align-items:end}
+@media (max-width:520px){.row3{grid-template-columns:1fr 1fr}.row3 .inp:last-child{grid-column:1/-1}}
+select{width:100%;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;min-height:48px;font:600 16px var(--body);padding:10px 12px}
+.est{font-weight:600;margin:0}
+.est b{color:var(--accent);font:800 24px/1 var(--display);font-variant-numeric:tabular-nums}
+.more b{color:var(--accent)}
+.more a{color:inherit;text-underline-offset:3px}
+
+/* notes */
+.notes{border-top:1px solid var(--line);padding-top:18px;display:grid;gap:8px;font-size:14px;color:var(--muted);max-width:68ch}
+.foot{font:700 13px/1.2 var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+@media (prefers-reduced-motion:reduce){.rung .bar i{transition:none}html{scroll-behavior:auto}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="in">
+    <a class="brand" href="#h1">DB <b>SPEED</b></a>
+    <div class="lang" role="group" aria-label="Language / Langue">
+      <button type="button" id="langEn" aria-pressed="true">English</button>
+      <button type="button" id="langFr" aria-pressed="false">Français</button>
+    </div>
+  </div>
+</header>
+
+
+
+<main class="wrap">
+
+  <section class="welcome" aria-labelledby="h-welcome">
+    <p class="eyebrow" data-t="wEye">Here's your guide</p>
+    <h2 id="h-welcome" data-t="wH">Thanks for grabbing my pull-up guide</h2>
+    <p class="muted" data-t="wP">Start with section 1: put in what you do in the gym and it gives you your level and your sets.</p>
+  </section>
+
+  <section class="hero" aria-labelledby="h1">
+    <p class="eyebrow" data-t="heroEye">Free guide · The paddler's pull-up guide</p>
+    <h1 id="h1" data-t="h1">Part 1: from zero to 12 pull-ups</h1>
+    <div class="score" role="img" aria-label="Pull-ups: 0 at the start, 26 now">
+      <div class="side"><span class="lbl" data-t="heroA">Her pull-ups, day one</span><span class="big">0</span></div>
+      <span class="arrow" aria-hidden="true">→</span>
+      <div class="side"><span class="lbl" data-t="heroB">Her pull-ups now</span><span class="big">26</span></div>
+      <div class="bars" aria-hidden="true"><i><b></b></i><i><b></b></i></div>
+    </div>
+    <p class="lead" data-t="lead">Can't do a pull-up yet, or can't get past a few? How you should train them depends on your number. With this method I've taken a lot of my athletes from zero to double digits. One of them, a 135-pound paddler on Team Canada's women's and mixed crews, went from 0 to 26.</p>
+    <p class="by"><b>Martin Shih · DB Speed</b><span data-t="cred1">Team Canada Premier world champion</span><span data-t="cred2">Strength coach of 22 Dragons, CCWC gold</span><span data-t="cred3">My best at Team Canada testing: 32 pull-ups at 190 lb</span></p>
+    <ul class="jump">
+      <li><a href="#level"><span>1</span><em data-t="nav1">Your level</em></a></li>
+      <li><a href="#levels"><span>2</span><em data-t="nav2">The 3 levels</em></a></li>
+      <li><a href="#week"><span>3</span><em data-t="nav3">Your week</em></a></li>
+      <li><a href="#exercises"><span>4</span><em data-t="nav4">The exercises</em></a></li>
+      <li><a href="#coach"><span>5</span><em data-t="nav5">Train with me</em></a></li>
+    </ul>
+  </section>
+
+  <section id="level" class="calc" aria-labelledby="h-level">
+    <div class="head">
+      <p class="eyebrow" data-t="s1eye">1 · Your level</p>
+      <h2 id="h-level" data-t="s1h">Start from what you do now</h2>
+      <p class="muted" data-t="s1p">Put in your strict pull-ups from the gym: how many sets, how many reps, and how many more you could have done on your last set. It estimates your max and gives you your level and your plan. Tested your max, or can't do one yet? Pick that instead.</p>
+    </div>
+    <div class="card">
+      <form id="calc" novalidate>
+        <div class="modes" role="group" aria-label="What to put in">
+          <button type="button" data-mode="sets" aria-pressed="true" data-t="mSets">My gym sets</button>
+          <button type="button" data-mode="max" aria-pressed="false" data-t="mMax">I tested my max</button>
+          <button type="button" data-mode="zero" aria-pressed="false" data-t="mZero">Can't do one yet</button>
+        </div>
+        <p class="example" data-t="example">Example numbers loaded. Replace them with yours.</p>
+        <div class="row3" id="setsWrap">
+          <div class="inp"><label class="lab" for="sets" data-t="setsLab">Sets</label><input type="text" id="sets" inputmode="numeric" value="3" autocomplete="off"></div>
+          <div class="inp"><label class="lab" for="reps" data-t="repsLab">Reps per set</label><input type="text" id="reps" inputmode="numeric" value="5" autocomplete="off"></div>
+          <div class="inp"><label class="lab" for="rir" data-t="rirLab">Reps left on the last set</label><select id="rir"><option value="0" data-t="rir0">0, all-out (RPE 10)</option><option value="1">1 (RPE 9)</option><option value="2" selected>2 (RPE 8)</option><option value="3">3 (RPE 7)</option><option value="4" data-t="rir4">4 or more (RPE 6)</option></select></div>
+        </div>
+        <div class="row2" id="maxWrap" hidden>
+          <div class="inp"><label class="lab" for="max" data-t="maxLab">Max strict pull-ups</label><input type="text" id="max" inputmode="numeric" value="6" autocomplete="off"></div>
+        </div>
+        <div class="row2" id="holdWrap" hidden>
+          <div class="inp"><label class="lab" for="hold" data-t="holdLab">Hold at the top (seconds)</label><input type="text" id="hold" inputmode="numeric" value="12" autocomplete="off"></div>
+        </div>
+        <p class="private" data-t="private">Everything updates as you type. Nothing you type is sent anywhere.</p>
+      </form>
+    </div>
+    <div class="card result" aria-live="polite">
+      <p class="est" id="rEst"></p>
+      <div class="stats">
+        <div class="stat lvlbox"><span class="k" data-t="kLevel">Your level</span><span class="v" id="rLevel"></span><span class="note" id="rLevelNote"></span></div>
+        <div class="stat"><span class="k" data-t="kSets">Your sets</span><span class="v" id="rSets"></span></div>
+        <div class="stat"><span class="k" data-t="kNext">Next goal</span><span class="v" id="rNext"></span></div>
+      </div>
+      <p class="lab" data-t="ladLab">The road from 0 to 12</p>
+      <div class="ladder" id="ladder"></div>
+      <p class="gap" id="rGap"></p>
+      <div class="share">
+        <p class="lab" data-t="shareLab">Send me your level</p>
+        <p class="muted" data-t="shareP">Tap the button: your level is copied and our Instagram chat opens. Paste it and I'll tell you what I'd work on first.</p>
+        <div class="line"><code id="shareText"></code></div>
+        <a class="btn" id="shareBtn" href="https://ig.me/m/martishih" target="_blank" rel="noopener" data-t="shareBtn">Copy and send on Instagram</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="why" aria-labelledby="h-why">
+    <h3 id="h-why" data-t="whyH">Why pull-ups?</h3>
+    <p class="muted" data-t="whyP">Pull-ups are the number one exercise in most dragon boat fit tests. In my coaching, the more pull-ups a paddler can do, the faster they are in the boat, up to a point, and it's rare to see an athlete who does too many. They also build your grip and your connection to your back and lats.</p>
+  </section>
+
+  <section id="levels" aria-labelledby="h-levels">
+    <div class="head">
+      <p class="eyebrow" data-t="s2eye">2 · The three levels</p>
+      <h2 id="h-levels" data-t="s2h">Train for your number</h2>
+    </div>
+    <div class="levers">
+      <article class="card lever">
+        <span class="no" aria-hidden="true">0</span>
+        <div class="body">
+          <h3 data-t="l0h">At zero: hold, then fight gravity</h3>
+          <p class="muted" data-t="l0p">Jump up to the top and hold as long as you can. When you can't hold on any longer, don't let go: fight gravity all the way down, and keep fighting. Notice where you drop the fastest, and on your next set, try to hold right there. Build up to about 3 hard sets.</p>
+          <div class="how"><span class="k" data-t="l0k">You're close when</span><span data-t="l0v">You can hold the top for about 30 seconds. Can't hold it for even a few seconds? That's when a band makes sense.</span></div>
+        </div>
+      </article>
+      <article class="card lever">
+        <span class="no" aria-hidden="true">1–3</span>
+        <div class="body">
+          <h3 data-t="l1h">One to three: sets of one</h3>
+          <p class="muted" data-t="l1p">Do your pull-ups in sets of just one rep, and mix in holds: about half your sets are a hold at the top for time. In week 1, that's 4 sets: 2 single reps and 2 holds. Add a set slowly.</p>
+        </div>
+      </article>
+      <article class="card lever twist">
+        <span class="no" aria-hidden="true">4–12</span>
+        <div class="body">
+          <p><span class="chip" data-t="twist">The set that takes you from 4 to 12</span></p>
+          <h3 data-t="l2h">Four to 12: sets of half your max, and a density set</h3>
+          <p class="muted" data-t="l2p">Do sets of about half your max: at 4, sets of 2; at 10, sets of 5. Pull every rep as fast as you can. Start with 3 sets and build to about 5. In weeks 3 and 4, if your sets feel easy, add a rep to each set. After the retest, start again at half your new max. Every so often, do a density set: set a timer for 11 to 16 minutes and do as many pull-ups as you can. Keep notes and track it from week to week.</p>
+        </div>
+      </article>
+    </div>
+    <p class="muted" data-t="l3p">Around 12 to 15, it's time to add weight. That's part 2.</p>
+  </section>
+
+  <section class="secret" aria-labelledby="h-road">
+    <p class="eyebrow" data-t="roadEye">The long road</p>
+    <h2 id="h-road" data-t="roadH">The longest road is from 0 to 1</h2>
+    <p class="lead" data-t="roadP">Then your next goal is 1 to 4. And the road from 4 to 12? That takes weeks, not years.</p>
+    <ul>
+      <li data-t="road1"><b>Retest every 4 to 5 weeks,</b> not every time you train, so you can actually see the progress.</li>
+      <li data-t="road2"><b>Bands are for extra volume,</b> or until you can hold the top on your own. After that, don't make them your main tool: you need hard sets at the level you're at right now.</li>
+      <li data-t="road3"><b>Mix up your pulls.</b> Different pull exercises build the muscles for the pull-up. A beginner doesn't need much to improve.</li>
+      <li data-t="road4"><b>Your bodyweight is the weight.</b> In a pull-up you lift your whole body, so leaner paddlers have it easier. Carrying extra weight? The plan still works, it just takes longer, and losing some body fat makes every rep easier.</li>
+    </ul>
+  </section>
+
+  <section id="week" aria-labelledby="h-week">
+    <div class="head">
+      <p class="eyebrow" data-t="s3eye">3 · Your week</p>
+      <h2 id="h-week" data-t="s3h">Your week, at your level</h2>
+      <p class="muted" data-t="s3p">Pull-ups every time you're in the gym, three times a week, then pulldowns and rows. Heavy, light and medium days, so you don't do the same thing three times. Pick a day. Your 4 weeks are right below it.</p>
+    </div>
+    <p class="card" data-t="s3note"><b>This is the pull-up part of your week, not a full workout.</b> It's the main work to build your pull-ups. Keep training the rest of your body around it: legs, pushing and core.</p>
+    <div class="weektabs" role="group" aria-label="Day">
+      <button type="button" data-day="0" aria-pressed="true"><span data-t="d1">Day 1</span><small data-t="d1s">Heavy</small></button>
+      <button type="button" data-day="1" aria-pressed="false"><span data-t="d2">Day 2</span><small data-t="d2s">Light</small></button>
+      <button type="button" data-day="2" aria-pressed="false"><span data-t="d3">Day 3</span><small data-t="d3s">Medium</small></button>
+    </div>
+    <article class="card dcard" id="dayCard"></article>
+    <article class="card dcard" id="planCard"></article>
+    <div class="week5">
+      <p class="lab" style="color:var(--good)" data-t="w5h">Week 5: retest</p>
+      <p data-t="w5p">Test your max, put it in the calculator above, and start again at your new level. Then send me your new number.</p>
+    </div>
+    <ul class="tips">
+      <li data-t="tip1"><span>3 to 6 sets of pull-up work in a workout,</span> holds included, even as your sets get bigger.</li>
+      <li data-t="tip2"><span>2 to 4 sets</span> of each other exercise, by how you feel.</li>
+      <li data-t="tip3"><span>Banded exercises</span> can also be done without the band.</li>
+    </ul>
+  </section>
+
+  <section id="exercises" aria-labelledby="h-ex">
+    <div class="head">
+      <p class="eyebrow" data-t="s4eye">4 · The exercises</p>
+      <h2 id="h-ex" data-t="s4h">The 5 pulls in your plan</h2>
+      <p class="muted" data-t="s4p">Where you see three rep ranges, they do different jobs: 3 to 5 heavy for the strength to do pull-ups, 8 to 12 lighter for muscle, 15+ light for endurance.</p>
+    </div>
+    <p class="card" data-t="s4warm"><b>Warm up with banded scap pulls, leaning back.</b> Press and lean back, chest facing the bar, and pull with your elbows slightly forward, not flared out. From a dead hang your shoulder can feel tight and stuck; leaning back frees it up so it moves smoothly.</p>
+    <ol class="xl">
+      <li class="fav"><div class="body"><p><span class="chip" data-t="favChip">My favourite: the V-grip</span></p><h3 data-t="x2h">Lat pulldowns</h3><span class="for" data-t="x2f">The closest thing to the pull-up</span><ul><li data-t="x2a">With a V-grip, hands together and wrists neutral, I feel my lats way more than on a regular pulldown.</li></ul><div class="rr"><span><b>3–5</b><em data-t="rH">heavy</em></span><span><b>8–12</b><em data-t="rM">lighter</em></span><span><b>15+</b><em data-t="rL">light</em></span></div></div></li>
+      <li><div class="body"><h3 data-t="x3h">Bench pulls</h3><span class="for" data-t="x3f">Lats, traps, biceps, forearms</span><div class="rr"><span><b>3–5</b><em data-t="rH">heavy</em></span><span><b>8–12</b><em data-t="rM">lighter</em></span><span><b>15+</b><em data-t="rL">light</em></span></div></div></li>
+      <li><div class="body"><h3 data-t="x4h">One-arm rows</h3><span class="for" data-t="x4f">Lats, shoulder blades, forearms</span><div class="rr"><span><b>3–5</b><em data-t="rH">heavy</em></span><span><b>8–12</b><em data-t="rM">lighter</em></span><span><b>15+</b><em data-t="rL">light</em></span></div></div></li>
+      <li><div class="body"><h3 data-t="x56h">Body rows and holds</h3><span class="for" data-t="x56f">All the muscles above, plus connective tissue · max reps, then max time</span><ul><li data-t="x6a">Hold at the top. When you can't, hold in the middle, then just before your arms go straight. Or hold one position for time.</li><li data-t="x6b">It gets harder as you lower the bar or raise your feet.</li></ul></div></li>
+      <li><div class="body"><h3 data-t="x9h">Hammer curls</h3><span class="for" data-t="x9f">Brachialis, forearms</span><div class="rr"><span><b>3–5</b><em data-t="rH">heavy</em></span><span><b>8–12</b><em data-t="rM">lighter</em></span><span><b>15+</b><em data-t="rL">light</em></span></div></div></li>
+    </ol>
+    <p class="muted" data-t="s4band"><b>Using a band?</b> Banded holds and negatives work the same way as the ones without. Do a few negatives first to find where you struggle most, then focus your holds on those spots.</p>
+  </section>
+
+  <section id="coach" aria-labelledby="h-coach">
+    <div class="head">
+      <p class="eyebrow" data-t="s5eye">5 · Train with me</p>
+      <h2 id="h-coach" data-t="s5h">Keep climbing with the DB Speed crew</h2>
+      <p class="muted" data-t="s5p">This guide covers your pull-ups. DB Speed covers your whole season.</p>
+    </div>
+    <div class="offers">
+      <article class="card offer main">
+        <p class="eyebrow" data-t="o1eye">DB Speed membership</p>
+        <h3 data-t="o1h">Your program and your community, in one place</h3>
+        <ul class="feats">
+          <li><svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="14" fill="#e5482b"></circle><path d="M8 14.5l4 4 8-9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg><p><b data-t="f1h">A full season, not just pull-ups</b><span data-t="f1p">Bench, pulling, legs and power, in the app. A new week every Monday, built around the race season, with suggested weights from your best logged sets.</span></p></li>
+          <li><svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="14" fill="#e5482b"></circle><path d="M8 14.5l4 4 8-9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg><p><b data-t="f2h">The DB Speed community on Skool</b><span data-t="f2p">Post your lifts, ask questions and follow other paddlers' progress. Training is easier to keep up when your crew is watching.</span></p></li>
+          <li><svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="14" fill="#e5482b"></circle><path d="M8 14.5l4 4 8-9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg><p><b data-t="f3h">Form Check Friday</b><span data-t="f3p">Film a lift, post it, and I send you video feedback.</span></p></li>
+          <li><svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="14" fill="#e5482b"></circle><path d="M8 14.5l4 4 8-9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg><p><b data-t="f4h">Add-ons coming</b><span data-t="f4p">PERG, OC and mobility, at no extra cost.</span></p></li>
+        </ul>
+        <p class="fine" data-t="o1fine">First 7 days free. Founding members keep their price for as long as they stay.</p>
+        <div class="btns"><a class="btn" href="https://app.dbspeed.app/join" target="_blank" rel="noopener" data-t="o1btn">Start your free week</a></div>
+        <a class="textlink" href="#level" data-t="o2btn">Not sure yet? Send me your level first</a>
+      </article>
+      <div class="more small">
+        <p data-t="o3"><b>1:1 coaching:</b> a program built around you, with every lift reviewed on video. DM me DBSPEED on Instagram.</p>
+        <p data-t="o4"><b>Captains and coaches:</b> gym programs for whole crews, like the Immortals. Email hello@dbspeed.app.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="notes">
+    <p data-t="n1">This guide is general training information. If you have pain or an injury, check with a health professional before you start.</p>
+    <p class="foot">DB Speed · Montréal · dbspeed.app</p>
+  </footer>
+</main>
+
+<script>
+(function(){
+var FR={
+wEye:"Voici ton guide",wH:"Merci d'avoir demandé mon guide de tractions",wP:"Commence par la section 1 : entre ce que tu fais au gym et tu obtiens ton niveau et tes séries.",
+w1h:"Tu me suis déjà?",w1p:"Le prochain guide est pour 12 à 30 tractions. Suis-moi pour ne pas le manquer.",
+w2h:"Reçois le prochain guide par courriel",w2p:"Laisse ton courriel et je t'envoie le prochain dès qu'il sort, plus un conseil d'entraînement de temps en temps.",
+emailLab:"Ton courriel",mailBtn:"Envoie-le-moi",consent:"Oui, DB Speed peut m'envoyer des guides et des conseils d'entraînement par courriel. Je peux me désabonner en tout temps.",
+heroEye:"Guide gratuit · Le guide des tractions du pagayeur",h1:"Partie 1 : de zéro à 12 tractions",heroA:"Ses tractions, jour 1",heroB:"Ses tractions maintenant",
+lead:"Tu n'arrives pas encore à faire une traction, ou tu bloques à quelques-unes? La façon de t'entraîner dépend de ton nombre. Avec cette méthode, j'ai amené beaucoup de mes athlètes de zéro à plus de 10. L'une d'elles, une pagayeuse de 135 lb des équipes féminine et mixte d'Équipe Canada, est passée de 0 à 26.",
+cred1:"Champion du monde Premier avec Équipe Canada",cred2:"Préparateur physique des 22 Dragons, or aux CCWC",cred3:"Mon meilleur aux tests d'Équipe Canada : 32 tractions à 190 lb",
+nav1:"Ton niveau",nav2:"Les 3 niveaux",nav3:"Ta semaine",nav4:"Les exercices",nav5:"T'entraîner avec moi",
+s1eye:"1 · Ton niveau",s1h:"Pars de ce que tu fais maintenant",s1p:"Entre tes tractions strictes au gym : combien de séries, combien de répétitions, et combien tu aurais pu en faire de plus à ta dernière série. Ça estime ton max et te donne ton niveau et ton plan. Tu as testé ton max, ou tu n'en fais pas encore? Choisis plutôt cette option.",mSets:"Mes séries au gym",mMax:"J'ai testé mon max",mZero:"Pas encore une",setsLab:"Séries",repsLab:"Rép. par série",rirLab:"Rép. en réserve à la dernière série",rir0:"0, à fond (RPE 10)",rir4:"4 ou plus (RPE 6)",
+example:"Exemple chargé. Remplace-le par tes chiffres.",maxLab:"Tractions strictes max",holdLab:"Maintien en haut (secondes)",private:"Tout se met à jour pendant que tu tapes. Rien n'est envoyé.",
+kLevel:"Ton niveau",kSets:"Tes séries",kNext:"Prochain objectif",ladLab:"La route de 0 à 12",
+shareLab:"Envoie-moi ton niveau",shareP:"Touche le bouton : ton niveau est copié et notre conversation Instagram s'ouvre. Colle-le et je te dis sur quoi je travaillerais en premier.",shareBtn:"Copier et envoyer sur Instagram",
+whyH:"Pourquoi les tractions?",whyP:"Les tractions sont l'exercice numéro un de la plupart des tests physiques en bateau-dragon. Dans mon coaching, plus un pagayeur fait de tractions, plus il est rapide dans le bateau, jusqu'à un certain point, et c'est rare de voir un athlète qui en fait trop. Elles bâtissent aussi ta prise et ta connexion avec ton dos et tes dorsaux.",
+s2eye:"2 · Les trois niveaux",s2h:"Entraîne-toi selon ton nombre",
+l0h:"À zéro : tiens, puis combats la gravité",l0p:"Saute jusqu'en haut et tiens aussi longtemps que possible. Quand tu n'en peux plus, ne lâche pas : combats la gravité jusqu'en bas, et continue de te battre. Remarque où tu descends le plus vite, et à ta prochaine série, essaie de tenir à cet endroit. Monte jusqu'à environ 3 séries difficiles.",
+l0k:"Tu es proche quand",l0v:"Tu peux tenir en haut environ 30 secondes. Tu ne tiens même pas quelques secondes? C'est là qu'un élastique a du sens.",
+l1h:"Une à trois : des séries d'une",l1p:"Fais tes tractions en séries d'une seule répétition, et ajoute des maintiens : environ la moitié de tes séries sont un maintien en haut pour le temps. À la semaine 1, ça fait 4 séries : 2 répétitions simples et 2 maintiens. Ajoute une série lentement.",
+twist:"La série qui t'amène de 4 à 12",l2h:"Quatre à 12 : des séries de la moitié de ton max, et une série densité",
+l2p:"Fais des séries d'environ la moitié de ton max : à 4, des séries de 2; à 10, des séries de 5. Tire chaque répétition le plus vite possible. Commence avec 3 séries et monte jusqu'à environ 5. Aux semaines 3 et 4, si tes séries sont faciles, ajoute une répétition à chaque série. Après le retest, recommence à la moitié de ton nouveau max. De temps en temps, fais une série densité : mets une minuterie de 11 à 16 minutes et fais le plus de tractions possible. Prends des notes et suis-la d'une semaine à l'autre.",
+l3p:"Vers 12 à 15, c'est le temps d'ajouter du poids. Ce sera la partie 2.",
+roadEye:"La longue route",roadH:"La route la plus longue, c'est de 0 à 1",roadP:"Ensuite, ton prochain objectif, c'est de 1 à 4. Et la route de 4 à 12? Ça prend des semaines, pas des années.",
+road1:"<b>Reteste aux 4 à 5 semaines,</b> pas à chaque entraînement, pour vraiment voir tes progrès.",
+road2:"<b>Les élastiques servent à ajouter du volume,</b> ou jusqu'à ce que tu tiennes en haut seul. Après ça, n'en fais pas ton outil principal : tu as besoin de séries difficiles au niveau où tu es en ce moment.",
+road3:"<b>Varie tes tirages.</b> Différents exercices de tirage bâtissent les muscles de la traction. Un débutant n'a pas besoin de grand-chose pour progresser.",
+road4:"<b>Ton poids, c'est la charge.</b> À la traction, tu soulèves tout ton corps, alors c'est plus facile pour les pagayeurs plus minces. Tu portes un peu plus de poids? Le plan fonctionne quand même, ça prend juste plus de temps, et perdre un peu de gras rend chaque répétition plus facile.",
+s3eye:"3 · Ta semaine",s3h:"Ta semaine, à ton niveau",s3p:"Des tractions chaque fois que tu vas au gym, trois fois par semaine, puis des tirages à la poulie et des rames. Une journée lourde, une légère et une moyenne, pour ne pas faire la même chose trois fois. Choisis une journée. Tes 4 semaines sont juste en dessous.",
+s3note:"<b>C'est la partie tractions de ta semaine, pas un entraînement complet.</b> C'est le travail principal pour bâtir tes tractions. Continue d'entraîner le reste de ton corps autour : jambes, poussée et tronc.",d1:"Jour 1",d1s:"Lourd",d2:"Jour 2",d2s:"Léger",d3:"Jour 3",d3s:"Moyen",
+w5h:"Semaine 5 : reteste",w5p:"Teste ton max, entre-le dans le calculateur plus haut et recommence à ton nouveau niveau. Puis envoie-moi ton nouveau nombre.",
+tip1:"<span>3 à 6 séries de travail de tractions par entraînement,</span> maintiens compris, même quand tes séries grossissent.",tip2:"<span>2 à 4 séries</span> de chaque autre exercice, selon comment tu te sens.",tip3:"<span>Les exercices avec élastique</span> peuvent aussi se faire sans.",
+s4eye:"4 · Les exercices",s4h:"Les 5 tirages de ton plan",s4warm:"<b>Échauffe-toi avec des tirages scapulaires avec élastique, penché vers l'arrière.</b> Pousse et penche-toi vers l'arrière, la poitrine face à la barre, et tire les coudes légèrement vers l'avant, pas ouverts. Suspendu bras tendus, l'épaule peut sembler serrée et bloquée; te pencher vers l'arrière libère de l'espace pour qu'elle bouge en douceur.",x56h:"Tractions inversées et maintiens",x56f:"Tous les muscles ci-dessus, plus les tissus conjonctifs · max de répétitions, puis temps max",s4band:"<b>Tu utilises un élastique?</b> Les maintiens et les négatives avec élastique fonctionnent de la même façon. Fais d'abord quelques négatives pour trouver où tu as le plus de difficulté, puis concentre tes maintiens à ces endroits.",s4p:"Quand tu vois trois plages de répétitions, elles ont chacune leur rôle : 3 à 5 lourd pour la force de faire des tractions, 8 à 12 plus léger pour le muscle, 15+ léger pour l'endurance.",
+x1h:"Tirage scapulaire avec élastique, penché vers l'arrière",x1f:"Le début de chaque traction",x1a:"Pousse et penche-toi vers l'arrière, la poitrine face à la barre.",x1b:"Tire vers la barre, les coudes légèrement vers l'avant, pas ouverts.",x1c:"Suspendu bras tendus, l'épaule peut sembler serrée et bloquée. Te pencher vers l'arrière libère de l'espace pour qu'elle bouge en douceur.",
+favChip:"Mon préféré : la prise en V",x2h:"Tirage à la poulie haute",x2f:"Ce qui ressemble le plus à la traction",x2a:"Avec une prise en V, les mains ensemble et les poignets neutres, je sens beaucoup plus mes dorsaux qu'avec un tirage ordinaire.",
+rH:"lourd",rM:"plus léger",rL:"léger",
+x3h:"Bench pulls",x3f:"Dorsaux, trapèzes, biceps, avant-bras",x4h:"Rame à un bras",x4f:"Dorsaux, omoplates, avant-bras",
+x5h:"Tractions inversées",x5f:"Tous les muscles ci-dessus · max de répétitions",
+x6h:"Maintiens en traction inversée",x6f:"Tissus conjonctifs · temps max",x6a:"Tiens en haut. Quand tu n'en peux plus, tiens au milieu, puis juste avant que tes bras soient tendus. Ou tiens une seule position pour un temps.",x6b:"C'est plus dur quand tu baisses la barre ou que tu surélèves tes pieds.",
+x7h:"Tractions avec élastique",x7f:"Volume · max de répétitions, n'importe quel élastique",
+x8h:"Maintiens avec élastique",x8f:"Tissus conjonctifs · temps max",x8a:"Tiens en haut, puis au milieu quand tu ne peux plus tenir en haut, puis juste avant d'être suspendu bras tendus. Ou tiens une seule position pour un temps.",
+x9h:"Curls marteau",x9f:"Brachial, avant-bras",
+x10h:"Négatives avec élastique",x10f:"Trouve ton point faible",x10a:"Utilise-les d'abord pour trouver où tu as le plus de difficulté, puis concentre tes maintiens à ces positions.",
+s5eye:"5 · T'entraîner avec moi",s5h:"Continue de grimper avec l'équipe DB Speed",s5p:"Ce guide couvre tes tractions. DB Speed couvre toute ta saison.",
+o1eye:"Abonnement DB Speed",o1h:"Ton programme et ta communauté, au même endroit",
+f1h:"Une saison complète, pas juste des tractions",f1p:"Développé couché, tirage, jambes et puissance, dans l'application. Une nouvelle semaine chaque lundi, bâtie autour de la saison de course, avec des charges suggérées à partir de tes meilleures séries.",
+f2h:"La communauté DB Speed sur Skool",f2p:"Publie tes levées, pose tes questions et suis les progrès des autres pagayeurs. C'est plus facile de rester constant quand ton équipe te regarde.",
+f3h:"Form Check Friday",f3p:"Filme une levée, publie-la, et je t'envoie une rétroaction en vidéo.",
+f4h:"Des ajouts à venir",f4p:"PERG, OC et mobilité, sans frais supplémentaires.",
+o1fine:"Les 7 premiers jours sont gratuits. Les membres fondateurs gardent leur prix tant qu'ils restent.",o1btn:"Commence ta semaine gratuite",o2btn:"Tu hésites? Envoie-moi d'abord ton niveau",
+moreEye:"D'autres façons de travailler avec moi",o3:"<b>Coaching 1:1 :</b> un programme bâti pour toi, avec chaque levée revue en vidéo. Écris-moi DBSPEED sur Instagram.",
+o4:"<b>Capitaines et entraîneurs :</b> des programmes de gym pour des équipes complètes, comme les Immortals. Écris à hello@dbspeed.app.",dmBtn:"Envoie-moi un message",
+n1:"Ce guide présente de l'information générale sur l'entraînement. Si tu as de la douleur ou une blessure, consulte un professionnel de la santé avant de commencer."
+};
+var EN={}; var lang='en';
+document.querySelectorAll('[data-t]').forEach(function(el){ if(!(el.dataset.t in EN)) EN[el.dataset.t]=el.innerHTML; });
+var T={
+ en:{lv:["Zero","Zero, with a band","One to three","Four to 12","Add weight","15+: amazing"],
+  note:["Hold, then fight gravity down","Band holds until you can hold the top","Sets of one, plus holds","Sets of half your max","Time to add weight","This guide isn't for you"],
+  rungs:["Zero","1 to 3","4 to 12","12 to 15"], rv:["0","1–3","4–12","12–15"],
+  holdS:"s hold", sets1:"1 rep + holds", setsOf:"Sets of ", weight:"+ weight", toGo:" more to reach ", reached:"15+ pull-ups: amazing. This guide is for 0 to 15, so it isn't for you.",
+  share:function(m,h,l){return (m===0?"My pull-ups: 0, I can hold the top for "+h+" s":"My pull-ups: "+m)+". Level: "+l+". (pull-up guide)";},
+  dayTitle:["Heavy","Light","Medium"], dayPurpose:["Your hardest day: your pull-up work, then heavy pulldowns and rows.","Your lightest day: your pull-up work, then light, high-rep pulls.","In between: your pull-up work, then medium pulls."],
+  colA:"Exercise", colB:"Sets × reps", est:"Estimated max: about ", estMx:"Your max: ", estN:" pull-ups. A rough guess: you retest your real max in week 5.", estN1:" pull-up. A rough guess: you retest your real max in week 5.", estMxN:" pull-ups.", estMxN1:" pull-up.", noReps:"No full reps yet? Tap “Can't do one yet”.", planH:"Your 4 weeks", planP:"Your pull-up work, week by week, on every gym day. The other exercises stay as above."},
+ fr:{lv:["Zéro","Zéro, avec élastique","Une à trois","Quatre à 12","Ajoute du poids","15+ : impressionnant"],
+  note:["Tiens, puis combats la gravité","Maintiens avec élastique jusqu'à tenir en haut","Séries d'une, plus des maintiens","Séries de la moitié de ton max","C'est le temps d'ajouter du poids","Ce guide n'est pas pour toi"],
+  rungs:["Zéro","1 à 3","4 à 12","12 à 15"], rv:["0","1–3","4–12","12–15"],
+  holdS:" s en haut", sets1:"1 rép. + maintiens", setsOf:"Séries de ", weight:"+ poids", toGo:" de plus pour atteindre ", reached:"15+ tractions : impressionnant. Ce guide est pour 0 à 15, alors il n'est pas pour toi.",
+  share:function(m,h,l){return (m===0?"Mes tractions : 0, je tiens en haut "+h+" s":"Mes tractions : "+m)+". Niveau : "+l+". (guide tractions)";},
+  dayTitle:["Lourd","Léger","Moyen"], dayPurpose:["Ta journée la plus dure : ton travail de tractions, puis du tirage et des rames lourds.","Ta journée la plus légère : ton travail de tractions, puis des tirages légers avec beaucoup de répétitions.","Entre les deux : ton travail de tractions, puis des tirages moyens."],
+  colA:"Exercice", colB:"Séries × rép.", est:"Max estimé : environ ", estMx:"Ton max : ", estN:" tractions. Une estimation : tu retestes ton vrai max à la semaine 5.", estN1:" traction. Une estimation : tu retestes ton vrai max à la semaine 5.", estMxN:" tractions.", estMxN1:" traction.", noReps:"Pas encore de répétition complète? Touche « Pas encore une ».", planH:"Tes 4 semaines", planP:"Ton travail de tractions, semaine par semaine, à chaque journée de gym. Les autres exercices restent comme plus haut."}
+};
+function num(id){var v=parseInt(String(document.getElementById(id).value).replace(/[^0-9]/g,''),10);return isNaN(v)?0:Math.min(v,99);}
+var day=0, mode='sets';
+function rirVal(){return +document.getElementById('rir').value||0;}
+function estMax(){ if(mode==='zero') return 0; if(mode==='max') return num('max'); var r=num('reps'), s=num('sets'); if(r===0) return 0; return Math.min(99, r+rirVal()+(s>=3?1:0)); }
+function planOf(L,m){
+  var en=lang==='en', w=en?'Week ':'Semaine ', S=en?' sets':' séries';
+  if(L===0) return [[w+1,'2'+S,en?'Hold the top, then fight gravity all the way down':'Tiens en haut, puis combats la gravité jusqu\'en bas'],[w+2,'3'+S,''],[w+3,'3'+S,en?'Hold where you dropped fastest last week':'Tiens là où tu descendais le plus vite la semaine passée'],[w+4,'3'+S,en?'Try to beat your best hold':'Essaie de battre ton meilleur maintien']];
+  if(L===1) return [[w+1,'2'+S,en?'Banded hold, then a banded negative':'Maintien avec élastique, puis une négative avec élastique'],[w+2,'3'+S,''],[w+3,'3'+S,en?'A lighter band if you can':'Un élastique plus léger si tu peux'],[w+4,'3'+S,en?'Try one hold with no band':'Essaie un maintien sans élastique']];
+  var H=en?' holds':' maintiens';
+  if(L===2) return [[w+1,'2 × 1 + 2'+H,en?'Each rep fast and clean. Holds at the top, as long as you can':'Chaque rép. rapide et propre. Maintiens en haut, le plus longtemps possible'],[w+2,'3 × 1 + 2'+H,''],[w+3,'3 × 1 + 2'+H,en?'Hold a bit longer than last week':'Tiens un peu plus longtemps que la semaine passée'],[w+4,'4 × 1 + 2'+H,'']];
+  var s=Math.max(2,Math.floor(Math.min(m,15)/2));
+  var rows=[[w+1,'3 × '+s,en?'Pull every rep as fast as you can':'Tire chaque rép. le plus vite possible'],[w+2,'4 × '+s,en?'Day 3: swap these for an 11-minute density set':'Jour 3 : remplace-les par une série densité de 11 minutes'],[w+3,'4 × '+s+'–'+(s+1),en?'Easy last week? Add 1 rep per set':'Facile la semaine passée? Ajoute 1 rép. par série'],[w+4,'5 × '+s+'–'+(s+1),en?'Day 3: swap these for a 14-minute density set':'Jour 3 : remplace-les par une série densité de 14 minutes']];
+  if(L>=4) rows[0][2]=en?'Pull every rep as fast as you can. Weighted pull-ups come in part 2; until then, keep this plan.':'Tire chaque rép. le plus vite possible. Les tractions lestées viennent dans la partie 2; d\'ici là, garde ce plan.';
+  return rows;
+}
+function levelOf(m,h){ if(m===0) return h<5?1:0; if(m<4) return 2; if(m<12) return 3; if(m<=15) return 4; return 5; }
+function pullWork(L,m){
+  var en=lang==='en';
+  if(L===0) return {n:en?"Pull-up hold + fight-gravity negative":"Maintien en haut + négative en combattant la gravité", d:en?"Hold the top as long as you can, then fight it all the way down":"Tiens en haut le plus longtemps possible, puis combats jusqu'en bas", s:en?"Up to 3 hard sets":"Jusqu'à 3 séries dures"};
+  if(L===1) return {n:en?"Banded hold + banded negative":"Maintien + négative avec élastique", d:en?"Until you can hold the top on your own for a few seconds":"Jusqu'à ce que tu tiennes en haut seul quelques secondes", s:en?"Up to 3 hard sets":"Jusqu'à 3 séries dures"};
+  if(L===2) return {n:en?"Pull-ups, sets of one + holds":"Tractions, séries d'une + maintiens", d:en?"About half your sets are holds at the top for time":"Environ la moitié de tes séries sont des maintiens en haut pour le temps", s:en?"4–6 sets":"4–6 séries"};
+  if(L===3){var s=Math.max(2,Math.floor(m/2)); return {n:en?"Pull-ups, sets of half your max":"Tractions, séries de la moitié de ton max", d:en?"Day 3 in weeks 2 and 4: a density set instead (see your 4 weeks below)":"Jour 3, semaines 2 et 4 : une série densité à la place (vois tes 4 semaines plus bas)", s:"3–5 × "+s};}
+  var s2=Math.max(2,Math.floor(Math.min(m,15)/2)); return {n:en?"Pull-ups, sets of half your max":"Tractions, séries de la moitié de ton max", d:en?"Weighted pull-ups come in part 2":"Les tractions lestées viennent dans la partie 2", s:"3–5 × "+s2};
+}
+var ACC={
+ en:[[["Lat pulldown (V-grip)","3–5 reps, heavy"],["Bench pull","3–5 reps, heavy"],["Hammer curls","3–5 reps, heavy"]],
+     [["Lat pulldown (V-grip)","15+ reps, light"],["One-arm row","15+ reps, light"],["Body rows","max reps"]],
+     [["Lat pulldown (V-grip)","8–12 reps, lighter"],["One-arm row","8–12 reps, lighter"],["Body row holds","max time"]]],
+ fr:[[["Tirage poulie (prise en V)","3–5 rép., lourd"],["Bench pull","3–5 rép., lourd"],["Curls marteau","3–5 rép., lourd"]],
+     [["Tirage poulie (prise en V)","15+ rép., léger"],["Rame à un bras","15+ rép., léger"],["Tractions inversées","max de rép."]],
+     [["Tirage poulie (prise en V)","8–12 rép., plus léger"],["Rame à un bras","8–12 rép., plus léger"],["Maintiens en traction inversée","temps max"]]]
+};
+function render(){
+  var m=estMax(), h=num('hold'), t=T[lang];
+  document.getElementById('setsWrap').hidden = mode!=='sets';
+  document.getElementById('maxWrap').hidden = mode!=='max';
+  document.getElementById('holdWrap').hidden = mode!=='zero';
+  var est=document.getElementById('rEst');
+  if(mode==='sets') est.innerHTML = num('reps')===0 ? t.noReps : t.est+'<b>'+m+'</b>'+(m===1?t.estN1:t.estN);
+  else if(mode==='max') est.innerHTML = t.estMx+'<b>'+m+'</b>'+(m===1?t.estMxN1:t.estMxN);
+  else est.innerHTML='';
+  est.hidden = mode==='zero';
+  var L=levelOf(m,h);
+  document.getElementById('rLevel').textContent=t.lv[L];
+  document.getElementById('rLevelNote').textContent=t.note[L];
+  var sets = (mode==='sets'&&num('reps')===0) ? '—' : L===0||L===1 ? h+t.holdS : L===2 ? t.sets1 : t.setsOf+Math.max(2,Math.floor(Math.min(m,15)/2));
+  document.getElementById('rSets').textContent=sets;
+  var next = m===0?1 : m<4?4 : m<12?12 : m<=15?15 : 30;
+  document.getElementById('rNext').textContent=next;
+  var marks=[0,1,4,12,15], tops=[1,4,12,15,30], cur= m===0?0 : m<4?1 : m<12?2 : m<=15?3 : 4;
+  var lad=''; for(var i=0;i<4;i++){ var w=Math.round(Math.min(1,Math.max(0,(m- (i===0?-1:marks[i]-1))/(tops[i]-(i===0?-1:marks[i]-1))))*100); if(i<cur) w=100; if(i>cur) w=0; if(i===0&&m===0) w=Math.min(100,Math.round(h/30*100));
+    lad+='<div class="rung'+(i<cur?' hit':'')+(i===cur?' cur':'')+'"><span class="n">'+t.rungs[i]+'</span><span class="bar"><i style="width:'+w+'%"></i></span><span class="v">'+t.rv[i]+'</span></div>'; }
+  document.getElementById('ladder').innerHTML=lad;
+  var gap=document.getElementById('rGap');
+  if(m>15) gap.textContent=t.reached;
+  else if(m===0) gap.innerHTML=lang==='en'?'<b>'+Math.max(0,30-h)+' s</b> more hold to be close to your first rep':'<b>'+Math.max(0,30-h)+' s</b> de maintien de plus pour être proche de ta première';
+  else gap.innerHTML='<b>+'+(next-m)+'</b>'+t.toGo+next;
+  var shr=t.share(m,h,t.lv[L]);
+  if(mode==='sets' && m>0) shr=(lang==='en'?'My pull-ups: '+num('sets')+' × '+num('reps')+', '+rirVal()+' left on the last set (about '+m+' max). Level: ':'Mes tractions : '+num('sets')+' × '+num('reps')+', '+rirVal()+' en réserve à la dernière série (environ '+m+' max). Niveau : ')+t.lv[L]+(lang==='en'?'. (pull-up guide)':'. (guide tractions)');
+  document.getElementById('shareText').textContent=shr;
+  var past = L===5;
+  if(L===4 && m>=15){ document.getElementById('rNext').textContent=lang==='en'?'Part 2':'Partie 2'; document.getElementById('rGap').textContent=lang==='en'?'You\'re at the top of this program. Part 2 is next.':'Tu es au sommet de ce programme. La partie 2 est la suite.'; }
+  ['.weektabs','#planCard','.week5','.tips','[data-t=s3p]','[data-t=s3note]'].forEach(function(q){var el=document.querySelector(q); if(el) el.hidden=past;});
+  if(past){
+    var en=lang==='en';
+    document.getElementById('rSets').textContent='—';
+    document.getElementById('rNext').textContent=en?'Part 2':'Partie 2';
+    document.getElementById('dayCard').innerHTML='<div class="dhead"><span class="dnum">'+(en?'15+ pull-ups: amazing':'15+ tractions : impressionnant')+'</span></div><p>'+(en?(mode==='max'?'':'About ')+m+' pull-ups is a great number. This guide is built for 0 to 15, so it isn\'t for you. Part 2 (12 to 30, with weight) is coming. Until then, send me your number and I\'ll tell you what I\'d work on.':(mode==='max'?'':'Environ ')+m+' tractions, c\'est un super nombre. Ce guide est bâti pour 0 à 15, alors il n\'est pas pour toi. La partie 2 (12 à 30, avec du poids) s\'en vient. D\'ici là, envoie-moi ton nombre et je te dis sur quoi je travaillerais.')+'</p><a class="btn" href="#level">'+(en?'Send me your number':'Envoie-moi ton nombre')+'</a>';
+    return;
+  }
+  // day card
+  var pw=pullWork(L,m), acc=ACC[lang][day];
+  var cls=['heavy','light','medium'][day];
+  var rows='<li class="main"><span class="exn">'+pw.n+'<small>'+pw.d+'</small></span><span class="sx">'+pw.s+'</span></li>';
+  acc.forEach(function(a){ rows+='<li><span class="exn">'+a[0]+'</span><span class="sx" style="font-size:18px">'+a[1]+'</span></li>'; });
+  document.getElementById('dayCard').innerHTML='<div class="dhead"><span class="dnum">'+(lang==='en'?'Day ':'Jour ')+(day+1)+'</span><span class="pill '+cls+'">'+t.dayTitle[day]+'</span></div><p class="purpose">'+t.dayPurpose[day]+'</p><div class="exhead"><span>'+t.colA+'</span><span>'+t.colB+'</span></div><ul class="ex">'+rows+'</ul>';
+  var pr=''; planOf(L,m).forEach(function(x){ pr+='<li><span class="exn">'+x[0]+(x[2]?'<small>'+x[2]+'</small>':'')+'</span><span class="sx" style="font-size:20px">'+x[1]+'</span></li>'; });
+  document.getElementById('planCard').innerHTML='<div class="dhead"><span class="dnum">'+t.planH+'</span></div><p class="purpose">'+t.planP+'</p><ul class="ex">'+pr+'</ul>';
+}
+['max','hold','sets','reps'].forEach(function(id){document.getElementById(id).addEventListener('input',render);});
+document.getElementById('rir').addEventListener('change',render);
+document.querySelectorAll('.modes button').forEach(function(b){b.addEventListener('click',function(){mode=b.dataset.mode;document.querySelectorAll('.modes button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});render();});});
+document.getElementById('calc').addEventListener('submit',function(e){e.preventDefault();});
+document.querySelectorAll('.weektabs button').forEach(function(b){b.addEventListener('click',function(){day=+b.dataset.day;document.querySelectorAll('.weektabs button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});render();});});
+document.getElementById('shareBtn').addEventListener('click',function(){var txt=document.getElementById('shareText').textContent;try{navigator.clipboard.writeText(txt).catch(function(){});}catch(e){} var r=document.createRange();r.selectNodeContents(document.getElementById('shareText'));var s=window.getSelection();s.removeAllRanges();s.addRange(r);});
+function setLang(l){lang=l;var d=l==='fr'?FR:EN;document.querySelectorAll('[data-t]').forEach(function(el){var k=el.dataset.t;if(d[k]!=null) el.innerHTML=d[k];});
+  document.documentElement.lang=l;document.getElementById('langEn').setAttribute('aria-pressed',l==='en');document.getElementById('langFr').setAttribute('aria-pressed',l==='fr');
+  render();}
+document.getElementById('langEn').addEventListener('click',function(){setLang('en');});
+document.getElementById('langFr').addEventListener('click',function(){setLang('fr');});
+if(/^#fr/i.test(location.hash)){setLang('fr');}else{render();}
+})();
+</script>
+</body>
+</html>
