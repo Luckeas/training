@@ -184,6 +184,17 @@ section{display:grid;gap:12px;padding-block:18px}
 .colhead{display:grid;grid-template-columns:28px minmax(0,1fr) 74px 62px 46px;gap:8px;font-family:var(--display);font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);text-align:center}
 .colhead span:nth-child(2){text-align:left}
 .note{width:100%;border:1px dashed var(--line);background:transparent;border-radius:10px;padding:10px 12px;font-size:14px}
+textarea.note.wn{display:block;resize:none;overflow:hidden;font:inherit;font-size:14px;line-height:1.4;color:inherit;min-height:42px;max-height:9.5em}
+textarea.note.wn:focus{max-height:none}
+textarea.note.wn.long:not(:focus){overflow-y:auto}
+.cnote{margin:0;font-size:13px;line-height:1.4;color:var(--muted);white-space:pre-line}
+.cnote b{font-family:var(--display);font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-right:6px}
+.wncard{display:grid;gap:12px;padding:16px}
+.wncard h3{margin:0}
+.wnrecap{display:grid;gap:8px}
+.wnr{display:grid;gap:2px;font-size:14px;line-height:1.4}
+.wnr b{font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.wnr span{white-space:pre-line;overflow-wrap:anywhere}
 .ssflag{font-family:var(--display);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:12px;color:var(--amber)}
 
 /* circuit */
@@ -680,6 +691,13 @@ const LIVE = !!(API_URL && TOKEN);
 /* Demo only: ?oc adds sample paddling days (OC and PERG) to the sample week, saved apart from the normal demo,
    so the public demo used in videos stays as it is. */
 const OC_DEMO = !LIVE && /[?&]oc\b/i.test(location.search);
+/* Workout notes (pilot, Nov 17): the Training App sends athlete.wnotes from Copies column T ("Workout notes").
+   On: each exercise shows the coach's note as text with the athlete's own note box under it (saved after "✎ "
+   in column P, like paddling rows), and the end of each gym day gets a "Workout notes" card: a recap of the
+   exercise notes plus a note for the whole session, saved in column O of the "Day N" row.
+   Demo only: ?wnotes turns it on with sample data, saved apart from the normal demo. */
+const WN_DEMO = !LIVE && /[?&]wnotes\b/i.test(location.search);
+let WNOTES = WN_DEMO;
 // Team branding: logo + accent colour, picked from the athlete's team (Admin → Copies column B).
 const BRANDS={
   immortals:{logo:"logos/immortals.png",icon:"logos/immortals-icon.png",accent:"#c4492d",ink:"#fff"},
@@ -730,7 +748,7 @@ const STR = {
   ocSession:"OC session",ergSession:"PERG session",fTime:"Time",fDist:"Meters",fSpm:"SPM",fHr:"HR",fW:"Watts",addSet:"+ Add a set",yourSet:"Your set",
   typeFirst:"Type your time or distance first.",checkVal:"That number looks off. Type it again?",session:"Session",sesTime:"Total min",sesDist:"km",sesHr:"Avg HR",
   sesRpe:"How hard was it? (RPE)",sesLink:"Strava or Garmin link (optional)",saveSes:"Save session",updSes:"Update session",sesSaved:"Session saved",
-  load:"Load",loadHow:"Load = minutes × RPE",water:"On the water",sessionsWk:"Sessions this week",kmWk:"km this week",pNoteFree:"What did you do? (optional)",
+  load:"Load",loadHow:"Load = minutes × RPE",water:"On the water",sessionsWk:"Sessions this week",kmWk:"km this week",pNoteFree:"What did you do? (optional)",wnMine:"Your notes (optional)",wnTitle:"Workout notes",wnDay:"How did today go? Anything for your coach?",wnEmpty:"Notes you add on each exercise show up here.",wnCoach:"Coach",
   logHint:"Log each set from your watch: time, meters, stroke rate (SPM), heart rate. Leave blank what you don't have.",badLink:"Paste a full link that starts with https://",
   shotBtn:"Fill from a screenshot",shotTip:"Works best with the Laps screen (Garmin Connect or Strava). The app fills your sets, you check them.",shotReading:"Reading your screenshot…",shotTitle:"From your screenshot",shotFill:"Fill in my sets",shotCancel:"Cancel",shotNoLap:"no lap found",
   shotNoSets:"No interval laps found, so only the session totals. Next time, press Lap at each interval.",shotAuto:d=>`Your watch made a lap every ${d} on its own, so your intervals aren’t in the laps: only the session totals. Next time, press Lap at each interval.`,
@@ -746,7 +764,7 @@ const STR = {
   ocSession:"Séance OC",ergSession:"Séance PERG",fTime:"Temps",fDist:"Mètres",fSpm:"Cad.",fHr:"FC",fW:"Watts",addSet:"+ Ajouter une série",yourSet:"Ta série",
   typeFirst:"Écris ton temps ou ta distance d’abord.",checkVal:"Ce chiffre semble bizarre. Réessaie ?",session:"Séance",sesTime:"Min totales",sesDist:"km",sesHr:"FC moy.",
   sesRpe:"C’était dur comment ? (RPE)",sesLink:"Lien Strava ou Garmin (optionnel)",saveSes:"Enregistrer la séance",updSes:"Mettre à jour la séance",sesSaved:"Séance enregistrée",
-  load:"Charge",loadHow:"Charge = minutes × RPE",water:"Sur l’eau",sessionsWk:"Séances cette semaine",kmWk:"km cette semaine",pNoteFree:"Qu’as-tu fait ? (optionnel)",
+  load:"Charge",loadHow:"Charge = minutes × RPE",water:"Sur l’eau",sessionsWk:"Séances cette semaine",kmWk:"km cette semaine",pNoteFree:"Qu’as-tu fait ? (optionnel)",wnMine:"Tes notes (optionnel)",wnTitle:"Notes de la séance",wnDay:"Comment s’est passée la séance ? Quelque chose à dire à ton coach ?",wnEmpty:"Les notes que tu ajoutes à chaque exercice apparaissent ici.",wnCoach:"Coach",
   logHint:"Note chaque série avec ta montre : temps, mètres, cadence, fréquence cardiaque. Laisse vide ce que tu n’as pas.",badLink:"Colle un lien complet qui commence par https://",
   shotBtn:"Remplir avec une capture",shotTip:"Ça marche mieux avec l’écran des tours (Laps) de Garmin Connect ou Strava. L’app remplit tes séries, tu vérifies.",shotReading:"Lecture de ta capture…",shotTitle:"Selon ta capture",shotFill:"Remplir mes séries",shotCancel:"Annuler",shotNoLap:"aucun tour trouvé",
   shotNoSets:"Aucun intervalle trouvé dans les tours, donc seulement les totaux. La prochaine fois, appuie sur Lap à chaque intervalle.",shotAuto:d=>`Ta montre a fait un tour automatique à chaque ${d}, donc tes intervalles n’y sont pas : seulement les totaux. La prochaine fois, appuie sur Lap à chaque intervalle.`,
@@ -761,7 +779,7 @@ const RULES = {
 const TERMS = [["AMRAP","As many reps as possible with good form. “AMRAP 40s” = as many as possible in 40 seconds."],["Conti","Continuous: pull-ups until you need to dead hang or pause."],["Drop set","Do the reps, reduce the weight, then go again right away."],["% of 1RM","Percent of your best single rep. The app suggests a weight once it knows your bench or squat."],["RPE","How hard the set felt, 1–10. RPE 8 ≈ 2 reps left in the tank."]];
 
 /* ---------- storage ---------- */
-const KEY=LIVE?"training-app-live-"+TOKEN:OC_DEMO?"dbspeed-oc-demo-v1":"immortals-app-v1";
+const KEY=LIVE?"training-app-live-"+TOKEN:OC_DEMO?"dbspeed-oc-demo-v1":WN_DEMO?"dbspeed-wnotes-demo-v1":"immortals-app-v1";
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s&&s.v===1)return s}catch(e){}return null}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 let S = load() || {v:1,profile:{name:"Alex",sex:"men",bw:168,lang:/^fr/i.test(navigator.language||"")?"fr":"en",skin:"scoreboard",coach:false},logs:{},notes:{},days:{},sample:!LIVE,seeded:LIVE,queue:{}};
@@ -769,6 +787,8 @@ S.queue=S.queue||{};
 /* Paddling sessions: S.pc = logged sets by "week|day|row index|cell" ({t secs, m meters, w watts, spm, hr, done}),
    S.pnote = the athlete's own note per row, S.sess = saved sessions by "week|day", S.sessDraft = what's typed before saving. */
 S.pc=S.pc||{};S.pnote=S.pnote||{};S.sess=S.sess||{};S.sessDraft=S.sessDraft||{};
+/* Workout notes (pilot): S.wnote = the athlete's own note per gym exercise ("week|day|index"), S.dnote = the note for the whole day ("week|day"). */
+S.wnote=S.wnote||{};S.dnote=S.dnote||{};
 /* Fast open: BLOCKED holds the full-screen message once the server says this link is locked, paused or
    inactive; REFRESHING is true while the latest program is being fetched (saves wait until it's in);
    CACHE is the last program received from the server, kept up to date with what's been saved since. */
@@ -1149,6 +1169,7 @@ function viewWorkout(wn,dn){
      ${timerHtml(wn,dn)}
      <div class="progress"><i id="pbar" style="width:${pct}%"></i></div></div>
    <section>${d.items.map((it,i)=>it.paddle?paddleCard(wn,dn,it,i):exCard(wn,dn,it,i)).join("")}
+     ${WNOTES?wnDayCard(wn,dn,d):""}
      <button class="btn block" id="finish">${S.days[`${wn}|${dn}`]?T("finished")+" ✓":T("finish")}</button>
    </section></div>`;
 }
@@ -1218,9 +1239,25 @@ function exCard(wn,dn,it,i){
     ${last?`<div class="last">${T("last")} (${last.w===wn?T("thisWeekLc"):T("week").toLowerCase()+" "+WN(last.w)}, ${esc(dayLabel(last.day))}): <b class="num">${esc(lastTxt)}</b></div>`:""}
     <div class="colhead"><span>#</span><span>${T("target")}</span><span>${noWt?"":T("lb")}</span><span>${T("reps")}</span><span></span></div>
     <div class="sets">${rows}</div>
-    <input class="note" id="note-${wn}-${dn.slice(-1)}-${i}" placeholder="${T("notes")}" value="${esc(S.notes[`${wn}|${dn}|${i}`]||"")}" data-note="${wn}|${dn}|${i}">
+    ${WNOTES?wnBox(wn,dn,it,i):`<input class="note" id="note-${wn}-${dn.slice(-1)}-${i}" placeholder="${T("notes")}" value="${esc(S.notes[`${wn}|${dn}|${i}`]||"")}" data-note="${wn}|${dn}|${i}">`}
   </article>`;
 }
+/* Workout notes (pilot): the coach's note as text, the athlete's own note in a box that grows as they type. */
+const wnCoach=it=>it.coachNote!=null?it.coachNote:pcNoteSplit(it.note).coach;
+const wnOn=v=>{v=String(v==null?"":v).trim();return /^(y|yes|oui|true|on|1)\b/i.test(v)||/^\d{4}-\d{2}-\d{2}/.test(v)};
+function wnBox(wn,dn,it,i){const rk=`${wn}|${dn}|${i}`,coach=wnCoach(it),ath=S.wnote[rk]||"";
+  return `${coach?`<p class="cnote"><b>${T("wnCoach")}</b>${esc(coach)}</p>`:""}<textarea class="note wn" rows="1" maxlength="1000" data-wnote="${rk}" aria-label="${T("wnMine")}" placeholder="${T("wnMine")}">${esc(ath)}</textarea>`}
+function wnRecapHtml(wn,dn,d){const rows=d.items.map((it,i)=>[it,String(S.wnote[`${wn}|${dn}|${i}`]||"").trim()]).filter(([it,n])=>!it.paddle&&n);
+  return rows.length?rows.map(([it,n])=>`<div class="wnr"><b>${esc(it.name)}</b><span>${esc(n)}</span></div>`).join(""):`<p class="small muted" style="margin:0">${T("wnEmpty")}</p>`}
+function wnDayCard(wn,dn,d){const k=`${wn}|${dn}`;
+  return `<article class="card wncard"><div class="eyebrow">${T("wnTitle")}</div><div class="wnrecap" id="wnrecap">${wnRecapHtml(wn,dn,d)}</div>
+    <textarea class="note wn" rows="2" maxlength="1000" data-dnote="${k}" aria-label="${T("wnTitle")}" placeholder="${T("wnDay")}">${esc(S.dnote[k]||"")}</textarea></article>`}
+function wnSize(el){el.style.height="auto";el.style.height=(el.scrollHeight+2)+"px"}
+/* Saved like paddling notes: column P = the coach's note, then "✎ " and the athlete's note. The day's note goes in column O of the "Day N" row. */
+function queueWNote(rk){save();const [w,d,i]=rk.split("|");const W=WEEKS[w-1];const it=W&&W.days.find(x=>x.day===d).items[+i];if(!LIVE||!W.tab||!it||!it.row)return;
+  const ath=S.wnote[rk]||"";S.queue[`${W.tab}|${it.row}|16`]={tab:W.tab,row:it.row,col:16,value:pcNoteJoin(wnCoach(it),ath),wnote:ath,v:Date.now()};save();scheduleFlush(2000)}
+function queueDNote(k){save();const [w,d]=k.split("|");const W=WEEKS[w-1];const day=W&&W.days.find(x=>x.day===d);const row=day?dayRowOf(day):0;if(!LIVE||!W.tab||!row)return;
+  const v=S.dnote[k]||"";S.queue[`${W.tab}|${row}|15`]={tab:W.tab,row,col:15,value:v,dnote:v,v:Date.now()};save();scheduleFlush(2000)}
 function viewCircuit(w,d){
   const groups={};d.items.forEach((it,i)=>{const g=/^[A-Z]/.test(it.pod)?it.pod[0]:"Stations";(groups[g]=groups[g]||[]).push([it,i])});
   const doneKey=`${w.week}|${d.day}`;
@@ -2313,6 +2350,7 @@ function render(){
   else if(v.name==="guide")html=viewGuide();
   else if(v.name==="season")html=viewSeason();
   app.innerHTML=html;renderTabs();
+  if(WNOTES)app.querySelectorAll("textarea.wn").forEach(wnSize);
 }
 app.addEventListener("click",e=>{
   if(e.target.closest("#a2hsHow")){openA2hs();return}
@@ -2386,6 +2424,10 @@ app.addEventListener("change",e=>{
 /* Paddling sets and the session card save when a box is left; the athlete's note saves as they type. */
 app.addEventListener("change",e=>{if(e.target.dataset.pf)pcField(e.target);else if(e.target.dataset.sf)pcSessField(e.target);else if(e.target.hasAttribute("data-shot"))pcShot(e.target)});
 app.addEventListener("input",e=>{const rk=e.target.dataset.pnote;if(rk){S.pnote[rk]=e.target.value;queuePNote(rk)}});
+app.addEventListener("input",e=>{const t=e.target;
+  if(t.dataset.wnote){S.wnote[t.dataset.wnote]=t.value;wnSize(t);queueWNote(t.dataset.wnote);
+    const r=document.getElementById("wnrecap"),day=VIEW.name==="workout"&&WEEKS[VIEW.w-1]&&WEEKS[VIEW.w-1].days.find(x=>x.day===VIEW.d);if(r&&day)r.innerHTML=wnRecapHtml(VIEW.w,VIEW.d,day)}
+  else if(t.dataset.dnote){S.dnote[t.dataset.dnote]=t.value;wnSize(t);queueDNote(t.dataset.dnote)}});
 function updateCount(){if(VIEW.name!=="workout")return;const d=WEEKS[VIEW.w-1].days.find(x=>x.day===VIEW.d);let total=0,done=0;
   d.items.forEach((it,i)=>(it.sets||[]).forEach((_,s)=>{total++;if(S.logs[keyOf(VIEW.w,VIEW.d,i,s)]?.done)done++}));
   const c=document.getElementById("setCount");if(c)c.textContent=`${done} ${T("ofSets")} ${total} ${T("sets")}`;const b=document.getElementById("pbar");if(b)b.style.width=(total?done/total*100:0)+"%"}
@@ -2554,27 +2596,32 @@ function totalWeeks(){
 }
 const nextSeasonSlots=()=>Math.max(0,totalWeeks()-(LIVE&&SEASON?SEASON.weeks.length:WEEKS.length));
 function applyLive(data){
-  applyBrand(data.athlete.team);setDragon(data.athlete.dragon);
+  applyBrand(data.athlete.team);setDragon(data.athlete.dragon);WNOTES=WN_DEMO||wnOn(data.athlete.wnotes);
   TEAM.name=data.athlete.name;EVENTS=[];SEASON=parsePeriod(data.period);if(SEASON)EVENTS=SEASON.events;
   WEEKS=data.weeks.filter(w=>w.days.length&&parseFloat(w.name)>=1).map((w,wi)=>({week:wi+1,name:w.name,label:w.label,date:w.date,tab:w.tab,
-    days:w.days.map(d=>({day:d.day,row:d.row||0,mark:d.mark||"",summary:d.summary,circuit:!!d.circuit,timer:d.timer||null,items:d.items.map(it=>!d.circuit&&isPaddle(it)?pcPrep(it):({...it,
+    days:w.days.map(d=>({day:d.day,row:d.row||0,mark:d.mark||"",dnote:d.dnote||"",summary:d.summary,circuit:!!d.circuit,timer:d.timer||null,items:d.items.map(it=>!d.circuit&&isPaddle(it)?pcPrep(it):({...it,...(WNOTES?{coachNote:pcNoteSplit(it.note).coach}:{}),
       sets:(it.sets||[]).map(s=>{const p=parseLogged(s.load,s.reps,weekDate(w)>=STRICT_FROM);return{load:p.presc,reps:s.reps,col:s.col,_logged:p.logged}})}))}))}));
   UNIT=WEEKS.some(w=>w.days.some(d=>d.items.some(it=>(it.sets||[]).some(s=>/\d\s*kg\b/i.test(String(s.load||""))))))?"kg":"lb";
   STR.en.lb=STR.fr.lb=UNIT;
   applyStart(data.athlete.start);
-  S.logs={};S.notes={};S.pc={};S.pnote={};S.sess={};
+  S.logs={};S.notes={};S.pc={};S.pnote={};S.sess={};S.wnote={};S.dnote={};
   WEEKS.forEach(w=>w.days.forEach(d=>{if(isPaddleDay(d)){const ss=pcParseMark(d.mark);if(ss)S.sess[`${w.week}|${d.day}`]=ss}
     d.items.forEach((it,i)=>{if(!it.paddle)return;const nt=pcNoteSplit(it.note);if(nt.ath)S.pnote[`${w.week}|${d.day}|${i}`]=nt.ath;
       pcModel(it).slots.forEach(sl=>{const lg=pcSplit(it.cells[sl.c]).log;if(lg)S.pc[pcK(w.week,d.day,i,sl.c)]=lg})})}));
   WEEKS.forEach(w=>w.days.forEach(d=>d.items.forEach((it,i)=>{
     if(it.paddle)return;
     if(it.note)S.notes[`${w.week}|${d.day}|${i}`]=it.note;
+    if(WNOTES){const a=pcNoteSplit(it.note).ath;if(a)S.wnote[`${w.week}|${d.day}|${i}`]=a}
     it.sets.forEach((s,si)=>{if(s._logged)S.logs[keyOf(w.week,d.day,i,si)]=s._logged})})));
   for(const q of Object.values(S.queue||{})){const f=findKey(q.tab,q.row,q.col);if(!f)continue;
     if(f.set&&q.log){S.logs[f.set]=q.log;
       // A set logged before the latest program arrived is sent with the latest prescription, so it never undoes a coach's edit.
       const st=setOf(f.set);if(st)q.value=cellValue(st,q.log)}
-    if(f.note!=null&&q.note!=null)S.notes[f.note]=q.note}
+    if(f.note!=null&&q.note!=null)S.notes[f.note]=q.note;
+    if(f.note!=null&&q.wnote!=null&&WNOTES){S.wnote[f.note]=q.wnote;const [ww,dd,ii]=f.note.split("|");const it=WEEKS[ww-1].days.find(x=>x.day===dd).items[+ii];q.value=pcNoteJoin(wnCoach(it),q.wnote)}}
+  WEEKS.forEach(w=>w.days.forEach(d=>{if(d.dnote)S.dnote[`${w.week}|${d.day}`]=d.dnote}));
+  for(const q of Object.values(S.queue||{})){if(q.dnote==null||q.col!==15)continue;const W=WEEKS.find(x=>x.tab===q.tab);if(!W)continue;
+    const d=W.days.find(x=>dayRowOf(x)===q.row);if(d)S.dnote[`${W.week}|${d.day}`]=q.dnote}
   // Paddling saves still waiting to go out: show them, and send them with the coach's latest target.
   for(const q of Object.values(S.queue||{})){if(!q.tab||(q.pc===undefined&&q.pnote==null&&!q.sess))continue;const W=WEEKS.find(x=>x.tab===q.tab);if(!W)continue;
     for(const d of W.days){if(q.sess&&q.col===16&&dayRowOf(d)===q.row&&isPaddleDay(d)){S.sess[`${W.week}|${d.day}`]={...q.sess};break}
@@ -2643,6 +2690,7 @@ function patchCache(writes,profile){
   for(const w of writes||[]){const W=CACHE.weeks.find(x=>x.tab===w.tab);if(!W)continue;
     const v=String(w.value==null?"":w.value).replace(/^'/,"");
     if(w.col===16){const d=W.days.find(x=>x.row===w.row);if(d){d.mark=v;continue}}
+    if(w.col===15){const d=W.days.find(x=>x.row===w.row);if(d){d.dnote=v;continue}}
     for(const d of W.days){const it=d.items.find(x=>x.row===w.row);if(!it)continue;
       if(w.col===16)it.note=v;else{const pc=w.col%2===0?w.col:w.col-1;it.sets=it.sets||[];let st=it.sets.find(x=>x.col===pc);
         if(!st){st={load:"",reps:"",col:pc};it.sets.push(st);it.sets.sort((a,b)=>a.col-b.col)}
@@ -2662,7 +2710,7 @@ function showProgram(){
 function blockScreen(html){BLOCKED=html;REFRESHING=false;CACHE=null;try{localStorage.removeItem(CK)}catch(_){}
   try{stopRest()}catch(_){}document.getElementById("overlay").innerHTML="";render()}
 /* Everything the screen is drawn from, to tell whether the latest program changed anything. */
-function screenSig(){try{return JSON.stringify([TODAY.getTime(),WEEKS,S.logs,S.notes,S.pc,S.pnote,S.sess,S.days,S.timers,SEASON,START,CUR,TEAM.name,S.profile.name,S.profile.sex,S.profile.bw,BRAND&&BRAND.logo])}catch(e){return String(Math.random())}}
+function screenSig(){try{return JSON.stringify([TODAY.getTime(),WEEKS,S.logs,S.notes,S.pc,S.pnote,S.wnote,S.dnote,WNOTES,S.sess,S.days,S.timers,SEASON,START,CUR,TEAM.name,S.profile.name,S.profile.sex,S.profile.bw,BRAND&&BRAND.logo])}catch(e){return String(Math.random())}}
 /* Wait until the athlete has left the box they're typing in (leaving it is what completes a set), so a
    refresh never closes the keyboard or swallows a number mid-set. */
 function whenIdle(fn){
@@ -2737,6 +2785,11 @@ async function boot(){
     saveCache(data);REFRESHING=false;READY=true;if(showProgram())flushQueue();return}
   swapIn(data,"Offline: showing your last saved program");
 }
+/* Demo only (?wnotes): a coach note on the first exercise of each day and two sample athlete notes, so the card has something to show. */
+if(WN_DEMO){WEEKS.forEach(w=>w.days.forEach(d=>{const it=d.items[0];if(it&&!it.paddle&&!it.note)it.note="Controlled on the way down, fast on the way up"}));
+  if(!S.wnSeeded){const w=WEEKS[CUR-1]||WEEKS[0],d=w&&w.days.find(x=>!isPaddleDay(x)&&!isCircuit(x));
+    if(d){["Felt strong, last set moved fast","Left shoulder a bit tight on set 2, fine after"].forEach((n,i)=>{if(d.items[i])S.wnote[`${w.week}|${d.day}|${i}`]=n})}
+    S.wnSeeded=true;save()}}
 boot();
 /* Coming back to the app (a home-screen app left open since Sunday, say) after more than 5 minutes away:
    fetch the latest program the same quiet way, so nobody has to close and reopen the app for a new week.
