@@ -351,6 +351,28 @@ section{display:grid;gap:12px;padding-block:18px}
 .dg-asleep .dg-breathe{animation-duration:4.8s}
 .dg-asleep .dg-head,.dg-asleep .dg-wing{animation:none}
 .dg-asleep .dg-tail{animation-duration:5s}
+.dg-plane{animation:dgPlane 7s linear infinite}
+@keyframes dgPlane{0%{transform:translate(-30px,6px)}50%{transform:translate(110px,-3px)}100%{transform:translate(250px,6px)}}
+.dg-case{transform-origin:50% 100%;animation:dgCase 2.6s ease-in-out infinite}
+@keyframes dgCase{0%,100%{transform:rotate(0)}40%{transform:rotate(-4deg)}70%{transform:rotate(2.5deg)}}
+.dg-sunray{transform-origin:50% 50%;animation:dgSpin 18s linear infinite}
+@keyframes dgSpin{to{transform:rotate(360deg)}}
+.dg-sea{animation:dgSea 3.4s ease-in-out infinite alternate}
+@keyframes dgSea{to{transform:translateX(-12px)}}
+.dg-fizz{animation:dgFizz 2.2s ease-in infinite}.dg-fizz.f2{animation-delay:.7s}.dg-fizz.f3{animation-delay:1.4s}
+@keyframes dgFizz{0%{opacity:0;transform:translateY(0)}20%{opacity:.9}100%{opacity:0;transform:translateY(-20px)}}
+.dg-camflash{transform-origin:50% 50%;animation:dgCamFlash 3.2s ease-out infinite}
+@keyframes dgCamFlash{0%,60%,100%{opacity:0;transform:scale(.3)}64%{opacity:1;transform:scale(1.3)}78%{opacity:0;transform:scale(1.7)}}
+.dg-polaroid{animation:dgPolaroid 3.2s ease-out infinite}
+@keyframes dgPolaroid{0%,62%{opacity:0;transform:translate(-8px,6px) scale(.6)}72%{opacity:1;transform:none}100%{opacity:0;transform:translate(20px,-30px) rotate(14deg)}}
+.dg-beam{transform-origin:0% 50%;animation:dgBeam 2.6s ease-in-out infinite alternate}
+@keyframes dgBeam{from{transform:scaleX(.4);opacity:.15}to{transform:scaleX(1);opacity:.45}}
+.dg-vstretch{transform-origin:50% 100%;animation:dgStretch 2.8s ease-in-out infinite alternate}
+@keyframes dgStretch{0%{transform:rotate(-9deg)}100%{transform:rotate(9deg)}}
+.dg-sweat{animation:dgSweat 1.9s ease-in infinite}
+@keyframes dgSweat{0%{opacity:0;transform:translateY(-4px)}30%{opacity:1}100%{opacity:0;transform:translateY(12px)}}
+.dg-steam{animation:dgSteam 2.4s ease-in-out infinite}
+@keyframes dgSteam{0%{opacity:0;transform:translateY(4px)}40%{opacity:.8}100%{opacity:0;transform:translateY(-8px)}}
 .dg-bubble{transform-box:fill-box;transform-origin:0% 50%;animation:dgBubble 4.8s ease-in-out infinite}
 @keyframes dgBubble{0%,100%{transform:scale(.35)}50%{transform:scale(1)}}
 .dg-z{animation:dgZ 2.8s ease-in-out infinite;opacity:0}
@@ -554,6 +576,7 @@ button.dg-say:active{transform:scale(.97)}
 /* mini dragon gym behind the workout title */
 .dg-gym{position:absolute;right:96px;bottom:32px;width:118px;pointer-events:none;opacity:.6;filter:saturate(.85);z-index:1}
 .dg-gym svg{display:block;width:100%;height:auto;overflow:visible}
+.dg-gym-vac,.dg-gym-sick{opacity:.85}
 .dgm{transform-box:fill-box;animation-duration:2.2s;animation-iteration-count:infinite;animation-timing-function:ease-in-out}
 .dgm-squat{transform-origin:50% 100%;animation-name:dgmSquat}
 @keyframes dgmSquat{0%,100%{transform:none}40%,58%{transform:translateY(9px) scale(1.06,.94)}}
@@ -1367,15 +1390,18 @@ function saveSession(wn,dn){const k=`${wn}|${dn}`;
   S.sess[k]=s;delete S.sessDraft[k];S.days[k]=S.days[k]||Date.now();
   queueDayMark(wn,dn,pcMark(s));{const dk=`${WEEKS[wn-1].tab}|${dayRowOf(day)}|16`;if(S.queue[dk])S.queue[dk].sess={...s}}
   save();
+  let dgA=dgB?dragonData():null;if(dgA&&dgA.xp<=dgB.xp)dgA=null;   // a paddling session gets the same dragon panel as a gym finish
+  const dgEv=dgA&&(dgA.st>dgB.st||dgA.medals>dgB.medals);
   const load=+s.min&&+s.rpe?Math.round(+s.min*+s.rpe):0;
-  document.getElementById("overlay").innerHTML=`<div class="scrim" data-close></div><div class="sheet"><div class="inner wrap"><div class="done-panel">
-    ${fresh?burstHtml():""}<div class="done-check">${I.check}</div>
+  document.getElementById("overlay").innerHTML=`<div class="scrim" data-close></div><div class="sheet"><div class="inner wrap"><div class="done-panel ${dgA?"dgp":""}">
+    ${dgA?(dgEv?"":burstHtml())+dragonCelebration(dgB,dgA,0):`${fresh?burstHtml():""}<div class="done-check">${I.check}</div>`}
     <div class="eyebrow">${T("week")} ${WN(wn)} · ${esc(dayTitle(day))}</div><div class="big">${T("sesSaved")}</div>
     <div class="done-grid three"><div class="stat"><b class="num">${s.min||"–"}</b><span>min</span></div><div class="stat"><b class="num">${s.km||"–"}</b><span>km</span></div><div class="stat"><b class="num">${load||"–"}</b><span>${T("load")}</span></div></div>
     ${load?`<div class="small muted">${T("loadHow")}</div>`:""}
     <button class="btn block" data-close>${T("back")}</button></div></div></div>`;
-  if(fresh){buzz();chime("done")}
-  if(dgB){const a=dragonData();if(a.xp>dgB.xp)toast(`+${a.xp-dgB.xp} XP 🐉`)}
+  if(dgEv){buzz([40,60,40,1050,200,80,260]);dgSfx(dgA.st>dgB.st?DG_STAGES[dgA.st].k:"medal")}
+  else if(fresh){buzz();chime("done")}
+  if(dgA)dgAnimateXp();
 }
 /* ---------- Fill from a screenshot ----------
    The athlete picks 1-4 screenshots of the session (Garmin Connect, Strava…). The phone shrinks them and sends
@@ -1770,6 +1796,7 @@ function finishWorkout(wn,dn){
     if(lifts.length<2)lifts.push({name:it.name,b,prev,pr})});
   S.days[key]=Date.now();save();stopRest();
   let dgAfter=null;if(dgBefore){if(DPREV&&DPREV.xp!=null)DPREV.xp+=10;dgAfter=dragonData()}
+  if(dgAfter&&dgAfter.xp<=dgBefore.xp)dgAfter=null;   // no XP (a week before the dragon's start date): the normal finish screen, never "+0 XP"
   const dgEv=dgAfter&&(dgAfter.st>dgBefore.st||dgAfter.medals>dgBefore.medals);
   const fmtPrev=(l)=>l.prev?`${T("bestBefore")}: ${liftLine(l.prev)}`:T("firstTime");
   document.getElementById("overlay").innerHTML=`<div class="scrim" data-close></div><div class="sheet"><div class="inner wrap"><div class="done-panel ${dgAfter?"dgp":""}">
@@ -1805,9 +1832,10 @@ const dragonOn=()=>dragonAvail()&&!(S.profile&&S.profile.dgOff);
 function dgSettingsRow(){if(!dragonAvail())return "";const fr=dgFr(),off=!!S.profile.dgOff;
   return `<div class="toggle dgset"><span>${fr?"Dibi, ton dragon":"Dibi, your dragon"}<small>${fr?"Il continue de grandir quand il est caché.":"He keeps growing while hidden."}</small></span><button class="switch" role="switch" id="dgSw" aria-checked="${!off}" aria-label="${fr?"Dibi, ton dragon":"Dibi, your dragon"}"></button></div>`}
 function setDragon(v){v=String(v==null?"":v).trim();if(!v||/^(no|non|off|false|0)$/i.test(v)){DRAGON=null;return}
+  const themes=[];v=v.replace(/\b(vacation|vacances|sick|malade)\b\s*:?\s*(\d{4})-(\d{1,2})-(\d{1,2})/gi,(_,k,y,mo,d)=>{themes.push({k:/^(sick|malade)$/i.test(k)?"sick":"vac",mon:dgMonday(new Date(+y,+mo-1,+d))});return " "}).trim();
   const m=v.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
   const nm=v.replace(/\d{4}-\d{1,2}-\d{1,2}/,"").replace(/\b(yes|oui)\b/gi,"").replace(/[^A-Za-zÀ-ÿ' -]/g," ").trim().split(/\s+/)[0]||"";
-  DRAGON={from:m?new Date(+m[1],+m[2]-1,+m[3]):null,name:nm.slice(0,20)}}
+  DRAGON={from:m?new Date(+m[1],+m[2]-1,+m[3]):null,name:nm.slice(0,20),themes}}
 /* Demo only: ?dragon&egg starts as an egg, &name=Martin sets the name the dragon says hi to. */
 if(DG_DEMO&&/[?&]egg\b/.test(location.search))DPREV={xp:0};
 /* The name the dragon greets when it hatches: from the switch, else the first word of the athlete's name. */
@@ -1830,14 +1858,15 @@ function dragonData(){
      starts as an egg. The streak counts the whole history, the same as the app's normal streak, so nobody
      loses a streak when the dragon is switched on. Freezes are a dragon extra: earned and used only from the start date. */
   const from=DRAGON&&DRAGON.from?dgMonday(DRAGON.from):null;
-  const weeks=WEEKS.filter(w=>w.week<=CUR).map(w=>{const lifts=w.days.filter(isGoalDay);
-    return {w:w.week,xpOn:!(from&&weekDate(w)<from),n:w.days.filter(d=>dayStatus(w.week,d.day)==="done").length,hit:lifts.filter(d=>dayStatus(w.week,d.day)==="done").length,goal:lifts.length,deload:/deload/i.test(phaseOf(w)||"")}});
+  const weeks=WEEKS.filter(w=>w.week<=CUR).map(w=>{const th=dgThemeOf(w),vac=!!th,lifts=w.days.filter(d=>isGoalDay(d)&&!(th==="vac"&&isPaddleDay(d)));
+    return {w:w.week,vac,xpOn:!(from&&weekDate(w)<from),n:w.days.filter(d=>dayStatus(w.week,d.day)==="done").length,hit:lifts.filter(d=>dayStatus(w.week,d.day)==="done").length,goal:lifts.length,deload:/deload/i.test(phaseOf(w)||"")}});
   let workouts=0,streak=0,best=0,freezes=0,run=0,bonus=0,started=false,frozeLast=false,missedLast=false;
   weeks.forEach(x=>{if(x.xpOn)workouts+=x.n;if(!started){if(!x.n)return;started=true}
     if(!x.goal)return;   // a week with no gym sessions counts neither way
     const hit=x.hit>=x.goal;
     if(x.w===CUR){if(hit){streak++;if(x.xpOn)bonus++}}
     else if(hit){streak++;if(x.xpOn){bonus++;run++;if(run%4===0&&freezes<2)freezes++}frozeLast=false;missedLast=false}
+    else if(x.vac){frozeLast=false;missedLast=false}   // a vacation or sick week never breaks the streak (and uses no freeze)
     else if(x.xpOn&&freezes>0){freezes--;frozeLast=true;missedLast=false}
     else{streak=0;frozeLast=false;missedLast=true}
     best=Math.max(best,streak)});
@@ -1845,6 +1874,7 @@ function dragonData(){
   let xp=workouts*10+bonus*20;
   const dow=(TODAY.getDay()+6)%7;
   let mood=!workouts?"egg":cur.goal&&cur.hit>=cur.goal?"happy":!cur.n&&missedLast?"asleep":!cur.n&&dow>=3?"sleepy":"awake";
+  {const th=dgHoliday();if((th==="vac"||th==="sick")&&(mood==="asleep"||mood==="sleepy"))mood="awake"}   // never sad-sleepy in a theme week (sick Dibi sleeps in his bed instead)
   if(DPREV){if(DPREV.xp!=null){xp=DPREV.xp;workouts=xp?Math.max(1,Math.round(xp/15)):0}
     if(DPREV.mood)mood=DPREV.mood;if(!xp)mood="egg";else if(mood==="egg")mood="awake"}
   const st=dgStageOf(xp),stage=DG_STAGES[st],next=DG_STAGES[st+1];
@@ -1861,17 +1891,51 @@ function dgHoliday(){
   if(DPREV&&DPREV.hol!=null)return DPREV.hol;
   const m=TODAY.getMonth()+1,d=TODAY.getDate();
   if(m===11&&d===11)return "remember";
-  if(m===12&&d<=23)return "xmas";
   if(m===12&&d===24)return "eve";
   if(m===12&&d===25)return "day";
   if(m===12&&d===26)return "boxing";
+  const th=dgWeekTheme();if(th)return th;
+  if(m===12&&d<=23)return "xmas";
   return "";
 }
+/* ---------- week themes (Nov 21) ----------
+   One week at a time, for one athlete, Dibi changes outfit:
+     vac  = on vacation: a suitcase on the Today card, photos of a landmark on the week page, a sweatband stretch
+            at the top of each workout, the beach with a mojito after a finished session.
+     sick = under the weather: tucked in bed with a nightcap, snoring (Z's and a sleep bubble), and the little
+            gym dragons behind each workout asleep in their beds too.
+   Switched on by the athlete's Copies "Dragon" cell: after the start date and name, add the theme and the Monday
+   of that week, e.g. "2026-11-16 Sam vacation 2026-11-23" or "2026-11-09 Alex sick 2026-11-23" (French words
+   vacances / malade work too; several themes can be listed). A week whose tab name says Vacation or Sick
+   ("Week 5 - Vacation") does the same. The theme lasts that week only, so Dibi is back to normal the next Monday.
+   A theme week never breaks the streak, and its paddling days are optional on vacation. */
+const DG_THEME_RE={vac:/vacation|vacances/i,sick:/\b(sick|malade)\b/i};
+function dgThemeOf(w){if(!w)return "";
+  const mon=+dgMonday(weekDate(w)),t=DRAGON&&DRAGON.themes&&DRAGON.themes.find(x=>+x.mon===mon);if(t)return t.k;
+  for(const k in DG_THEME_RE)if(DG_THEME_RE[k].test(w.label||""))return k;
+  return ""}
+function dgWeekTheme(){   // a dated theme follows the calendar week only (on even before that week's program is written, off the next Monday
+  // even if the next week isn't written yet); a week tab named Vacation / Sick works while it's the current program week
+  const mon=+dgMonday(TODAY),t=DRAGON&&DRAGON.themes&&DRAGON.themes.find(x=>+x.mon===mon);if(t)return t.k;
+  const w=(WEEKS||[]).find(w=>w.week===CUR);if(w)for(const k in DG_THEME_RE)if(DG_THEME_RE[k].test(w.label||""))return k;
+  return ""}
+const dgHatOn=h=>!!h&&h!=="remember"&&h!=="vac"&&h!=="sick";   // the Santa hat: December days only
 const DG_HOL_LINES={
   remember:[["Today we remember. Lest we forget.","Aujourd’hui, on se souvient. N’oublions jamais."],["Wearing my poppy today. We remember.","Je porte mon coquelicot aujourd’hui. On se souvient."],["A quiet moment today. Lest we forget.","Un moment de silence aujourd’hui. N’oublions jamais."]],
   xmas:[["I found a Santa hat. I'm never taking it off. 🎅","J’ai trouvé une tuque de père Noël. Je l’enlève plus jamais. 🎅"],["Sleigh bells and deadlifts. Best month.","Clochettes et soulevés de terre. Meilleur mois."],["Making my list: bench, rows, pull-ups. Checking it twice.","Ma liste : couché, rowing, tractions. Je la vérifie deux fois."],["Cookies after the workout, not before. Dragon rules.","Les biscuits après la séance, pas avant. Règle de dragon."],["Even reindeer do leg day.","Même les rennes font leur journée de jambes."],["This hat is warm. Your muscles should be too. Warm up!","Ma tuque est chaude. Tes muscles aussi devraient l’être. Échauffe-toi!"],["Ho ho… one more set!","Ho ho… encore une série!"],["I'm on the nice list. So are you. 🎄","Je suis sur la liste des sages. Toi aussi. 🎄"]],
   eve:[["Ho ho ho! Santa dragon reporting for duty! 🎅","Ho ho ho! Le dragon Noël est au rapport! 🎅"],["My sack is full of gifts. And protein bars.","Ma poche est pleine de cadeaux. Et de barres protéinées."],["Tonight I deliver. Tomorrow we feast. 🎁","Ce soir je livre. Demain on fête. 🎁"]],
   day:[["Merry Christmas! I got my little cousin a gift. 🎁","Joyeux Noël! J’ai un cadeau pour mon petit cousin. 🎁"],["Merry Christmas! Rest, eat, laugh. Training can wait a day.","Joyeux Noël! Repose-toi, mange, ris. L’entraînement peut attendre."],["Best gift this year? Getting stronger with you. 🎄","Le plus beau cadeau cette année? Devenir plus fort avec toi. 🎄"]],
+  vac:[["I'm on vacation! 🏝️ Short sessions this week, big smiles.","Je suis en vacances! 🏝️ Petites séances cette semaine, gros sourires."],["Packed: sunscreen, sweatband, and your program. 🧳","Dans ma valise : crème solaire, bandeau et ton programme. 🧳"],
+    ["Vacation rule: move a little every day, then enjoy the view.","Règle de vacances : bouge un peu chaque jour, puis profite de la vue."],["25 minutes of mobility, then the beach is ours. 🏖️","25 minutes de mobilité, puis la plage est à nous. 🏖️"],
+    ["I took 200 photos of the sights. Want to see? 📸","J’ai pris 200 photos des sites. Tu veux voir? 📸"],["Stretch, sip, repeat. 🍹","Étire-toi, sirote, recommence. 🍹"],["Rest is part of the plan. You'll come back stronger.","Le repos fait partie du plan. Tu vas revenir plus fort."]],
+  vacEgg:[["Even eggs go on vacation! 🧳 Finish a session and I'll hatch on the beach.","Même les œufs partent en vacances! 🧳 Finis une séance et j’éclos sur la plage."],["I'm packed and ready. One short session and out I come! 🏝️","Ma valise est prête. Une petite séance et je sors! 🏝️"]],
+  vacAfter:[["Done! Back to the beach. 🏖️","Fini! Retour à la plage. 🏖️"],["Session done. Mojito time! 🍹","Séance faite. L’heure du mojito! 🍹"],["That's how you stay sharp on vacation. 😎","C’est comme ça qu’on reste en forme en vacances. 😎"],["Stretched and happy. Now for the sights! 📸","Étiré et content. Maintenant, les sites! 📸"]],
+  vacPet:[["Careful, my mojito! 🍹","Attention, mon mojito! 🍹"],["Say cheese! 📸","Souris! 📸"],["Vacation mode. Pets are welcome.","Mode vacances. Les caresses sont les bienvenues."],["Hehe, that tickles. Sunscreen on? ☀️","Hihi, ça chatouille. Crème solaire? ☀️"]],
+  sick:[["Not feeling great. Rest is training too. 🛌","Pas en forme. Le repos, c’est aussi de l’entraînement. 🛌"],["Zzz… dreaming of PRs… zzz","Zzz… je rêve de records… zzz"],["Soup, sleep, repeat. 🍲","Soupe, dodo, on recommence. 🍲"],
+    ["Your body is busy getting better. Let it.","Ton corps est occupé à guérir. Laisse-le faire."],["Feel better soon! The gym will wait for us.","Prends soin de toi! Le gym va nous attendre."],["Lots of water, lots of sleep. Doctor Dibi's orders. 💧","Beaucoup d’eau, beaucoup de sommeil. Ordre du docteur Dibi. 💧"]],
+  sickEgg:[["Shh… even eggs need their rest. Feel better soon! 🛌","Chut… même les œufs ont besoin de repos. Prends soin de toi! 🛌"],["Tucked in and warm. We'll hatch when you're better. 💛","Bien au chaud sous la couverture. On éclora quand tu iras mieux. 💛"]],
+  sickAfter:[["Easy does it! Now back to bed. 🛌","Doucement! Maintenant, au lit. 🛌"],["Gentle movement, then rest. Good call.","Bouger doucement, puis se reposer. Bonne idée."],["Proud of you. Now tea and a nap. 🍵","Fier de toi. Maintenant, une tisane et une sieste. 🍵"]],
+  sickPet:[["Achoo! 🤧 Sorry.","Atchoum! 🤧 Pardon."],["Mmm… five more minutes…","Mmm… encore cinq minutes…"],["Thank you. I'll feel better soon. 💛","Merci. Je vais aller mieux bientôt. 💛"],["Zzz… *snore*… huh? Oh, hi!","Zzz… *ronfle*… hein? Oh, salut!"]],
   boxing:[["Boxing Day! I'm shopping. Back for leg day. 🛍️","Lendemain de Noël! Je magasine. De retour pour les jambes. 🛍️"],["Deals everywhere. Still no discount on reps.","Des aubaines partout. Mais pas de rabais sur les répétitions."],["New shades, new bags, same training plan. 😎","Nouvelles lunettes, nouveaux sacs, même plan d’entraînement. 😎"]]};
 
 /* ---------- daily lines ---------- */
@@ -1883,8 +1947,10 @@ function dgPick(kind,salt,ok){let arr=(DG_LINES[kind]||DG_LINES.train||[]);if(ok
   const l=arr[(((dgDay()+(salt||0))*step)%n+n)%n];return dgFr()?l.fr:l.en}
 function dgKind(d){return d.mood==="egg"?"egg":d.mood==="happy"?"weekDone":d.mood==="asleep"?"asleep":d.mood==="sleepy"?"sleepy":
   d.frozeLast&&!d.curN?"freeze":d.deload?"deload":d.left===1?"oneLeft":"train"}
+const dgVacLine=(k,n)=>{const arr=DG_HOL_LINES[k];const l=arr[((n%arr.length)+arr.length)%arr.length];return dgFr()?l[1]:l[0]};
 function dgSay(d){
   const h=dgHoliday();
+  if(h==="vac"||h==="sick")return dgVacLine(h+(d.mood==="egg"?"Egg":""),dgDay());
   if(h&&(h!=="xmas"||dgDay()%2===0)){const arr=DG_HOL_LINES[h];const l=arr[((dgDay()%arr.length)+arr.length)%arr.length];if(!(h==="xmas"&&d.mood==="egg"))return dgFr()?l[1]:l[0]}
   const k=dgKind(d);return dgPick(k,0,k==="train"&&d.left<2?(l=>!/\{left\}/.test(l.en)):null).replace(/\{left\}/g,d.left||2);
 }
@@ -1928,7 +1994,10 @@ function dgEggBody(){const {R,C,EGG}=DGC;
 const DG_CRACK="M52.7 118 L66 110 L74 121 L84 108 L94 121 L104 106 L114 121 L124 108 L134 120 L147.3 112";
 function dgEggSVG(o){o=o||{};const px=o.px||110,h=o.hol===undefined?dgHoliday():o.hol;
   const cracks=o.cracks?`<path class="dg-crack" d="${DG_CRACK}" fill="none" stroke="#9c8a68" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`:"";
-  const deco=o.still?"":(h&&h!=="remember"?dgHat(104,72,.62,-14):h==="remember"?dgPoppy(146,150,.8):o.stoic?dgWreath(100,118,50,52,1.05):"");
+  const vk=o.still?"":o.vac||"",INK=DGC.INK,OL=DGC.OL;
+  const vdeco=vk==="trip"||vk==="beach"?`<path d="M68 98 H132 L129 104 C127 113 116 115 107 112 L103 105 H97 L93 112 C84 115 73 113 71 104 Z" fill="${INK}" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/><path d="M77 102 h7 M111 102 h7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".55"/>`
+    :vk==="stretch"?`<path d="M55 84 Q100 68 145 84 L146 95 Q100 79 54 95 Z" fill="#fff" stroke="${OL}" stroke-width="2" stroke-linejoin="round"/><path d="M55 89.5 Q100 73.5 145.5 89.5" fill="none" stroke="${DGC.R}" stroke-width="3"/>`:"";
+  const deco=o.still?"":o.cap?dgNightcap(104,74,.7,-14):vdeco?vdeco:(dgHatOn(h)?dgHat(104,72,.62,-14):h==="remember"?dgPoppy(146,150,.8):o.stoic?dgWreath(100,118,50,52,1.05):"");
   return `<svg class="dgsvg dg-egg-st ${o.cls||""}" width="${px}" height="${px}" viewBox="0 0 200 200" role="img" aria-label="${esc(dgName(0))}">
    <ellipse cx="100" cy="191" rx="42" ry="6" fill="#000" opacity=".18"/>
    <g class="${dgA(o,"dg-egg")}">${dgEggBody()}${o.perch?dgBarbell(1).replace('<g>','<g transform="translate(0 8)">'):""}${cracks}${o.still?"":`<path class="dg-shine" d="M126 72 l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" fill="#fff"/>`}${deco}</g></svg>`}
@@ -1959,7 +2028,7 @@ function dgBody(g,mood,o){
     (g.brows?`<path d="M${x-11} 185 l-2 6 5-1z M${x-3} 188 l-1 6 4-2z M${x+5} 187 l1 6 3-4z" fill="${C}" stroke="${OL}" stroke-width="1"/>`
       :`<circle cx="${x-7}" cy="187" r="2.3" fill="${C}"/><circle cx="${x}" cy="189" r="2.3" fill="${C}"/><circle cx="${x+7}" cy="187" r="2.3" fill="${C}"/>`)).join("");
   // what the right arm does: paddle (Racing dragon), a sack (Dec 24), shopping bags (Dec 26), a gift (Dec 25)
-  const raise=scene&&(h==="eve"||(g.paddle&&!h)||(g.paddle&&h==="xmas")||(g.paddle&&h==="remember"));
+  const raise=scene&&!o.cap&&!o.vac&&(h==="eve"||(g.paddle&&!h)||(g.paddle&&h==="xmas")||(g.paddle&&h==="remember"));
   const armL=g.k==="hatch"?"":`<ellipse cx="${ax}" cy="152" rx="${8*g.arm}" ry="${13.5*g.arm}" fill="${RD}" stroke="${OL}" stroke-width="${sw}" transform="rotate(26 ${ax} 152)"/>`;
   const armR=g.k==="hatch"?"":raise?`<ellipse cx="${204-ax}" cy="134" rx="${8*g.arm}" ry="${14*g.arm}" fill="${RD}" stroke="${OL}" stroke-width="${sw}" transform="rotate(-38 ${204-ax} 134)"/>`
      :`<ellipse cx="${200-ax}" cy="152" rx="${8*g.arm}" ry="${13.5*g.arm}" fill="${RD}" stroke="${OL}" stroke-width="${sw}" transform="rotate(-26 ${200-ax} 152)"/>`;
@@ -1982,7 +2051,7 @@ function dgBody(g,mood,o){
   const horns=horn1?horn1+`<g transform="translate(200 0) scale(-1 1)">${horn1}</g>`:"";
   const spikes=Array.from({length:g.spikes},(_,i)=>{const a=(i-(g.spikes-1)/2)*15,x=100+40*Math.sin(a*Math.PI/180),y=90-37*Math.cos(a*Math.PI/180);
      return `<path d="M${x-6} ${y+4} L${x} ${y-11} L${x+6} ${y+4} Z" fill="${AM}" stroke="${AMD}" stroke-width="2" stroke-linejoin="round" transform="rotate(${a.toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)})"/>`}).join("");
-  const shades=h==="boxing"&&mood!=="asleep";
+  const shades=(h==="boxing"||o.vac==="trip"||o.vac==="beach")&&mood!=="asleep";
   const eyes=shades?`<path d="M66 82 H134 L131 88 C129 98 118 101 108 98 L103 90 H97 L92 98 C82 101 71 98 69 88 Z" fill="${INK}" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/><path d="M74 86 L82 86 M110 86 L118 86" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".55"/>`
     :mood==="happy"?`<path d="M72 92 Q82 79 92 92 M108 92 Q118 79 128 92" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"/>`
     :mood==="asleep"?`<path d="M72 89 Q82 97 92 89 M108 89 Q118 97 128 89" fill="none" stroke="${INK}" stroke-width="4.5" stroke-linecap="round"/>`
@@ -2003,20 +2072,112 @@ function dgBody(g,mood,o){
   const beard=h==="eve"?`<path d="M62 104 C60 124 74 146 100 150 C126 146 140 124 138 104 C130 112 122 114 116 110 C110 118 90 118 84 110 C78 114 70 112 62 104 Z" fill="#fff" stroke="#d8d2c4" stroke-width="2.5" stroke-linejoin="round"/>
      <path d="M76 118 q4 8 0 14 M100 126 q4 8 0 14 M124 118 q-4 8 0 14" stroke="#e6e0d2" stroke-width="2.5" fill="none" stroke-linecap="round"/>
      <path d="M80 110 C88 104 96 108 100 112 C104 108 112 104 120 110 C114 118 104 116 100 114 C96 116 86 118 80 110 Z" fill="#fff" stroke="#d8d2c4" stroke-width="2"/>`:"";
-  const band=g.band&&!(h&&h!=="remember")?`<path d="M62 66 Q100 44 138 66 L137 75 Q100 53 63 75 Z" fill="${C}" stroke="${OL}" stroke-width="2" stroke-linejoin="round"/><path d="M63 71 Q100 49 137 71" fill="none" stroke="${R}" stroke-width="2.6"/>
+  const band=g.band&&!dgHatOn(h)&&o.vac!=="stretch"&&!o.cap?`<path d="M62 66 Q100 44 138 66 L137 75 Q100 53 63 75 Z" fill="${C}" stroke="${OL}" stroke-width="2" stroke-linejoin="round"/><path d="M63 71 Q100 49 137 71" fill="none" stroke="${R}" stroke-width="2.6"/>
     <g transform="translate(136 70)"><g class="${dgA(o,"dg-band")}"><path d="M0 -2 C10 -8 20 -6 32 -13 C28 -4 18 2 2 4 Z" fill="${C}" stroke="${OL}" stroke-width="1.6" stroke-linejoin="round"/><path d="M0 2 C10 4 19 11 30 11 C24 16 12 14 1 8 Z" fill="${C}" stroke="${OL}" stroke-width="1.6" stroke-linejoin="round"/></g></g>`:"";
-  const shellHat=g.k==="hatch"&&!(h&&h!=="remember")?`<g transform="rotate(-14 100 50)"><path d="M74 60 C76 44 92 36 104 37 C118 38 128 48 128 58 L121 54 L114 60 L107 53 L100 59 L93 52 L86 59 L79 53 Z" fill="${C}" stroke="${DGC.EGG}" stroke-width="2.5" stroke-linejoin="round"/><circle cx="97" cy="45" r="3.5" fill="${R}" opacity=".9"/></g>`:"";
-  const hat=h&&h!=="remember"?dgHat(100,58,.95,-12):"";
+  const shellHat=g.k==="hatch"&&!dgHatOn(h)&&o.vac!=="stretch"&&!o.cap?`<g transform="rotate(-14 100 50)"><path d="M74 60 C76 44 92 36 104 37 C118 38 128 48 128 58 L121 54 L114 60 L107 53 L100 59 L93 52 L86 59 L79 53 Z" fill="${C}" stroke="${DGC.EGG}" stroke-width="2.5" stroke-linejoin="round"/><circle cx="97" cy="45" r="3.5" fill="${R}" opacity=".9"/></g>`:"";
+  const hat=dgHatOn(h)?dgHat(100,58,.95,-12):o.cap?dgNightcap(100,58,.95,-12):"";
+  // vacation: a terry sweatband and a drop of sweat while stretching
+  const sweat=o.vac==="stretch"?`<path d="M61 70 Q100 46 139 70 L138 80 Q100 56 62 80 Z" fill="#fff" stroke="${OL}" stroke-width="2" stroke-linejoin="round"/><path d="M62 75 Q100 51 138.5 75" fill="none" stroke="${R}" stroke-width="3"/>
+    <path d="M80 64 v7 M90 60 v7 M110 60 v7 M120 64 v7" stroke="#e2ddd0" stroke-width="1.6" stroke-linecap="round"/><path class="${dgA(o,"dg-sweat")}" d="M141 86 q4.5 7 0 10.5 q-4.5 -3.5 0 -10.5z" fill="#bfe3ff" stroke="#fff" stroke-width="1"/>`:"";
   const wreath=mood==="stoic"&&!hat?dgWreath(100,90,43,39,1):"";
   const bubble=mood==="asleep"&&!o.still?`<circle class="dg-bubble" cx="113" cy="106" r="7" fill="#d6ecff" stroke="#fff" stroke-width="1.5" opacity=".85"/>`:"";
   const lower=mood==="asleep"?"translate(0 9) rotate(7 100 124) ":"";
   const head=`<g transform="${lower}translate(100 124) scale(${g.head}) translate(-100 -124)"><g class="${dgA(o,"dg-head")}">
      ${fins}${horns}${spikes}<ellipse cx="100" cy="90" rx="41" ry="37" fill="${R}" stroke="${OL}" stroke-width="${sw}"/>
-     <ellipse cx="80" cy="66" rx="9" ry="5" fill="#fff" opacity=".22" transform="rotate(-25 80 66)"/>${band}${cheeks}${snout}${eyes}${brows}${mouth}${fangs}${beard}${shellHat}${wreath}${hat}${bubble}</g></g>`;
+     <ellipse cx="80" cy="66" rx="9" ry="5" fill="#fff" opacity=".22" transform="rotate(-25 80 66)"/>${band}${cheeks}${snout}${eyes}${brows}${mouth}${fangs}${beard}${shellHat}${sweat}${wreath}${hat}${bubble}</g></g>`;
   const bar=o.perch&&g.k!=="hatch"?dgBarbell(g.s):"";
   const inner=`${tail}${wings}${sack}${body}${bar}${feet}${paddle}${armL}${poppy}${armR}${bags}${med}${head}`;
   return `<g class="${dgA(o,"dg-hop")}"><g transform="translate(0 ${g.dy||0}) translate(100 190) scale(${g.s}) translate(-100 -190)"><g class="${dgA(o,"dg-breathe")}">${inner}</g></g></g>`;
 }
+/* ---------- week-theme scenes ----------
+   Each one draws the dragon as usual (any stage, egg included), shrunk a little, inside a small scene. */
+function dgNightcap(cx,cy,sc,rot){const {OL}=DGC;
+  return `<g transform="translate(${cx} ${cy}) rotate(${rot}) scale(${sc})"><path d="M-36 6 C-32 -20 -10 -38 14 -36 C32 -34 46 -18 56 6 C50 0 44 -2 38 -2 C34 -14 26 -20 18 -20 C24 -8 26 0 30 6 Z" fill="#5089e2" stroke="${OL}" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M-24 -10 Q-6 -2 8 -22 M6 -30 Q20 -14 34 -22" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".75"/>
+    <rect x="-42" y="0" width="76" height="13" rx="6.5" fill="#fff" stroke="#d8d2c4" stroke-width="2"/><circle cx="58" cy="9" r="8" fill="#fff" stroke="#d8d2c4" stroke-width="2"/></g>`}
+function dgSceneInner(svg){return svg.slice(svg.indexOf(">")+1,svg.lastIndexOf("</svg>"))}
+/* Landmarks for the vacation photos (one a day, generic shapes): a lattice tower, a pagoda, a clock tower, a lighthouse. */
+function dgLandmark(n){const c="#8fa6bd",w=`fill="none" stroke="${c}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"`;
+  const L=[`<path ${w} d="M142 186 Q156 146 159 92 L160 50 L161 92 Q164 146 178 186"/><path ${w} d="M147 162 H173 M152 130 H168 M156.5 102 H163.5"/><path ${w} d="M150 186 Q160 170 170 186"/>`,
+    `<g fill="${c}"><rect x="155" y="58" width="10" height="128"/><path d="M134 88 Q160 76 186 88 L178 94 H142 Z"/><path d="M138 122 Q160 110 182 122 L175 128 H145 Z"/><path d="M134 156 Q160 144 186 156 L178 162 H142 Z"/><path d="M159 40 L161 40 L162 60 L158 60 Z"/></g><g fill="#fff" opacity=".35"><rect x="150" y="98" width="20" height="18"/><rect x="148" y="132" width="24" height="18"/><rect x="146" y="166" width="28" height="20"/></g>`,
+    `<g fill="${c}"><rect x="147" y="80" width="26" height="106"/><path d="M144 82 L160 44 L176 82 Z"/></g><circle cx="160" cy="98" r="8.5" fill="#fff" opacity=".8"/><path d="M160 98 V92 M160 98 L164 100" stroke="${c}" stroke-width="2" stroke-linecap="round"/><path d="M152 186 V160 Q160 150 168 160 V186" fill="#fff" opacity=".3"/>`,
+    `<g fill="${c}"><path d="M150 186 L153 96 H167 L170 186 Z"/><rect x="150" y="80" width="20" height="16" rx="3"/><path d="M148 80 L160 66 L172 80 Z"/></g><path d="M151 150 H169 M152 120 H168" stroke="#fff" stroke-width="6" opacity=".45"/><rect x="154" y="84" width="12" height="8" fill="#f2b233"/><path class="dg-a dg-beam" d="M170 88 L198 76 L198 100 Z" fill="#f2b233" opacity=".35"/>`];
+  return `<g opacity=".75">${L[((n%L.length)+L.length)%L.length]}</g><path d="M28 50 q6 -10 16 -6 q6 -8 14 0 q8 0 6 8 h-38 q-4 -2 2 -2z" fill="#fff" opacity=".35"/>`}
+function dgVacSVG(st,mood,o,kind){
+  const px=o.px||110,{OL,INK,R}=DGC,g=DG_STAGES[st]||{s:1,dy:0,k:"egg"};
+  const inner=dgSceneInner(dragonSVG(st,mood,Object.assign({},o,{px:200,hol:"",scene:"",vac:kind,perch:false,cls:""})));
+  // where the camera hangs (the chest), in the scene's coordinates
+  const cy0=!st?142:g.k==="hatch"?128:(146-190)*g.s+190+(g.dy||0),cx=76,cy=(cy0-190)*.86+192;
+  let bg="",fg="",body=`<g transform="translate(-24 2) translate(100 190) scale(.86) translate(-100 -190)">${inner}</g>`;
+  if(kind==="trip"){
+    bg=`<g class="${dgA(o,"dg-plane")}"><path d="M-30 30 H-6" stroke="#9fb3c8" stroke-width="2" stroke-dasharray="4 4" opacity=".7"/><g transform="translate(0 30)"><path d="M-6 -2 H18 Q26 0 18 3 H-6 Z" fill="#fff" stroke="#9fb3c8" stroke-width="1.6"/><path d="M4 -2 L-2 -12 H4 L12 -2 Z M4 3 L-2 11 H4 L12 3 Z M-6 -2 L-10 -8 H-6 L-2 -2 Z" fill="#e5482b"/></g></g>`;
+    fg=`<g class="${dgA(o,"dg-case")}"><path d="M153 118 V96 H171 V118" fill="none" stroke="#6b7480" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="138" y="116" width="48" height="66" rx="9" fill="#3aa6e0" stroke="${OL}" stroke-width="3"/><path d="M150 120 V178 M174 120 V178" stroke="#2b86bb" stroke-width="3"/>
+      <circle cx="162" cy="138" r="9" fill="${R}" stroke="#fff" stroke-width="2"/><text x="162" y="142" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800" font-size="10" fill="#fff">DB</text>
+      <path d="M146 160 l3.5 7 7.5 1-5.5 5 1.5 7.5-7-3.8-7 3.8 1.5-7.5-5.5-5 7.5-1z" transform="translate(4 -6) scale(.7)" fill="#f2b233"/><rect x="164" y="156" width="16" height="11" rx="2" fill="#43c08a" transform="rotate(-10 172 161)"/>
+      <circle cx="146" cy="186" r="5" fill="${INK}"/><circle cx="178" cy="186" r="5" fill="${INK}"/></g>`}
+  if(kind==="photo"){
+    bg=dgLandmark(dgDay());
+    fg=`<g transform="translate(${cx} ${cy.toFixed(1)})">${st?`<path d="M-17 -16 Q0 -2 17 -16" fill="none" stroke="${INK}" stroke-width="2.2"/>`:""}
+      <rect x="-15" y="-9" width="30" height="20" rx="4" fill="#2b2f36" stroke="${OL}" stroke-width="2"/><rect x="-10" y="-13" width="9" height="5" rx="1.5" fill="#2b2f36" stroke="${OL}" stroke-width="1.5"/>
+      <circle cx="2" cy="1" r="6.5" fill="#5a6470" stroke="#d8d2c4" stroke-width="2"/><circle cx="2" cy="1" r="2.6" fill="#9bd1f2"/><circle cx="10" cy="-5" r="1.8" fill="#f2b233"/>
+      <g class="${dgA(o,"dg-camflash")}"><path d="M11 -15 l2.6 6.4 6.4 2.6-6.4 2.6-2.6 6.4-2.6-6.4-6.4-2.6 6.4-2.6z" fill="#fff"/></g>
+      <g class="${dgA(o,"dg-polaroid")}"><rect x="16" y="-24" width="19" height="22" rx="2" fill="#fff" stroke="#d8d2c4" stroke-width="1.2"/><rect x="18.5" y="-21.5" width="14" height="12" fill="#9fd3f0"/><path d="M19 -9.5 L24 -17 L27 -13 L29 -15 L32.5 -9.5 Z" fill="#8fa6bd"/></g></g>`}
+  if(kind==="beach"){
+    bg=`<g transform="translate(30 32)"><g class="${dgA(o,"dg-sunray")}">${[0,45,90,135,180,225,270,315].map(a=>`<path d="M0 -20 V-15" stroke="#f2b233" stroke-width="3" stroke-linecap="round" transform="rotate(${a})"/>`).join("")}</g><circle r="11" fill="#f2b233"/></g>
+      <path class="${dgA(o,"dg-sea")}" d="M-20 152 Q-5 146 10 152 T40 152 T70 152 T100 152 T130 152 T160 152 T190 152 T220 152 V178 H-20 Z" fill="#3aa6e0" opacity=".45"/>
+      <path d="M182 188 C178 150 172 124 162 98" stroke="#8a5a3c" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M176 160 l6 -2 M172 136 l6 -2 M167 116 l6 -2" stroke="#6d4329" stroke-width="2" stroke-linecap="round"/>
+      <g fill="#43c08a" stroke="#2b8a5e" stroke-width="2" stroke-linejoin="round"><path d="M162 98 C150 84 132 84 122 92 C136 90 148 94 162 98 Z"/><path d="M162 98 C166 80 182 72 196 76 C184 80 172 88 162 98 Z"/><path d="M162 98 C156 80 146 70 132 70 C146 76 154 86 162 98 Z"/><path d="M162 98 C176 92 192 96 198 108 C186 100 174 98 162 98 Z"/></g>
+      <circle cx="160" cy="102" r="4" fill="#7a4b2a"/><circle cx="166" cy="104" r="4" fill="#7a4b2a"/>
+      <path d="M-10 176 Q50 166 110 174 T210 170 V205 H-10 Z" fill="#ecd39d"/>`;
+    fg=`<g transform="translate(160 146)"><path d="M-3 -4 L-8 -24 L-19 -28" stroke="${R}" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M-12 -4 L12 -4 L9 34 Q0 38 -9 34 Z" fill="#dff4ea" fill-opacity=".8" stroke="#fff" stroke-width="2"/><path d="M-11 5 L11 5 L9 33 Q0 37 -9 33 Z" fill="#b8e6c4"/>
+      <rect x="-7" y="8" width="7" height="7" rx="1.5" fill="#fff" opacity=".7" transform="rotate(12 -3.5 11.5)"/><rect x="1" y="14" width="7" height="7" rx="1.5" fill="#fff" opacity=".6"/>
+      <path d="M-8 2 C-4 -6 2 -6 3 2 C-1 4 -5 4 -8 2 Z M2 3 C6 -4 11 -2 10 4 C7 6 4 5 2 3 Z" fill="#2fa35b"/>
+      <circle cx="11" cy="-4" r="7" fill="#9bd35a" stroke="#5d9b2c" stroke-width="1.6"/><path d="M11 -11 V3 M4 -4 H18 M6 -9 L16 1 M16 -9 L6 1" stroke="#d9f0b8" stroke-width="1"/>
+      <circle class="${dgA(o,"dg-fizz")}" cx="-3" cy="26" r="1.6" fill="#fff"/><circle class="${dgA(o,"dg-fizz f2")}" cx="3" cy="28" r="1.3" fill="#fff"/><circle class="${dgA(o,"dg-fizz f3")}" cx="0" cy="22" r="1.1" fill="#fff"/></g>`}
+  if(kind==="stretch"){
+    bg=`<rect x="34" y="183" width="132" height="9" rx="4.5" fill="#43c08a" stroke="#2b8a5e" stroke-width="2"/>`;
+    body=`<g class="${dgA(o,"dg-vstretch")}">${inner}</g>`}
+  return `<svg class="dgsvg dg-${mood} dg-vac dg-v-${kind} ${o.cls||""}" style="overflow:hidden" width="${px}" height="${px}" viewBox="0 0 200 200" role="img" aria-label="${esc(dgName(st))}">${bg}${body}${fg}</svg>`;
+}
+/* Sick: tucked in bed with a nightcap, head on the pillow. Asleep everywhere (Z's and a snore bubble), sitting up with a cup of tea after a session. */
+function dgSickSVG(st,mood,o,kind){
+  const px=o.px||110,{OL}=DGC,up=kind==="beach"&&mood==="happy",md=st?(up?"happy":"asleep"):"egg";
+  let tf,hy,hr;
+  if(st){const g=DG_STAGES[st],hh=124+(90-124)*g.head,y0=(hh-190)*g.s+190+(g.dy||0)+(md==="asleep"?8:0);
+    hr=37*g.head*g.s;hy=Math.max(86,62+hr);tf=`translate(0 ${(hy-y0).toFixed(1)})`}
+  else{tf="translate(0 -12) translate(100 190) scale(.9) translate(-100 -190)";hy=122;hr=46}
+  const top=st?Math.min(hy+hr*1.02,168):hy+8,hb=Math.max(14,hy-hr-20);
+  const inner=dgSceneInner(dragonSVG(st,md,Object.assign({},o,{px:200,hol:"",scene:"",vac:"",cap:"night",perch:false,cls:""}))).replace(/<ellipse cx="\d+" cy="191"[^>]*\/>/,"").replace(/<g fill="#9b9a93"[^>]*><text class="dg-z[^]*?<\/g>/,"");   // no floor shadow and no small Z's under the covers
+  const zx=100-hr-20,zy=hy+4,sleep=!up&&!o.still;   // the Z's float up on the left, away from the nightcap's pom-pom
+  const zz=sleep?`<g fill="#a9c4e6" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800" text-anchor="middle"><text class="dg-z" x="${zx.toFixed(0)}" y="${zy.toFixed(0)}" font-size="19">z</text><text class="dg-z z2" x="${(zx-11).toFixed(0)}" y="${(zy-17).toFixed(0)}" font-size="25">z</text><text class="dg-z z3" x="${(zx-22).toFixed(0)}" y="${(zy-38).toFixed(0)}" font-size="31">Z</text></g>`:"";
+  const bub=sleep&&st?`<circle class="dg-bubble" cx="${(100+hr*.36).toFixed(1)}" cy="${(hy+hr*.42).toFixed(1)}" r="${(4.5+hr*.14).toFixed(1)}" fill="#d6ecff" stroke="#fff" stroke-width="1.5" opacity=".9"/>`:"";
+  const tea=up?`<g transform="translate(152 ${(top+2).toFixed(0)})"><path class="${dgA(o,"dg-steam")}" d="M-3 -14 q-4 -6 0 -12 q4 -6 0 -12" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".7"/><path d="M-11 -12 H11 L9 6 Q0 10 -9 6 Z" fill="#fff" stroke="${OL}" stroke-width="2.2"/><path d="M11 -7 q8 0 7 6 q-1 5 -8 4" fill="none" stroke="${OL}" stroke-width="2.2"/><path d="M-9 -8 H9" stroke="#c98a4b" stroke-width="3"/></g>`:"";
+  return `<svg class="dgsvg dg-${md} dg-sick ${o.cls||""}" style="overflow:hidden" width="${px}" height="${px}" viewBox="0 0 200 200" role="img" aria-label="${esc(dgName(st))}">
+    <rect x="26" y="${hb.toFixed(0)}" width="148" height="${(196-hb).toFixed(0)}" rx="18" fill="#a06a45" stroke="${OL}" stroke-width="3"/><rect x="38" y="${(hb+10).toFixed(0)}" width="124" height="${Math.max(10,top-hb-22).toFixed(0)}" rx="10" fill="#b97f57" opacity=".8"/>
+    <ellipse cx="100" cy="${(hy+hr*.5).toFixed(1)}" rx="${(hr*1.45).toFixed(1)}" ry="${(hr*.52).toFixed(1)}" fill="#fff" stroke="#d8d2c4" stroke-width="2.5"/>
+    <g transform="${tf}">${inner}</g>${bub}${zz}
+    <path d="M14 ${top.toFixed(1)} Q100 ${(top-12).toFixed(1)} 186 ${top.toFixed(1)} L188 188 Q100 195 12 188 Z" fill="#5089e2" stroke="${OL}" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M15 ${(top+9).toFixed(1)} Q100 ${(top-3).toFixed(1)} 185 ${(top+9).toFixed(1)}" fill="none" stroke="#fff" stroke-width="7" opacity=".9"/>
+    <g fill="#fff" opacity=".35"><circle cx="50" cy="${(top+24).toFixed(0)}" r="4"/><circle cx="100" cy="${(top+28).toFixed(0)}" r="4"/><circle cx="150" cy="${(top+24).toFixed(0)}" r="4"/></g>
+    <rect x="10" y="186" width="180" height="9" rx="4.5" fill="#a06a45" stroke="${OL}" stroke-width="2.5"/>${tea}</svg>`;
+}
+/* Behind each workout title: a little beach on vacation, the mini dragons asleep in their beds when sick. */
+function dgVacStrip(){
+  return `<div class="dg-gym dg-gym-vac" aria-hidden="true"><svg viewBox="0 0 260 100"><g transform="translate(224 24)"><circle r="10" fill="#f2b233"/></g>
+    <path d="M-10 78 Q10 74 30 78 T70 78 T110 78 T150 78 T190 78 T230 78 T270 78 V90 H-10 Z" fill="#3aa6e0" opacity=".5"/><path d="M-10 88 Q80 82 160 88 T270 86 V100 H-10 Z" fill="#ecd39d"/>
+    <path d="M40 92 C38 72 34 58 28 46" stroke="#8a5a3c" stroke-width="5" fill="none" stroke-linecap="round"/><g fill="#43c08a"><path d="M28 46 C20 36 8 36 2 42 C12 40 20 42 28 46 Z"/><path d="M28 46 C32 34 44 30 54 34 C44 36 36 40 28 46 Z"/><path d="M28 46 C24 34 16 28 6 28 C16 32 22 38 28 46 Z"/></g>
+    <path d="M150 90 L156 54" stroke="#6b7480" stroke-width="2.5"/><path d="M128 58 Q156 38 184 58 Z" fill="#e5482b"/><path d="M137 52 Q156 44 175 52" stroke="#fff" stroke-width="4" fill="none" opacity=".8"/>
+    <path d="M168 90 L176 78 H196 L190 90" fill="none" stroke="#a06a45" stroke-width="2.5" stroke-linejoin="round"/></svg></div>`}
+function dgSickStrip(){const {R,OL,C,INK}=DGC;
+  const bed=(x,dl)=>`<g transform="translate(${x} 0)"><rect x="-34" y="58" width="68" height="34" rx="6" fill="#a06a45"/><ellipse cx="-14" cy="66" rx="16" ry="7" fill="#fff"/>
+    <circle cx="-14" cy="62" r="11" fill="${R}" stroke="${OL}" stroke-width="1.5"/><path d="M-19 62 q2.5 2 5 0 M-12 62 q2.5 2 5 0" stroke="${INK}" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    <path d="M-24 56 C-22 46 -10 42 -2 46 C4 48 8 54 10 60 C6 56 2 54 -2 54 C-4 50 -8 50 -12 52 Z" fill="#5089e2"/><circle cx="10" cy="60" r="3" fill="#fff"/>
+    <path d="M-36 70 Q0 64 36 70 V90 H-36 Z" fill="#5089e2" stroke="${OL}" stroke-width="1.5"/><path d="M-36 73 Q0 67 36 73" stroke="#fff" stroke-width="3" fill="none"/>
+    <circle class="dg-bubble" cx="-8" cy="66" r="3.5" fill="#d6ecff" stroke="#fff" stroke-width="1" style="animation-delay:${dl}s"/>
+    <g fill="#9b9a93" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800"><text class="dg-z" x="2" y="46" font-size="12" style="animation-delay:${dl}s">z</text><text class="dg-z z2" x="10" y="36" font-size="16" style="animation-delay:${(+dl+.95).toFixed(2)}s">z</text></g></g>`;
+  return `<div class="dg-gym dg-gym-sick" aria-hidden="true"><svg viewBox="0 0 260 100"><path d="M-10 97.5 H270" stroke="var(--line)" stroke-width="3"/><g transform="translate(62 96) scale(1.45) translate(0 -96)">${bed(0,0)}</g><g transform="translate(196 96) scale(1.45) translate(0 -96)">${bed(0,.7)}</g></svg></div>`}
 /* A barbell with red plates, drawn in the dragon's own (scaled) coordinates so it always spans the picture. */
 function dgBarbell(s){const {OL,R,AM,AMD}=DGC,y=176,L=100-95/s,Rr=100+95/s,k=1/s;
   const plate=(x,dir)=>`<rect x="${x-6*k}" y="${y-22*k}" width="${12*k}" height="${44*k}" rx="${4*k}" fill="${R}" stroke="${OL}" stroke-width="${2.5*k}"/><rect x="${x+dir*9*k-4.5*k}" y="${y-15*k}" width="${9*k}" height="${30*k}" rx="${3*k}" fill="${AM}" stroke="${AMD}" stroke-width="${2*k}"/><rect x="${x+dir*17*k-3*k}" y="${y-6*k}" width="${6*k}" height="${12*k}" rx="${1.5*k}" fill="#9aa3ad" stroke="#4b525a" stroke-width="${1.5*k}"/>`;
@@ -2024,6 +2185,8 @@ function dgBarbell(s){const {OL,R,AM,AMD}=DGC,y=176,L=100-95/s,Rr=100+95/s,k=1/s
 function dragonSVG(st,mood,o){
   o=o||{};const px=o.px||110;
   const h=o.hol===undefined?(o.still?"":dgHoliday()):o.hol;
+  const scene=(h==="vac"||h==="sick")&&!o.still?(o.scene||""):"";
+  if(scene)return h==="sick"?dgSickSVG(st,mood,o,scene):dgVacSVG(st,mood,o,scene);
   if(!st)return dgEggSVG(Object.assign({},o,{hol:h}));
   const g=DG_STAGES[st];const {C,R,EGG}=DGC;
   const top=190-(190-(124-71*g.head))*g.s+(g.dy||0),rx=100+41*g.head*g.s,lx=100-41*g.head*g.s;
@@ -2060,7 +2223,7 @@ function dgFont(){const f=(DPREV&&DPREV.font)||"Fredoka";
 function dragonPerch(){
   if(!dragonOn())return "";dgFont();const d=dragonData(),h=dgHoliday();
   const hol=h==="day"?"xmas":h;   // no gift scene up here, just the hat
-  return `<button class="dg-perch" id="dgPerch" aria-label="${dgFr()?"Ton dragon":"Your dragon"}">${dragonSVG(d.st,d.st?(dgStoicNow()?"stoic":"happy"):"egg",{px:104,medals:d.medals,perch:true,hol,stoic:dgStoicNow()})}</button>`;
+  return `<button class="dg-perch" id="dgPerch" aria-label="${dgFr()?"Ton dragon":"Your dragon"}">${dragonSVG(d.st,d.st?(dgStoicNow()?"stoic":"happy"):"egg",{px:104,medals:d.medals,perch:true,hol,stoic:dgStoicNow(),scene:"stretch"})}</button>`;
 }
 function dgPerchPet(){const b=document.getElementById("dgPerch");if(b)dgTap(b,b.querySelector("svg"))}
 
@@ -2073,7 +2236,7 @@ const dgStreakTxt=n=>dgFr()?(n>1?"semaines de suite":"semaine de suite"):"week s
 function dragonCard(){
   if(!dragonOn())return "";dgFont();const d=dragonData(),fr=dgFr();
   return `<section style="padding-bottom:0"><div class="dgcard">
-    <div class="dgtop"><button class="dg-hello dg-tapme" data-dgtap aria-label="${fr?"Flatter ton dragon":"Pet your dragon"}">${dragonSVG(d.st,dgStoicNow()&&d.st?"stoic":d.mood,{px:120,medals:d.medals,stoic:dgStoicNow()})}${dgHint("card")}</button><button class="dg-say" data-dgtap>${dgSayHtml(d)}</button></div>
+    <div class="dgtop"><button class="dg-hello dg-tapme" data-dgtap aria-label="${fr?"Flatter ton dragon":"Pet your dragon"}">${dragonSVG(d.st,dgStoicNow()&&d.st?"stoic":d.mood,{px:120,medals:d.medals,stoic:dgStoicNow(),scene:"trip"})}${dgHint("card")}</button><button class="dg-say" data-dgtap>${dgSayHtml(d)}</button></div>
     <button class="dginfo" id="dragonCard" aria-label="${fr?"Ton dragon : statistiques":"Your dragon: stats"}"><div class="dgrow"><div><div class="eyebrow">${fr?"Dibi · ton dragon":"Dibi · your dragon"}</div><div class="dgname">${esc(dgName(d.st))}</div></div>
      ${d.st?`<div class="dgmeta"><span>🔥 <b>${d.streak}</b> ${dgStreakTxt(d.streak)}</span>${d.freezes?`<span>🧊 <b>${d.freezes}</b></span>`:""}${d.medals?`<span>🏅 <b>${d.medals}</b></span>`:""}</div>`:""}</div>
      ${d.st?`<div class="xpbar"><i style="width:${d.pct}%"></i></div><div class="dgnext">${esc(dgNextTxt(d))}<span class="dgmore">${fr?"Stats":"Stats"} ›</span></div>`:`<div class="dgnext">${fr?"Ta prochaine séance le fait éclore.":"Your next workout hatches it."}<span class="dgmore">${fr?"Stats":"Stats"} ›</span></div>`}</button></div></section>`;
@@ -2081,7 +2244,7 @@ function dragonCard(){
 /* Program tab, week page: Dibi with the day's quote under the week title (tap him or the quote for emotes). */
 function dragonWeekCard(){
   if(!dragonOn())return "";dgFont();const d=dragonData(),fr=dgFr(),st=dgStoicNow();
-  return `<div class="dgcard dgweek"><div class="dgtop"><button class="dg-hello dg-tapme" data-dgtap aria-label="${fr?"Flatter ton dragon":"Pet your dragon"}">${dragonSVG(d.st,st&&d.st?"stoic":d.mood,{px:96,medals:d.medals,stoic:st})}${dgHint("card")}</button><button class="dg-say" data-dgtap>${dgSayHtml(d)}</button></div></div>`;
+  return `<div class="dgcard dgweek"><div class="dgtop"><button class="dg-hello dg-tapme" data-dgtap aria-label="${fr?"Flatter ton dragon":"Pet your dragon"}">${dragonSVG(d.st,st&&d.st?"stoic":d.mood,{px:96,medals:d.medals,stoic:st,scene:"photo"})}${dgHint("card")}</button><button class="dg-say" data-dgtap>${dgSayHtml(d)}</button></div></div>`;
 }
 function openDragon(){
   dgFont();if(DG_DEMO)Object.keys(DG_FONTS).forEach(f=>{if(!dgFontsIn[f]){dgFontsIn[f]=1;const l=document.createElement("link");l.rel="stylesheet";l.href=`https://fonts.googleapis.com/css2?family=${DG_FONTS[f]}&display=swap`;document.head.appendChild(l)}});
@@ -2093,12 +2256,12 @@ function openDragon(){
     <div class="small muted">Play the animation (from the stage before)</div><div class="dg-prev">${["hatch","baby","young","adult","racing","medal"].map(k=>`<button data-dprev-ev="${k}">▶ ${k==="hatch"?"Hatch":k==="medal"?"Medal":DG_STAGES.find(s=>s.k===k).en}</button>`).join("")}<button data-dprev-ev="">▶ Normal workout</button></div>
     <div class="small muted">Quote of the day</div><div class="dg-prev"><button data-dprev-stoic="1">Stoic day 🏛️</button><button data-dprev-stoic="0">Normal quote</button></div>
     <div class="small muted">Workout gym (opens a workout)</div><div class="dg-prev"><button data-dprev-gym="upper">Upper body</button><button data-dprev-gym="lower">Lower body</button><button data-dprev-gym="full">Full body</button></div>
-    <div class="small muted">Holidays</div><div class="dg-prev">${[["","Normal day"],["remember","Nov 11"],["xmas","Dec 1–23"],["eve","Dec 24"],["day","Dec 25"],["boxing","Dec 26"]].map(([k,n])=>`<button data-dprev-hol="${k}">${n}</button>`).join("")}</div>
+    <div class="small muted">Holidays</div><div class="dg-prev">${[["","Normal day"],["remember","Nov 11"],["xmas","Dec 1–23"],["eve","Dec 24"],["day","Dec 25"],["boxing","Dec 26"],["vac","Vacation week"],["sick","Sick week"]].map(([k,n])=>`<button data-dprev-hol="${k}">${n}</button>`).join("")}</div>
     <div class="small muted">Font for the dragon's words</div><div class="dg-prev">${Object.keys(DG_FONTS).map(f=>`<button data-dprev-font="${f}" style="font-family:'${f}',sans-serif;font-size:15px">${f}</button>`).join("")}</div>
     <div class="dg-prev"><button data-dprev-day>Next day's message ›</button><button data-dprev-clear>Back to real data</button><button data-dprev-buzz>📳 Test buzz</button></div></div>`:"";
   document.getElementById("overlay").innerHTML=`<div class="scrim" data-close></div><div class="sheet" role="dialog" aria-label="${fr?"Ton dragon":"Your dragon"}"><div class="inner wrap">
    <div style="display:flex;justify-content:space-between;align-items:center"><h2>${fr?"Ton dragon":"Your dragon"}</h2><button class="btn ghost" data-close style="padding:8px 12px;font-size:14px">${T("close")}</button></div>
-   <div class="dg-big"><div class="dg-say down" id="dgSay">${dgSayHtml(d)}</div><div id="dgPet" role="button" aria-label="${fr?"Flatter ton dragon":"Pet your dragon"}">${dragonSVG(d.st,dgStoicNow()&&d.st?"stoic":d.mood,{px:210,medals:d.medals,stoic:dgStoicNow()})}</div>
+   <div class="dg-big"><div class="dg-say down" id="dgSay">${dgSayHtml(d)}</div><div id="dgPet" role="button" aria-label="${fr?"Flatter ton dragon":"Pet your dragon"}">${dragonSVG(d.st,dgStoicNow()&&d.st?"stoic":d.mood,{px:210,medals:d.medals,stoic:dgStoicNow(),scene:"beach"})}</div>
      <div class="dg-title">${esc(dgName(d.st))}${d.medals?` · 🏅 ${d.medals}`:""}</div>
      ${d.st?`<div class="muted small">${d.xp} XP · ${esc(dgNextTxt(d))}</div><div class="xpbar" style="width:100%;max-width:320px"><i style="width:${d.pct}%"></i></div>`:""}
      <div class="small muted">${fr?(d.st?"Touche ton dragon pour le flatter":"Touche l’œuf"):(d.st?"Tap your dragon to pet it":"Tap the egg")}</div></div>
@@ -2116,6 +2279,7 @@ function dgPet(){
   const box=document.getElementById("dgPet");if(!box)return;const d=dragonData();
   dgTap(box,box.querySelector("svg"));
   if(dgStoicNow()){const l=DG_STOIC_PET[Math.floor(Date.now()/700)%DG_STOIC_PET.length];dgSayAgain(dgFr()?l[1]:l[0]);return}
+  const th=dgHoliday();if((th==="vac"||th==="sick")&&d.st){dgSayAgain(dgVacLine(th+"Pet",Math.floor(Date.now()/700)));return}
   dgSayAgain(d.st?dgPick("pet",Math.floor(Date.now()/700)%53):dgPick("egg",Date.now()%97));
 }
 
@@ -2146,17 +2310,26 @@ function dgFx(k){
      +dgParts(34,["#f2b233"],{shapes:"g",sy:-150,a0:70,a1:110,r:40,g:260,d:.9,dd:.9,t:1.9})+dgParts(16,["#fff6d8","#f2b233"],{shapes:"s",sy:-20,r:120,g:80,d:1.3});
   return "";
 }
+/* A team circuit has no finish screen. When marking it done hatches the egg, grows the dragon or earns a medal,
+   show the same dragon celebration in a sheet, so circuit teams never miss the hatch ("Hi [name]! I'm Dibi") or an evolution. */
+function dgCircuitCele(b,a){
+  document.getElementById("overlay").innerHTML=`<div class="scrim" data-close></div><div class="sheet"><div class="inner wrap"><div class="done-panel dgp">
+    ${dragonCelebration(b,a,0)}
+    <div class="eyebrow">${T("circuit")}</div><div class="big">${T("circuitDone")}</div>
+    <button class="btn block" data-close>${T("back")}</button></div></div></div>`;
+  buzz([40,60,40,1050,200,80,260]);dgSfx(a.st>b.st?DG_STAGES[a.st].k:"medal");dgAnimateXp();
+}
 function dragonCelebration(b,a,pr){
   dgFont();const fr=dgFr(),grew=a.st>b.st,medal=!grew&&a.medals>b.medals,gain=a.xp-b.xp;
   const k=grew?DG_STAGES[a.st].k:medal?"medal":"",ev=!!k;
   const title=k==="hatch"?(fr?"Il a éclos!":"It hatched!"):grew?(fr?"Ton dragon a évolué!":"Your dragon evolved!"):medal?(fr?"Nouvelle médaille!":"New medal!"):"";
   const nm=dgHelloName();
   const line=k==="hatch"?(fr?`Salut${nm?" "+nm:""}! Moi, c'est Dibi. J’ai tellement hâte de grandir avec toi pendant que tu t’entraînes!`:`Hi${nm?" "+nm:""}! I'm Dibi. I'm so excited to keep growing with you as you train!`)
-    :ev?dgEvolveLine(k):dgPick(pr?"pr":"after",a.workouts);
+    :ev?dgEvolveLine(k):dgHoliday()==="vac"||dgHoliday()==="sick"?dgVacLine(dgHoliday()+"After",a.workouts):dgPick(pr?"pr":"after",a.workouts);
   const L=ev?"dg-late":"";
   const stage=k==="hatch"?`<div class="layer old">${dgEggSVG({px:200,cracks:true,cls:"dg-hatching"})}</div><div class="layer cap">${dgCapSVG(200)}</div><div class="flash"></div><div class="layer new">${dragonSVG(a.st,"happy",{px:200,cls:"dg-wave"})}</div>`
     :grew?`<div class="layer old">${dragonSVG(b.st,"awake",{px:200,medals:b.medals})}</div><div class="flash"></div><div class="layer new">${dragonSVG(a.st,"happy",{px:200,medals:a.medals})}</div>`
-    :`<div class="layer new">${dragonSVG(a.st,"happy",{px:200,medals:a.medals})}</div>`;
+    :`<div class="layer new">${dragonSVG(a.st,"happy",{px:200,medals:a.medals,scene:"beach"})}</div>`;
   return `<div class="dg-cele ${ev?`ev ev-${k}`:""}" role="button" aria-label="${fr?"Flatter ton dragon":"Pet your dragon"}">${stage}${dgFx(k)}<div class="xp-pop">+${gain} XP</div>${dgHint(ev?"cele":"cele now")}</div>
     ${title?`<div class="dg-title ${L}" style="color:var(--amber)">${title}</div><div class="dgname ${L}">${esc(dgName(a.st))}</div>`:""}
     ${line?`<div class="dg-say up ${L}" style="justify-self:center;max-width:320px">${esc(line)}</div>`:""}
@@ -2297,7 +2470,9 @@ function dgStation(kind,dx,delay,hat,wreath){
 }
 function dragonGym(day){
   if(!dragonOn()||!day||isCircuit(day))return "";
-  const k=(DG_DEMO&&DG_GYM_FORCE())||dgDayKind(day),h=dgHoliday(),hat=!!h&&h!=="remember";
+  const k=(DG_DEMO&&DG_GYM_FORCE())||dgDayKind(day),h=dgHoliday(),hat=dgHatOn(h);
+  if(h==="vac")return dgVacStrip();
+  if(h==="sick")return dgSickStrip();
   const set=k==="upper"?["press","pull"]:k==="lower"?["squat","dead"]:["squat","press"];
   // two tiny dragons far behind yours (smaller, a little higher, faded = farther away)
   return `<div class="dg-gym dg-gym-${k}" aria-hidden="true"><svg viewBox="0 0 260 100"><path d="M-10 97.5 H270" stroke="var(--line)" stroke-width="3"/>
@@ -2341,7 +2516,9 @@ app.addEventListener("click",e=>{
   const dgt=t.closest("[data-dgtap]");if(dgt){dgTap(dgt,dgt.closest(".dgcard").querySelector(".dg-tapme svg"));return}
   if(t.closest("#dragonCard")){openDragon();return}
   if(t.closest("#dgPerch")){dgPerchPet();return}
-  if(t.closest("#circuitDone")){const k=`${VIEW.w}|${VIEW.d}`;if(S.days[k]){delete S.days[k];queueDayMark(VIEW.w,VIEW.d,"")}else{const b=dragonOn()?dragonData():null;S.days[k]=Date.now();queueDayMark(VIEW.w,VIEW.d,"✓ Done · "+isoDay());buzz();chime();if(b)toast(`+${dragonData().xp-b.xp} XP 🐉`)}save();render();return}
+  if(t.closest("#circuitDone")){const k=`${VIEW.w}|${VIEW.d}`;if(S.days[k]){delete S.days[k];queueDayMark(VIEW.w,VIEW.d,"")}else{const b=dragonOn()?dragonData():null;S.days[k]=Date.now();queueDayMark(VIEW.w,VIEW.d,"✓ Done · "+isoDay());const a=b?dragonData():null;
+    if(a&&(a.st>b.st||a.medals>b.medals)){save();render();dgCircuitCele(b,a);return}   // hatched or grew on a circuit: same show as a finished workout
+    buzz();chime();if(b&&a.xp>b.xp)toast(`+${a.xp-b.xp} XP 🐉`)}save();render();return}
 });
 app.addEventListener("input",e=>{
   const f=e.target.dataset.f;
