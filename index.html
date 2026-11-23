@@ -1188,6 +1188,9 @@ const isToMax=r=>/\d+\s*(?:s|sec|secs|seconds?)\b|amrap|\bmax\b|conti/i.test(Str
 function wtPick(s,p,rm,prevSet){
   const L=String(s.load||"").trim();
   if(/^BW\b/i.test(L))return "BW";
+  // A test set (load cell blank, reps cell just "Max", e.g. a 3-5 rep max): nothing suggested, so ticking it
+  // without typing logs no weight (Martin, Nov 21: "it's a test, do your best").
+  if(!L&&/^\s*x?\s*max\s*$/i.test(String(s.reps||"")))return T("lb");
   const m=L.match(/^\+?\s*(\d+(?:\.\d+)?)\s*(?:lbs?|kg)?$/i);if(m)return m[1];
   // A range like "155-165 lb": start at the low end.
   const g=L.match(/^(\d+(?:\.\d+)?)\s*[-–]\s*\d+(?:\.\d+)?\s*(?:lbs?|kg)?$/i);if(g)return g[1];
