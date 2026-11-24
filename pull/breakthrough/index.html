@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>The Breakthrough Pull-Up Guide · DB Speed</title>
+<meta name="description" content="Free pull-up guide for dragon boat paddlers stuck at 15: three changes, Conti sets and your next 5 weeks.">
+<meta property="og:title" content="The Breakthrough Pull-Up Guide · DB Speed">
+<meta property="og:description" content="Stuck at 15 pull-ups? Three changes, Conti sets and your next 5 weeks. Free, in English and French.">
+<meta property="og:image" content="https://app.dbspeed.app/apple-touch-icon.png">
+<meta property="og:url" content="https://app.dbspeed.app/pull/breakthrough/">
+<link rel="icon" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+/* DB Speed "Scoreboard" look, copied from the bench guide (app.dbspeed.app/bench) so the two guides match.
+   Layout: one 720px column. Welcome -> story -> your level -> the 3 levels -> the long road -> your week -> exercises -> train with me. */
+:root{
+  --bg:#121315; --surface:#1b1d20; --raised:#24272b; --line:#30343a;
+  --fg:#f3efe6; --muted:#9b9a93; --faint:#64666b; --accent:#e5482b; --good:#43c08a; --amber:#f2b233;
+  --display:"Barlow Condensed","Arial Narrow","Helvetica Neue",Arial,sans-serif;
+  --body:"Barlow","Helvetica Neue",Arial,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--bg);scroll-padding-top:calc(64px + env(safe-area-inset-top,0px))}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 16px/1.5 var(--body);-webkit-text-size-adjust:100%;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 calc(40px + env(safe-area-inset-bottom,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:720px;margin:0 auto;display:grid;gap:40px}
+
+/* draft banner (preview only) */
+.draft{max-width:720px;margin:14px auto 0;border:1px dashed var(--amber);border-radius:12px;padding:12px 14px;color:var(--amber);font-size:14px;display:grid;gap:6px}
+.draft b{font:800 15px/1.2 var(--display);letter-spacing:.08em;text-transform:uppercase}
+.draft ol{margin:0;padding-left:18px;display:grid;gap:3px}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);
+  margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
+.top .in{max-width:720px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{font:800 18px/1 var(--display);letter-spacing:.08em;text-decoration:none}
+.brand b{color:var(--accent);font-weight:800}
+.lang{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.lang button{background:none;border:0;color:var(--muted);font:600 14px var(--body);padding:8px 14px;min-height:36px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+
+/* type */
+.eyebrow{font:700 14px/1.2 var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0}
+h1,h2,h3{font-family:var(--display);text-transform:uppercase;margin:0;text-wrap:balance}
+h1{font-weight:800;font-size:clamp(44px,9vw,72px);line-height:1;letter-spacing:.005em}
+h2{font-weight:800;font-size:clamp(30px,5.6vw,40px);line-height:1;letter-spacing:.01em}
+h3{font-weight:700;font-size:23px;line-height:1.05;letter-spacing:.02em}
+p{margin:0}
+.lead{font-size:18px;line-height:1.5;max-width:62ch}
+.muted{color:var(--muted)}
+section{display:grid;gap:16px}
+.head{display:grid;gap:8px}
+.lab{font:700 14px/1.2 var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+
+/* welcome (people arriving from the PULL DM) */
+.welcome{margin-top:24px;display:grid;gap:14px;background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:14px;padding:18px}
+.welcome h2{font-size:clamp(28px,5.4vw,36px)}
+.steps2{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.steps2 li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;align-items:start}
+.steps2 .n{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font:800 16px/1 var(--display)}
+.steps2 b{display:block;font:800 19px/1.15 var(--display);letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.mail{display:grid;gap:10px;margin-top:4px}
+.mail .line{display:flex;gap:8px;flex-wrap:wrap}
+input[type=email]{flex:1 1 220px;min-width:0;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;min-height:48px;font:500 16px var(--body);padding:10px 12px}
+.consent{display:grid;grid-template-columns:22px minmax(0,1fr);gap:8px;font-size:14px;color:var(--muted);align-items:start}
+.consent input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--accent)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.ok{font-weight:600;color:var(--good)}
+.err{font-weight:600;color:var(--accent)}
+
+/* hero */
+.hero{display:grid;gap:18px}
+.score{display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 18px 16px}
+.score .side{display:grid;gap:6px}
+.score .side:last-child{text-align:right}
+.score .lbl{font:700 13px/1.2 var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.score .big{font:800 clamp(64px,15vw,104px)/.82 var(--display);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.score .arrow{font:800 34px/1 var(--display);color:var(--faint);padding-bottom:14px}
+.score .bars{grid-column:1/-1;display:grid;gap:6px;margin-top:6px}
+.score .bars i{display:block;height:10px;border-radius:3px;background:var(--raised)}
+.score .bars i b{display:block;height:100%;border-radius:3px}
+.score .bars i:first-child b{width:2%;background:var(--muted)}
+.score .bars i:last-child b{width:100%;background:var(--accent)}
+.by{font-size:14px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px}
+.by b{color:var(--fg);font-weight:600}
+.jump{display:flex;flex-wrap:wrap;gap:8px;padding:0;margin:0;list-style:none}
+.jump a{display:flex;align-items:center;gap:8px;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:8px 14px 8px 8px;font:600 15px var(--body);min-height:40px}
+.jump a span{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--raised);font:800 14px/1 var(--display);color:var(--accent)}
+.jump a em{font-style:normal}
+
+/* calculator */
+.calc{display:grid;gap:14px}
+form{display:grid;gap:16px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:460px){.row2{grid-template-columns:1fr}}
+.inp{display:grid;gap:6px;min-width:0}
+input[type=text]{width:100%;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;min-height:48px;font:700 24px/1 var(--display);letter-spacing:.02em;padding:10px 12px;font-variant-numeric:tabular-nums}
+.example{font-size:14px;color:var(--accent);font-weight:600}
+.private{font-size:13px;color:var(--muted)}
+.result{display:grid;gap:16px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:520px){.stats{grid-template-columns:1fr 1fr}.stats .lvlbox{grid-column:1/-1;order:-1}}
+.stat{background:var(--raised);border-radius:12px;padding:12px 14px;display:grid;gap:6px;align-content:start}
+.stat .k{font:700 13px/1.2 var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.stat .v{font:800 34px/1 var(--display);font-variant-numeric:tabular-nums}
+.lvlbox .v{color:var(--accent);text-transform:uppercase}
+.lvlbox .note{font-size:14px;color:var(--muted)}
+.ladder{display:grid;gap:6px}
+.rung{display:grid;grid-template-columns:150px minmax(0,1fr) 72px;gap:10px;align-items:center;font-variant-numeric:tabular-nums}
+@media (max-width:440px){.rung{grid-template-columns:112px minmax(0,1fr) 58px;gap:8px}}
+.rung .n{font:700 15px/1.1 var(--display);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.rung .bar{height:12px;background:var(--raised);border-radius:3px;overflow:hidden}
+.rung .bar i{display:block;height:100%;background:var(--faint);border-radius:3px;transition:width .3s ease}
+.rung .v{text-align:right;font-weight:600;color:var(--muted);white-space:nowrap}
+.rung.hit .n,.rung.hit .v{color:var(--fg)}
+.rung.hit .bar i{background:var(--fg)}
+.rung.cur .n{color:var(--accent)}
+.rung.cur .bar i{background:var(--accent)}
+.gap{font-weight:600}
+.gap b{color:var(--accent);font-variant-numeric:tabular-nums}
+.share{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:14px}
+.share .line{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap}
+.share code{flex:1 1 260px;font:500 14px/1.4 var(--body);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;overflow-wrap:anywhere}
+
+/* why */
+.why{border-left:3px solid var(--accent);padding:4px 0 4px 16px;display:grid;gap:8px}
+
+/* the three levels */
+.levers{display:grid;gap:14px}
+.lever{display:grid;grid-template-columns:72px minmax(0,1fr);gap:4px 14px}
+.lever .no{font:800 40px/.9 var(--display);color:var(--faint);font-variant-numeric:tabular-nums}
+.lever.twist{border-color:var(--accent)}
+.lever.twist .no{color:var(--accent)}
+.lever .body{display:grid;gap:10px;min-width:0}
+.chip{display:inline-block;font:800 15px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;background:var(--accent);color:#fff;padding:6px 9px;border-radius:6px}
+.how{background:var(--raised);border-radius:10px;padding:12px 14px;display:grid;gap:4px}
+.how .k{font:700 13px/1.2 var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+@media (max-width:440px){.lever{grid-template-columns:1fr}.lever .no{font-size:34px}}
+
+/* the long road */
+.secret{background:var(--fg);color:var(--bg);border-radius:16px;padding:22px 20px;display:grid;gap:12px}
+.secret h2{font-size:clamp(34px,6.4vw,48px)}
+.secret .lead{color:var(--bg)}
+.secret ul{margin:0;padding-left:20px;display:grid;gap:6px;color:#3b3c40}
+.secret ul b{color:var(--bg)}
+.secret .eyebrow{color:var(--accent)}
+
+/* plan */
+.weektabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:6px}
+.weektabs button{background:none;border:0;border-radius:8px;color:var(--muted);font:800 19px/1 var(--display);text-transform:uppercase;letter-spacing:.04em;padding:9px 4px;min-height:52px;cursor:pointer;display:grid;gap:4px;justify-items:center;align-content:center}
+.weektabs button small{font:600 11px/1 var(--body);letter-spacing:0;text-transform:none}
+.weektabs button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.wknote{font-weight:600}
+.wknote b{color:var(--accent)}
+.dcard{display:grid;gap:8px}
+.dhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.dnum{font:800 34px/1 var(--display);letter-spacing:.02em;text-transform:uppercase}
+.pill{font:800 14px/1 var(--display);letter-spacing:.1em;text-transform:uppercase;padding:6px 9px;border-radius:6px}
+.pill.heavy{background:var(--accent);color:#fff}
+.pill.medium{background:var(--amber);color:#1a1405}
+.pill.light{background:var(--good);color:#06150e}
+.purpose{color:var(--muted)}
+.ex{list-style:none;margin:4px 0 0;padding:0;display:grid}
+.ex li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.exhead{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;font:700 12px/1.2 var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.exn{font-weight:600;min-width:0}
+.exn small{display:block;font-weight:400;font-size:13px;color:var(--muted);margin-top:2px}
+.sx{font:800 24px/1 var(--display);white-space:nowrap;font-variant-numeric:tabular-nums;text-align:right}
+.ex li.main .sx{color:var(--accent)}
+@media (max-width:440px){.sx{font-size:21px}}
+.week5{display:grid;gap:4px;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--good);border-radius:12px;padding:14px 16px}
+.tips{margin:0;padding-left:20px;display:grid;gap:6px;color:var(--muted)}
+.tips li span{color:var(--fg)}
+
+/* exercises */
+.xl{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:x}
+.xl > li{counter-increment:x;display:grid;grid-template-columns:40px minmax(0,1fr);gap:4px 12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.xl > li::before{content:counter(x);font:800 30px/1 var(--display);color:var(--faint);font-variant-numeric:tabular-nums}
+.xl .body{display:grid;gap:6px;min-width:0}
+.xl h3{font-size:21px}
+.xl .for{font-size:13px;color:var(--muted)}
+.xl ul{margin:0;padding-left:18px;display:grid;gap:3px;font-size:15px}
+.xl li.fav{border-color:var(--accent)}
+.xl li.fav::before{color:var(--accent)}
+.rr{display:flex;flex-wrap:wrap;gap:6px}
+.rr span{font:600 13px/1 var(--body);border-radius:999px;padding:6px 10px;background:var(--raised);white-space:nowrap}
+.rr b{font:800 15px/1 var(--display);margin-right:4px}
+
+/* offers */
+.offers{display:grid;gap:12px}
+.offer{display:grid;gap:10px}
+.offer.main{background:var(--fg);color:var(--bg);border-color:var(--fg);padding:22px 20px;gap:14px}
+.offer.main .eyebrow{color:var(--accent)}
+.offer.main h3{font-size:clamp(28px,5.4vw,36px);line-height:1}
+.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font:800 19px/1 var(--display);letter-spacing:.08em;text-transform:uppercase;padding:14px 20px;min-height:48px;border-radius:12px;background:var(--accent);color:#fff;border:2px solid var(--accent);justify-self:start;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--fg);border-color:var(--fg)}
+.feats{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.feats li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;align-items:start}
+.feats svg{width:28px;height:28px;flex:none}
+.feats b{display:block;font:800 19px/1.1 var(--display);letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.feats span{color:#3b3c40}
+.btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.textlink{font-weight:600;color:var(--bg);text-underline-offset:3px;justify-self:start}
+.offer.main .fine{color:#4a4b4f;font-size:14px}
+.more p{margin:0}
+.more.small{display:grid;gap:6px;font-size:14px;color:var(--muted);padding:0 4px}
+.modes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:6px}
+.modes button{background:none;border:0;border-radius:8px;color:var(--muted);font:600 14px/1.2 var(--body);padding:10px 6px;min-height:44px;cursor:pointer}
+.modes button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.row3{display:grid;grid-template-columns:1fr 1fr 1.5fr;gap:12px;align-items:end}
+@media (max-width:520px){.row3{grid-template-columns:1fr 1fr}.row3 .inp:last-child{grid-column:1/-1}}
+select{width:100%;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;min-height:48px;font:600 16px var(--body);padding:10px 12px}
+.est{font-weight:600;margin:0}
+.est b{color:var(--accent);font:800 24px/1 var(--display);font-variant-numeric:tabular-nums}
+.more b{color:var(--accent)}
+.more a{color:inherit;text-underline-offset:3px}
+
+/* notes */
+.notes{border-top:1px solid var(--line);padding-top:18px;display:grid;gap:8px;font-size:14px;color:var(--muted);max-width:68ch}
+.foot{font:700 13px/1.2 var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+@media (prefers-reduced-motion:reduce){.rung .bar i{transition:none}html{scroll-behavior:auto}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style><style>
+[hidden]{display:none!important}
+.lever .how b{color:var(--fg)}
+.acc{display:grid;gap:8px}
+.acclist{margin:0;padding-left:18px;display:grid;gap:6px;font-size:15px}
+.acclist b{font-weight:600}
+</style></head><body>
+<header class="top">
+  <div class="in">
+    <a class="brand" href="#h1">DB <b>SPEED</b></a>
+    <div class="lang" role="group" aria-label="Language / Langue">
+      <button type="button" id="langEn" aria-pressed="true">English</button>
+      <button type="button" id="langFr" aria-pressed="false">Français</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="welcome" aria-labelledby="h-welcome">
+    <p class="eyebrow" data-t="wEye">Here's your guide</p>
+    <h2 id="h-welcome" data-t="wH">Thanks for grabbing my breakthrough pull-up guide</h2>
+    <p class="muted" data-t="wP">Start with section 1. It gives you your stage and your next 5 weeks.</p>
+  </section>
+
+  <section class="hero" aria-labelledby="h1">
+    <p class="eyebrow" data-t="heroEye">Free guide · For paddlers stuck at 15 pull-ups</p>
+    <h1 id="h1" data-t="h1">The breakthrough pull-up guide</h1>
+    <div class="score" role="img" aria-label="From 15 pull-ups to your next PR">
+      <div class="side"><span class="lbl" data-t="heroA">Where you hit the wall</span><span class="big">15</span></div>
+      <span class="arrow" aria-hidden="true">→</span>
+      <div class="side"><span class="lbl" data-t="heroB">Your next PR</span><span class="big">PR</span></div>
+      <div class="bars" aria-hidden="true"><i><b style="width:50%"></b></i><i><b></b></i></div>
+    </div>
+    <p class="lead" data-t="lead">Stuck at 15 pull-ups and want more? What got you to 15 won't get you past it. Three changes got three of the women I coach past 20, and one of my guys past 40.</p>
+    <p class="by"><b>Martin Shih · DB Speed</b><span data-t="cred1">Team Canada Premier world champion</span><span data-t="cred2">Strength coach of 22 Dragons, CCWC gold</span></p>
+    <ul class="jump">
+      <li><a href="#level"><span>1</span><em data-t="nav1">Your number</em></a></li>
+      <li><a href="#changes"><span>2</span><em data-t="nav2">The 3 changes</em></a></li>
+      <li><a href="#week"><span>3</span><em data-t="nav3">Your 5 weeks</em></a></li>
+      <li><a href="#setlist"><span>4</span><em data-t="nav4">The sets</em></a></li>
+      <li><a href="#coach"><span>5</span><em data-t="nav5">Train with me</em></a></li>
+    </ul>
+  </section>
+
+  <section id="level" class="calc" aria-labelledby="h-level">
+    <div class="head">
+      <p class="eyebrow" data-t="s1eye">1 · Your number</p>
+      <h2 id="h-level" data-t="s1h">Start from what you do now</h2>
+      <p class="muted" data-t="s1p">Put in your tested max, your gym sets or your Conti reps. You get your max and your stage.</p>
+    </div>
+    <div class="card">
+      <form id="calc" novalidate>
+        <div class="modes" role="group" aria-label="What to put in">
+          <button type="button" data-mode="max" aria-pressed="true" data-t="mMax">I tested my max</button>
+          <button type="button" data-mode="sets" aria-pressed="false" data-t="mSets">My gym sets</button>
+          <button type="button" data-mode="conti" aria-pressed="false" data-t="mConti">My Conti reps</button>
+        </div>
+        <p class="example" data-t="example">Example numbers loaded. Replace them with yours.</p>
+        <div class="row3" id="setsWrap">
+          <div class="inp"><label class="lab" for="sets" data-t="setsLab">Sets</label><input type="text" id="sets" inputmode="numeric" value="3" autocomplete="off"></div>
+          <div class="inp"><label class="lab" for="reps" data-t="repsLab">Reps per set</label><input type="text" id="reps" inputmode="numeric" value="12" autocomplete="off"></div>
+          <div class="inp"><label class="lab" for="rir" data-t="rirLab">Reps left on the last set</label><select id="rir"><option value="0" data-t="rir0">0, all-out (RPE 10)</option><option value="1">1 (RPE 9)</option><option value="2" selected>2 (RPE 8)</option><option value="3">3 (RPE 7)</option><option value="4" data-t="rir4">4 or more (RPE 6)</option></select></div>
+        </div>
+        <div class="row2" id="maxWrap" hidden>
+          <div class="inp"><label class="lab" for="max" data-t="maxLab">Max strict pull-ups</label><input type="text" id="max" inputmode="numeric" value="15" autocomplete="off"></div>
+        </div>
+        <div class="row2" id="contiWrap" hidden>
+          <div class="inp"><label class="lab" for="conti" data-t="contiLab">Conti reps (no pause at the bottom)</label><input type="text" id="conti" inputmode="numeric" value="12" autocomplete="off"></div>
+        </div>
+        <p class="private" data-t="private">Everything updates as you type. Nothing you type is sent anywhere.</p>
+      </form>
+    </div>
+    <div class="card result" aria-live="polite">
+      <p class="est" id="rEst"></p>
+      <div class="stats">
+        <div class="stat lvlbox"><span class="k" data-t="kLevel">Your stage</span><span class="v" id="rLevel"></span><span class="note" id="rLevelNote"></span></div>
+        <div class="stat"><span class="k" data-t="kNext">Next goal</span><span class="v" id="rNext"></span></div>
+        <div class="stat"><span class="k" data-t="kGo">To go</span><span class="v" id="rGo"></span></div>
+      </div>
+      <p class="lab" data-t="ladLab">The road past 15</p>
+      <div class="ladder" id="ladder"></div>
+      <p class="gap" id="rGap"></p>
+      <div class="share">
+        <p class="lab" data-t="shareLab">Send me your number</p>
+        <p class="muted" data-t="shareP">Tap the button: your number is copied and our Instagram chat opens. Paste it and I'll tell you what I'd change first.</p>
+        <div class="line"><code id="shareText"></code></div>
+        <a class="btn" id="shareBtn" href="https://ig.me/m/martishih" target="_blank" rel="noopener" data-t="shareBtn">Copy and send on Instagram</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="why" aria-labelledby="h-why">
+    <h3 id="h-why" data-t="whyH">Why the wall at 15?</h3>
+    <p class="muted" data-t="whyP">Most of us keep adding sets and reps, and hope the number moves. But your body has already adapted to that. To keep progressing, it needs a fresh stimulus.</p>
+  </section>
+
+  <section id="changes" aria-labelledby="h-changes">
+    <div class="head">
+      <p class="eyebrow" data-t="s2eye">2 · The three changes</p>
+      <h2 id="h-changes" data-t="s2h">You've probably never tried the last one</h2>
+    </div>
+    <div class="levers">
+      <article class="card lever">
+        <span class="no" aria-hidden="true">1</span>
+        <div class="body">
+          <h3 data-t="c1h">Switch grips</h3>
+          <p class="muted" data-t="c1p">Hit your back from new angles. About 70% regular grip, sometimes a bit wider or closer. The rest chin-ups and neutral, by feel.</p>
+          <div class="how"><span class="k" data-t="c1k">And chalk up</span><span data-t="c1v">Use more than you think, so your back gives out before your hands. No chalk allowed at your gym? Try liquid chalk.</span></div>
+        </div>
+      </article>
+      <article class="card lever">
+        <span class="no" aria-hidden="true">2</span>
+        <div class="body">
+          <h3 data-t="c2h">Add weight</h3>
+          <p class="muted" data-t="c2p">Heavier for lower reps builds strength. Lighter for higher reps builds endurance, without maxing out every set.</p>
+          <div class="how"><span class="k" data-t="c2k">How</span><span data-t="c2v"><b>Heavy:</b> 1 to 2 sets of 3 to 6. <b>Lighter:</b> 8 to 12. <b>Then:</b> Conti back-downs at bodyweight, with a new grip.</span></div>
+        </div>
+      </article>
+      <article class="card lever twist">
+        <span class="no" aria-hidden="true">3</span>
+        <div class="body">
+          <p><span class="chip" data-t="twist">The big one · my own method</span></p>
+          <h3 data-t="c3h">Conti sets</h3>
+          <p class="muted" data-t="c3p">Conti is short for continuous: as many reps as you can, with no pause at the bottom. Push that number up every week. On test day, you can usually add another 50%: 20 Conti reps means about 30.</p>
+          <div class="how"><span class="k" data-t="c3k">Your Conti number</span><span data-t="c3v">Write it down every time. The calculator turns it into your test-day max.</span></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="week" aria-labelledby="h-week">
+    <div class="head">
+      <p class="eyebrow" data-t="s3eye">3 · Your 5 weeks</p>
+      <h2 id="h-week" data-t="s3h">Build, deload, retest</h2>
+      <p class="muted" data-t="s3p">Three gym days: heavy, light and medium. Three weeks of building, a deload, then a retest. Pick a day.</p>
+    </div>
+    <p class="card" data-t="s3note"><b>This is your pull-up work, not a full workout.</b> Add your accessory work (section 4) and train the rest of your body.</p>
+    <div class="card dcard" id="past30" hidden style="border-color:var(--good)">
+      <div class="dhead"><span class="dnum" data-t="p30h">30+ pull-ups</span></div>
+      <p data-t="p30p">You're past the road this guide was built for. Keep running the 5 weeks: go a little heavier on day 1, and keep pushing your Conti number. Then send me your number, and I'll tell you what I'd change next.</p>
+      <a class="btn" href="#level" data-t="p30btn">Send me your number</a>
+    </div>
+    <div class="weektabs" role="group" aria-label="Day">
+      <button type="button" data-day="0" aria-pressed="true"><span data-t="d1">Day 1</span><small data-t="d1s">Heavy</small></button>
+      <button type="button" data-day="1" aria-pressed="false"><span data-t="d2">Day 2</span><small data-t="d2s">Light</small></button>
+      <button type="button" data-day="2" aria-pressed="false"><span data-t="d3">Day 3</span><small data-t="d3s">Medium</small></button>
+    </div>
+    <article class="card dcard" id="dayCard"></article>
+    <article class="card dcard" id="planCard"></article>
+    <div class="week5">
+      <p class="lab" style="color:var(--good)" data-t="w5h">Week 5: retest</p>
+      <p data-t="w5p">Fresh off the deload, test your max. Put it in the calculator, start again at week 1, and send me your new number.</p>
+    </div>
+    <ul class="tips">
+      <li data-t="tip1"><span>3 to 6 sets of pull-up work in a workout,</span> Conti sets included.</li>
+      <li data-t="tip2"><span>Mix the grips by feel</span> on every set.</li>
+    </ul>
+  </section>
+
+  <section id="setlist" aria-labelledby="h-sets">
+    <div class="head">
+      <p class="eyebrow" data-t="s4eye">4 · The sets</p>
+      <h2 id="h-sets" data-t="s4h">The 4 sets in your plan</h2>
+    </div>
+    <p class="card" data-t="s4warm"><b>Warm up with banded scap pulls, leaning back.</b> Chest facing the bar, elbows slightly forward. It frees up your shoulders so they move smoothly.</p>
+    <ol class="xl">
+      <li><div class="body"><h3 data-t="x1h">Weighted pull-ups, heavy</h3><span class="for" data-t="x1f">Strength · a weight where every rep is hard but strict</span><div class="rr"><span><b>1–2</b><em data-t="rSets">sets</em></span><span><b>3–6</b><em data-t="rReps">reps</em></span></div></div></li>
+      <li><div class="body"><h3 data-t="x2h">Weighted pull-ups, lighter</h3><span class="for" data-t="x2f">Endurance, without maxing out every set</span><div class="rr"><span><b>2</b><em data-t="rSets">sets</em></span><span><b>8–12</b><em data-t="rReps">reps</em></span></div></div></li>
+      <li class="fav"><div class="body"><p><span class="chip" data-t="favChip">My own method</span></p><h3 data-t="x3h">Conti sets</h3><span class="for" data-t="x3f">Bodyweight · as many reps as you can, no pause at the bottom</span><div class="rr"><span><b>2–4</b><em data-t="rSets">sets</em></span></div></div></li>
+      <li><div class="body"><h3 data-t="x4h">Threshold set</h3><span class="for" data-t="x4f">Bodyweight · once, on the light day</span><ul><li data-t="x4a">Pull continuous reps until you can't.</li><li data-t="x4b">Then go past failure: keep going with partial reps until you're just dead hanging.</li><li data-t="x4c">Then keep dead hanging until your grip gives out.</li></ul><div class="rr"><span><b>1</b><em data-t="rSet1">set</em></span></div></div></li>
+    </ol>
+    <div class="card acc">
+      <p class="lab" data-t="accLab">Your accessory work</p>
+      <p class="muted" data-t="accP">Add a few of these after your pull-ups, however they fit your week.</p>
+      <ul class="acclist">
+        <li data-t="a1"><b>Lat pulldown, V-grip:</b> the best variation to really target your lats for pull-ups</li>
+        <li data-t="a2"><b>Bench pull:</b> lats, traps, biceps, forearms</li>
+        <li data-t="a3"><b>One-arm row:</b> lats, shoulder blades, forearms</li>
+        <li data-t="a4"><b>Body rows and holds:</b> all of the above, plus connective tissue</li>
+        <li data-t="a5"><b>Hammer curls:</b> brachialis, forearms</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="coach" aria-labelledby="h-coach">
+    <div class="head">
+      <p class="eyebrow" data-t="s5eye">5 · Train with me</p>
+      <h2 id="h-coach" data-t="s5h">Keep climbing with the DB Speed crew</h2>
+      <p class="muted" data-t="s5p">This guide covers your pull-ups. DB Speed covers your whole season.</p>
+    </div>
+    <div class="offers">
+      <article class="card offer main">
+        <p class="eyebrow" data-t="o1eye">DB Speed membership</p>
+        <h3 data-t="o1h">Your program and your community, in one place</h3>
+        <ul class="feats">
+          <li><svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="14" fill="#e5482b"></circle><path d="M8 14.5l4 4 8-9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg><p><b data-t="f1h">A full season, not just pull-ups</b><span data-t="f1p">Bench, pulling, legs and power, in the app. A new week every Monday, built around the race season, with suggested weights from your best logged sets.</span></p></li>
+          <li><svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="14" fill="#e5482b"></circle><path d="M8 14.5l4 4 8-9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg><p><b data-t="f2h">The DB Speed community on Skool</b><span data-t="f2p">Post your lifts, ask questions and follow other paddlers' progress. Training is easier to keep up when your crew is watching.</span></p></li>
+          <li><svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="14" fill="#e5482b"></circle><path d="M8 14.5l4 4 8-9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg><p><b data-t="f3h">Form Check Friday</b><span data-t="f3p">Film a lift, post it, and I send you video feedback.</span></p></li>
+          <li><svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="14" fill="#e5482b"></circle><path d="M8 14.5l4 4 8-9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg><p><b data-t="f4h">Add-ons coming</b><span data-t="f4p">PERG, OC and mobility, at no extra cost.</span></p></li>
+        </ul>
+        <p class="fine" data-t="o1fine">First 7 days free.</p>
+        <div class="btns"><a class="btn" href="https://app.dbspeed.app/join" target="_blank" rel="noopener" data-t="o1btn">Start your free week</a></div>
+        <a class="textlink" href="#level" data-t="o2btn">Not sure yet? Send me your number first</a>
+      </article>
+      <div class="more small">
+        <p data-t="o3"><b>1:1 coaching:</b> a program built around you, with every lift reviewed on video. DM me DBSPEED on Instagram.</p>
+        <p data-t="o4"><b>Captains and coaches:</b> gym programs for whole crews, like the Immortals. Email hello@dbspeed.app.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="notes">
+    <p data-t="n1">This guide is general training information. If you have pain or an injury, check with a health professional before you start.</p>
+    <p class="foot">DB Speed · Montréal · dbspeed.app</p>
+  </footer>
+</main>
+<script>
+(function(){
+var FR={
+wEye:"Voici ton guide",wH:"Merci d'avoir demandé mon guide pour percer ton plafond en tractions",wP:"Commence par la section 1. Elle te donne ton stade et tes 5 prochaines semaines.",
+heroEye:"Guide gratuit · Pour les pagayeurs bloqués à 15 tractions",h1:"Le guide pour percer ton plafond en tractions",heroA:"Là où tu frappes le mur",heroB:"Ton prochain record",
+lead:"Bloqué à 15 tractions et tu en veux plus? Ce qui t'a amené à 15 ne te fera pas passer au-delà. Trois changements ont amené trois des femmes que je coache à plus de 20, et un de mes gars à plus de 40.",
+cred1:"Champion du monde Premier avec Équipe Canada",cred2:"Préparateur physique des 22 Dragons, or aux CCWC",
+nav1:"Ton nombre",nav2:"Les 3 changements",nav3:"Tes 5 semaines",nav4:"Les séries",nav5:"T'entraîner avec moi",
+s1eye:"1 · Ton nombre",s1h:"Pars de ce que tu fais maintenant",s1p:"Entre ton max testé, tes séries au gym ou tes rép. Conti. Tu obtiens ton max et ton stade.",
+mSets:"Mes séries au gym",mMax:"J'ai testé mon max",mConti:"Mes rép. Conti",setsLab:"Séries",repsLab:"Rép. par série",rirLab:"Rép. en réserve à la dernière série",rir0:"0, à fond (RPE 10)",rir4:"4 ou plus (RPE 6)",
+example:"Exemple chargé. Remplace-le par tes chiffres.",maxLab:"Tractions strictes max",contiLab:"Rép. Conti (sans pause en bas)",private:"Tout se met à jour pendant que tu tapes. Rien n'est envoyé.",
+kLevel:"Ton stade",kNext:"Prochain objectif",kGo:"Il te reste",ladLab:"La route au-delà de 15",
+shareLab:"Envoie-moi ton nombre",shareP:"Touche le bouton : ton nombre est copié et notre conversation Instagram s'ouvre. Colle-le et je te dis ce que je changerais en premier.",shareBtn:"Copier et envoyer sur Instagram",
+whyH:"Pourquoi le mur à 15?",whyP:"La plupart d'entre nous ajoutent des séries et des répétitions, en espérant que le nombre monte. Mais ton corps s'est déjà adapté à ça. Pour continuer à progresser, il a besoin d'un stimulus nouveau.",
+s2eye:"2 · Les trois changements",s2h:"Tu n'as probablement jamais essayé le dernier",
+c1h:"Change de prise",c1p:"Travaille ton dos sous de nouveaux angles. Environ 70 % en prise régulière, parfois un peu plus large ou plus serrée. Le reste en supination et en prise neutre, selon comment tu te sens.",
+c1k:"Et mets de la magnésie",c1v:"Plus que tu penses, pour que ton dos lâche avant tes mains. Pas de magnésie permise à ton gym? Essaie la magnésie liquide.",
+c2h:"Ajoute du poids",c2p:"Plus lourd avec moins de répétitions bâtit la force. Plus léger avec plus de répétitions bâtit l'endurance, sans aller au max à chaque série.",
+c2k:"Comment",c2v:"<b>Lourd :</b> 1 à 2 séries de 3 à 6. <b>Plus léger :</b> 8 à 12. <b>Ensuite :</b> des séries de retour Conti au poids du corps, avec une nouvelle prise.",
+twist:"Le gros morceau · ma propre méthode",c3h:"Les séries Conti",c3p:"Conti, c'est pour continu : le plus de répétitions possible, sans pause en bas. Monte ce nombre chaque semaine. Le jour du test, tu peux habituellement ajouter 50 % : 20 rép. Conti, c'est environ 30.",
+c3k:"Ton nombre Conti",c3v:"Note-le chaque fois. Le calculateur le transforme en ton max du jour du test.",
+s3eye:"3 · Tes 5 semaines",s3h:"Bâtir, décharger, retester",s3p:"Trois jours de gym : lourd, léger et moyen. Trois semaines pour bâtir, une semaine de décharge, puis un retest. Choisis une journée.",
+s3note:"<b>C'est ton travail de tractions, pas un entraînement complet.</b> Ajoute tes exercices accessoires (section 4) et entraîne le reste de ton corps.",d1:"Jour 1",d1s:"Lourd",d2:"Jour 2",d2s:"Léger",d3:"Jour 3",d3s:"Moyen",
+w5h:"Semaine 5 : reteste",w5p:"Frais après la décharge, teste ton max. Entre-le dans le calculateur, recommence à la semaine 1, et envoie-moi ton nouveau nombre.",
+tip1:"<span>3 à 6 séries de travail de tractions par entraînement,</span> séries Conti comprises.",tip2:"<span>Varie les prises selon comment tu te sens</span> à chaque série.",
+p30h:"30+ tractions",p30p:"Tu as dépassé la route pour laquelle ce guide a été bâti. Continue les 5 semaines : un peu plus lourd au jour 1, et pousse ton nombre Conti. Puis envoie-moi ton nombre, et je te dis ce que je changerais ensuite.",p30btn:"Envoie-moi ton nombre",
+s4eye:"4 · Les séries",s4h:"Les 4 séries de ton plan",
+s4warm:"<b>Échauffe-toi avec des tirages scapulaires avec élastique, penché vers l'arrière.</b> La poitrine face à la barre, les coudes légèrement vers l'avant. Ça libère tes épaules pour qu'elles bougent en douceur.",
+x1h:"Tractions lestées, lourd",x1f:"Force · un poids où chaque répétition est difficile mais stricte",rSets:"séries",rReps:"rép.",
+x2h:"Tractions lestées, plus léger",x2f:"Endurance, sans aller au max à chaque série",
+favChip:"Ma propre méthode",x3h:"Séries Conti",x3f:"Poids du corps · le plus de répétitions possible, sans pause en bas",
+x4h:"Série seuil",x4f:"Poids du corps · une fois, à la journée légère",x4a:"Tire des répétitions continues jusqu'à ne plus pouvoir.",x4b:"Puis dépasse l'échec : continue avec des répétitions partielles jusqu'à ce que tu sois simplement suspendu bras tendus.",x4c:"Puis reste suspendu jusqu'à ce que ta prise lâche.",rSet1:"série",
+accLab:"Tes exercices accessoires",accP:"Ajoute-en quelques-uns après tes tractions, comme ça te convient dans ta semaine.",
+a1:"<b>Tirage poulie, prise en V :</b> la meilleure variante pour vraiment cibler tes dorsaux pour les tractions",a2:"<b>Bench pull :</b> dorsaux, trapèzes, biceps, avant-bras",a3:"<b>Rame à un bras :</b> dorsaux, omoplates, avant-bras",a4:"<b>Tractions inversées et maintiens :</b> tout ce qui précède, plus les tissus conjonctifs",a5:"<b>Curls marteau :</b> brachial, avant-bras",
+s5eye:"5 · T'entraîner avec moi",s5h:"Continue de grimper avec l'équipe DB Speed",s5p:"Ce guide couvre tes tractions. DB Speed couvre toute ta saison.",
+o1eye:"Abonnement DB Speed",o1h:"Ton programme et ta communauté, au même endroit",
+f1h:"Une saison complète, pas juste des tractions",f1p:"Développé couché, tirage, jambes et puissance, dans l'application. Une nouvelle semaine chaque lundi, bâtie autour de la saison de course, avec des charges suggérées à partir de tes meilleures séries.",
+f2h:"La communauté DB Speed sur Skool",f2p:"Publie tes levées, pose tes questions et suis les progrès des autres pagayeurs. C'est plus facile de rester constant quand ton équipe te regarde.",
+f3h:"Form Check Friday",f3p:"Filme une levée, publie-la, et je t'envoie une rétroaction en vidéo.",
+f4h:"Des ajouts à venir",f4p:"PERG, OC et mobilité, sans frais supplémentaires.",
+o1fine:"Les 7 premiers jours sont gratuits.",o1btn:"Commence ta semaine gratuite",o2btn:"Tu hésites? Envoie-moi d'abord ton nombre",
+o3:"<b>Coaching 1:1 :</b> un programme bâti pour toi, avec chaque levée revue en vidéo. Écris-moi DBSPEED sur Instagram.",
+o4:"<b>Capitaines et entraîneurs :</b> des programmes de gym pour des équipes complètes, comme les Immortals. Écris à hello@dbspeed.app.",
+n1:"Ce guide présente de l'information générale sur l'entraînement. Si tu as de la douleur ou une blessure, consulte un professionnel de la santé avant de commencer."
+};
+var EN={}; var lang='en';
+document.querySelectorAll('[data-t]').forEach(function(el){ if(!(el.dataset.t in EN)) EN[el.dataset.t]=el.innerHTML; });
+var T={
+ en:{lv:["Under 12","At the wall","Past the wall","Past 20","Almost 30","30+"],
+  note:["Start with part 1","Time to change it up","Keep changing it up","Keep changing it up","Keep pushing your Conti number","Keep pushing your Conti number"],
+  rungs:["The wall","16 to 20","21 to 25","26 to 29","30+"], rv:["12–15","16–20","21–25","26–29","30+"],
+  est:"Estimated max: about ", estMx:"Your max: ", estN:" pull-ups. A rough guess: you retest your real max in week 5.", estMxN:" pull-ups.", noReps:"Put in your reps per set.",
+  estC:function(c,m){return 'Your Conti reps: <b>'+c+'</b>. Add about 50% on test day: about <b>'+m+'</b> pull-ups.';},
+  gap:function(n,g){return '<b>+'+n+'</b> to reach '+g;}, made:"30+ pull-ups. Keep pushing your Conti number, and send me your new PR.",
+  under:"Under 12? Part 1 is built for you. Come back when you're at 12 to 15.", underBtn:"Open part 1",
+  share:function(m,l,s){return "My pull-ups: "+(s?s+" (about "+m+" max)":m+" max")+". Stage: "+l+". (breakthrough guide)";},
+  contiTxt:function(c){return c+" Conti reps";},
+  dayTitle:["Heavy","Light","Medium"],
+  dayPurpose:["Heavy weighted, then Conti back-downs.","No weight: one threshold set, then Conti sets.","Lighter weighted, then Conti back-downs."],
+  main:[[{n:"Weighted pull-ups, heavy",d:"Hard but strict",s:"1–2 × 3–6"},{n:"Conti back-downs",d:"Bodyweight, new grip",s:"2–4 sets"}],
+        [{n:"Threshold set",d:"Bodyweight. Past failure with partials, then dead hang until your grip goes",s:"1 set"},{n:"Conti sets",d:"Bodyweight. Beat your best",s:"2–4 sets"}],
+        [{n:"Weighted pull-ups, lighter",d:"Endurance",s:"2 × 8–12"},{n:"Conti back-downs",d:"Bodyweight, new grip",s:"2–4 sets"}]],
+  colA:"Pull-up work", colB:"Sets × reps", planH:"Your 5 weeks", planP:"Weeks 1 to 3 build. Week 4 is a deload: lighter, and day 3 off.",
+  weeks:[["Week 1","Start",["Day 1: heavy 1 × 3–6 + 2 Conti","Day 2: 1 threshold + 2 Conti, write down your best","Day 3: lighter 2 × 8–12 + 2 Conti"]],
+         ["Week 2","Build",["Day 1: heavy 2 × 3–6 + 3 Conti","Day 2: 1 threshold + 3 Conti, beat last week","Day 3: lighter 2 × 8–12 + 3 Conti"]],
+         ["Week 3","Peak",["Day 1: heavy 2 × 3–6, a little heavier + 4 Conti","Day 2: 1 threshold + 4 Conti, beat your best","Day 3: lighter 2 × 8–12 + 4 Conti"]],
+         ["Week 4","Deload",["Day 1: heavy 1 × 3–6 + 2 Conti","Day 2: 2 Conti, no threshold","Day 3: rest"]]]},
+ fr:{lv:["Moins de 12","Au mur","Passé le mur","Plus de 20","Presque 30","30+"],
+  note:["Commence par la partie 1","C'est le temps de changer les choses","Continue de changer les choses","Continue de changer les choses","Pousse ton nombre Conti","Pousse ton nombre Conti"],
+  rungs:["Le mur","16 à 20","21 à 25","26 à 29","30+"], rv:["12–15","16–20","21–25","26–29","30+"],
+  est:"Max estimé : environ ", estMx:"Ton max : ", estN:" tractions. Une estimation : tu retestes ton vrai max à la semaine 5.", estMxN:" tractions.", noReps:"Entre tes répétitions par série.",
+  estC:function(c,m){return 'Tes rép. Conti : <b>'+c+'</b>. Ajoute environ 50 % le jour du test : environ <b>'+m+'</b> tractions.';},
+  gap:function(n,g){return '<b>+'+n+'</b> pour atteindre '+g;}, made:"30+ tractions. Continue de pousser ton nombre Conti, et envoie-moi ton nouveau record.",
+  under:"Moins de 12? La partie 1 est faite pour toi. Reviens quand tu seras à 12 à 15.", underBtn:"Ouvrir la partie 1",
+  share:function(m,l,s){return "Mes tractions : "+(s?s+" (environ "+m+" max)":m+" max")+". Stade : "+l+". (guide percer ton plafond)";},
+  contiTxt:function(c){return c+" rép. Conti";},
+  dayTitle:["Lourd","Léger","Moyen"],
+  dayPurpose:["Lesté lourd, puis des séries de retour Conti.","Sans poids : une série seuil, puis des séries Conti.","Lesté plus léger, puis des séries de retour Conti."],
+  main:[[{n:"Tractions lestées, lourd",d:"Difficile mais strict",s:"1–2 × 3–6"},{n:"Séries de retour Conti",d:"Poids du corps, nouvelle prise",s:"2–4 séries"}],
+        [{n:"Série seuil",d:"Poids du corps. Au-delà de l'échec avec des partielles, puis suspendu jusqu'à ce que ta prise lâche",s:"1 série"},{n:"Séries Conti",d:"Poids du corps. Bats ton meilleur",s:"2–4 séries"}],
+        [{n:"Tractions lestées, plus léger",d:"Endurance",s:"2 × 8–12"},{n:"Séries de retour Conti",d:"Poids du corps, nouvelle prise",s:"2–4 séries"}]],
+  colA:"Travail de tractions", colB:"Séries × rép.", planH:"Tes 5 semaines", planP:"Les semaines 1 à 3 bâtissent. La semaine 4 est une décharge : plus léger, et pas de jour 3.",
+  weeks:[["Semaine 1","Départ",["Jour 1 : lourd 1 × 3–6 + 2 Conti","Jour 2 : 1 seuil + 2 Conti, note ton meilleur","Jour 3 : plus léger 2 × 8–12 + 2 Conti"]],
+         ["Semaine 2","Montée",["Jour 1 : lourd 2 × 3–6 + 3 Conti","Jour 2 : 1 seuil + 3 Conti, bats la semaine passée","Jour 3 : plus léger 2 × 8–12 + 3 Conti"]],
+         ["Semaine 3","Sommet",["Jour 1 : lourd 2 × 3–6, un peu plus lourd + 4 Conti","Jour 2 : 1 seuil + 4 Conti, bats ton meilleur","Jour 3 : plus léger 2 × 8–12 + 4 Conti"]],
+         ["Semaine 4","Décharge",["Jour 1 : lourd 1 × 3–6 + 2 Conti","Jour 2 : 2 Conti, pas de seuil","Jour 3 : repos"]]]}
+};
+var ACC={
+ en:[[["Lat pulldown (V-grip)","3–5 reps, heavy"],["Bench pull","3–5 reps, heavy"],["Hammer curls","3–5 reps, heavy"]],
+     [["Lat pulldown (V-grip)","15+ reps, light"],["One-arm row","15+ reps, light"],["Body rows","max reps"]],
+     [["Lat pulldown (V-grip)","8–12 reps, lighter"],["One-arm row","8–12 reps, lighter"],["Body row holds","max time"]]],
+ fr:[[["Tirage poulie (prise en V)","3–5 rép., lourd"],["Bench pull","3–5 rép., lourd"],["Curls marteau","3–5 rép., lourd"]],
+     [["Tirage poulie (prise en V)","15+ rép., léger"],["Rame à un bras","15+ rép., léger"],["Tractions inversées","max de rép."]],
+     [["Tirage poulie (prise en V)","8–12 rép., plus léger"],["Rame à un bras","8–12 rép., plus léger"],["Maintiens en traction inversée","temps max"]]]
+};
+function num(id){var v=parseInt(String(document.getElementById(id).value).replace(/[^0-9]/g,''),10);return isNaN(v)?0:Math.min(v,99);}
+var day=0, mode='max';
+function rirVal(){return +document.getElementById('rir').value||0;}
+function estMax(){ if(mode==='max') return num('max'); if(mode==='conti') return Math.min(99,Math.round(num('conti')*1.5)); var r=num('reps'), s=num('sets'); if(r===0) return 0; return Math.min(99, r+rirVal()+(s>=3?1:0)); }
+function levelOf(m){ if(m<12) return 0; if(m<=15) return 1; if(m<=20) return 2; if(m<=25) return 3; if(m<30) return 4; return 5; }
+function render(){
+  var m=estMax(), t=T[lang], en=lang==='en';
+  document.getElementById('setsWrap').hidden = mode!=='sets';
+  document.getElementById('maxWrap').hidden = mode!=='max';
+  document.getElementById('contiWrap').hidden = mode!=='conti';
+  var est=document.getElementById('rEst');
+  if(mode==='sets') est.innerHTML = num('reps')===0 ? t.noReps : t.est+'<b>'+m+'</b>'+t.estN;
+  else if(mode==='max') est.innerHTML = t.estMx+'<b>'+m+'</b>'+t.estMxN;
+  else est.innerHTML = t.estC(num('conti'),m);
+  var L=levelOf(m);
+  document.getElementById('rLevel').textContent=t.lv[L];
+  document.getElementById('rLevelNote').textContent=t.note[L];
+  var next = m<12?12 : m<20?20 : m<25?25 : m<30?30 : m+5;
+  document.getElementById('rNext').textContent = next;
+  document.getElementById('rGo').textContent = '+'+(next-m);
+  var lo=[12,16,21,26,30], hi=[15,20,25,29,99], lad='';
+  for(var i=0;i<5;i++){ var w; if(m>hi[i]||(i===4&&m>=30)) w=100; else if(m<lo[i]) w=0; else w=Math.round((m-lo[i]+1)/(hi[i]-lo[i]+1)*100);
+    var hit=m>hi[i], cur=m>=lo[i]&&m<=hi[i];
+    lad+='<div class="rung'+(hit?' hit':'')+(cur?' cur':'')+'"><span class="n">'+t.rungs[i]+'</span><span class="bar"><i style="width:'+w+'%"></i></span><span class="v">'+t.rv[i]+'</span></div>'; }
+  document.getElementById('ladder').innerHTML=lad;
+  document.getElementById('rGap').innerHTML = L===5 ? t.made+' <b>+5</b>' : t.gap(next-m,next);
+  if(L===5) document.getElementById('rGap').innerHTML = t.made;
+  var setsTxt = mode==='sets' && m>0 ? num('sets')+' × '+num('reps')+(en?', '+rirVal()+' left on the last set':', '+rirVal()+' en réserve à la dernière série') : mode==='conti' ? t.contiTxt(num('conti')) : '';
+  document.getElementById('shareText').textContent=t.share(m,t.lv[L],setsTxt);
+  document.getElementById('past30').hidden = L!==5;
+  var under = L===0;
+  ['.weektabs','#planCard','.week5','.tips'].forEach(function(q){var el=document.querySelector(q); if(el) el.hidden=under;});
+  if(under){
+    document.getElementById('dayCard').innerHTML='<div class="dhead"><span class="dnum">'+t.lv[0]+'</span></div><p>'+t.under+'</p><a class="btn" href="https://app.dbspeed.app/pull/guide'+(en?'':'#fr')+'">'+t.underBtn+'</a>';
+    return;
+  }
+  var pw=t.main[day], cls=['heavy','light','medium'][day];
+  var rows=''; pw.forEach(function(x){ rows+='<li class="main"><span class="exn">'+x.n+'<small>'+x.d+'</small></span><span class="sx">'+x.s+'</span></li>'; });
+  document.getElementById('dayCard').innerHTML='<div class="dhead"><span class="dnum">'+(en?'Day ':'Jour ')+(day+1)+'</span><span class="pill '+cls+'">'+t.dayTitle[day]+'</span></div><p class="purpose">'+t.dayPurpose[day]+'</p><div class="exhead"><span>'+t.colA+'</span><span>'+t.colB+'</span></div><ul class="ex">'+rows+'</ul>';
+  var pr=''; t.weeks.forEach(function(x){ pr+='<li><span class="exn">'+x[0]+'<small>'+x[2].join('<br>')+'</small></span><span class="sx" style="font-size:20px">'+x[1]+'</span></li>'; });
+  document.getElementById('planCard').innerHTML='<div class="dhead"><span class="dnum">'+t.planH+'</span></div><p class="purpose">'+t.planP+'</p><ul class="ex">'+pr+'</ul>';
+}
+['max','sets','reps','conti'].forEach(function(id){document.getElementById(id).addEventListener('input',render);});
+document.getElementById('rir').addEventListener('change',render);
+document.querySelectorAll('.modes button').forEach(function(b){b.addEventListener('click',function(){mode=b.dataset.mode;document.querySelectorAll('.modes button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});render();});});
+document.getElementById('calc').addEventListener('submit',function(e){e.preventDefault();});
+document.querySelectorAll('.weektabs button').forEach(function(b){b.addEventListener('click',function(){day=+b.dataset.day;document.querySelectorAll('.weektabs button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});render();});});
+document.getElementById('shareBtn').addEventListener('click',function(){var txt=document.getElementById('shareText').textContent;try{navigator.clipboard.writeText(txt).catch(function(){});}catch(e){} var r=document.createRange();r.selectNodeContents(document.getElementById('shareText'));var s=window.getSelection();s.removeAllRanges();s.addRange(r);});
+function setLang(l){lang=l;var d=l==='fr'?FR:EN;document.querySelectorAll('[data-t]').forEach(function(el){var k=el.dataset.t;if(d[k]!=null) el.innerHTML=d[k];});
+  document.documentElement.lang=l;document.getElementById('langEn').setAttribute('aria-pressed',l==='en');document.getElementById('langFr').setAttribute('aria-pressed',l==='fr');
+  render();}
+document.getElementById('langEn').addEventListener('click',function(){setLang('en');});
+document.getElementById('langFr').addEventListener('click',function(){setLang('fr');});
+if(/^#fr/i.test(location.hash)){setLang('fr');}else{render();}
+})();
+</script>
+</body></html>
