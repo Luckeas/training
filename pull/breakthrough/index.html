@@ -348,7 +348,7 @@ select{width:100%;color:var(--fg);background:var(--bg);border:1px solid var(--li
         <div class="body">
           <h3 data-t="c2h">Add weight</h3>
           <p class="muted" data-t="c2p">Heavier for lower reps builds strength. Lighter for higher reps builds endurance, without maxing out every set.</p>
-          <div class="how"><span class="k" data-t="c2k">How</span><span data-t="c2v"><b>Heavy:</b> 1 to 2 sets of 3 to 6. <b>Lighter:</b> 8 to 12. <b>Then:</b> Conti back-downs at bodyweight, with a new grip.</span></div>
+          <div class="how"><span class="k" data-t="c2k">How</span><span data-t="c2v"><b>Heavy:</b> 1 to 2 sets of 3 to 6. <b>Lighter:</b> 8 to 12. <b>Then:</b> Conti sets at bodyweight (see 3), with a new grip.</span></div>
         </div>
       </article>
       <article class="card lever twist">
@@ -387,7 +387,7 @@ select{width:100%;color:var(--fg);background:var(--bg);border:1px solid var(--li
       <p data-t="w5p">Fresh off the deload, test your max. Put it in the calculator, start again at week 1, and send me your new number.</p>
     </div>
     <ul class="tips">
-      <li data-t="tip1"><span>3 to 6 sets of pull-up work in a workout,</span> Conti sets included.</li>
+      <li data-t="tip1"><span>3 to 6 sets of pull-up work in a workout,</span> Conti sets included (fewer in the deload week).</li>
       <li data-t="tip2"><span>Mix the grips by feel</span> on every set.</li>
     </ul>
   </section>
@@ -467,13 +467,13 @@ s2eye:"2 · Les trois changements",s2h:"Tu n'as probablement jamais essayé le d
 c1h:"Change de prise",c1p:"Travaille ton dos sous de nouveaux angles. Environ 70 % en prise régulière, parfois un peu plus large ou plus serrée. Le reste en supination et en prise neutre, selon comment tu te sens.",
 c1k:"Et mets de la magnésie",c1v:"Plus que tu penses, pour que ton dos lâche avant tes mains. Pas de magnésie permise à ton gym? Essaie la magnésie liquide.",
 c2h:"Ajoute du poids",c2p:"Plus lourd avec moins de répétitions bâtit la force. Plus léger avec plus de répétitions bâtit l'endurance, sans aller au max à chaque série.",
-c2k:"Comment",c2v:"<b>Lourd :</b> 1 à 2 séries de 3 à 6. <b>Plus léger :</b> 8 à 12. <b>Ensuite :</b> des séries de retour Conti au poids du corps, avec une nouvelle prise.",
+c2k:"Comment",c2v:"<b>Lourd :</b> 1 à 2 séries de 3 à 6. <b>Plus léger :</b> 8 à 12. <b>Ensuite :</b> des séries Conti au poids du corps (voir 3), avec une nouvelle prise.",
 twist:"Le gros morceau · ma propre méthode",c3h:"Les séries Conti",c3p:"Conti, c'est pour continu : le plus de répétitions possible, sans pause en bas. Monte ce nombre chaque semaine. Le jour du test, tu peux habituellement ajouter 50 % : 20 rép. Conti, c'est environ 30.",
 c3k:"Ton nombre Conti",c3v:"Note-le chaque fois. Le calculateur le transforme en ton max du jour du test.",
 s3eye:"3 · Tes 5 semaines",s3h:"Bâtir, décharger, retester",s3p:"Trois jours de gym : lourd, léger et moyen. Trois semaines pour bâtir, une semaine de décharge, puis un retest. Choisis une journée.",
 s3note:"<b>C'est ton travail de tractions, pas un entraînement complet.</b> Ajoute tes exercices accessoires (section 4) et entraîne le reste de ton corps.",d1:"Jour 1",d1s:"Lourd",d2:"Jour 2",d2s:"Léger",d3:"Jour 3",d3s:"Moyen",
 w5h:"Semaine 5 : reteste",w5p:"Frais après la décharge, teste ton max. Entre-le dans le calculateur, recommence à la semaine 1, et envoie-moi ton nouveau nombre.",
-tip1:"<span>3 à 6 séries de travail de tractions par entraînement,</span> séries Conti comprises.",tip2:"<span>Varie les prises selon comment tu te sens</span> à chaque série.",
+tip1:"<span>3 à 6 séries de travail de tractions par entraînement,</span> séries Conti comprises (moins pendant la semaine de décharge).",tip2:"<span>Varie les prises selon comment tu te sens</span> à chaque série.",
 p30h:"30+ tractions",p30p:"Tu as dépassé la route pour laquelle ce guide a été bâti. Continue les 5 semaines : un peu plus lourd au jour 1, et pousse ton nombre Conti. Puis envoie-moi ton nombre, et je te dis ce que je changerais ensuite.",p30btn:"Envoie-moi ton nombre",
 s4eye:"4 · Les séries",s4h:"Les 4 séries de ton plan",
 s4warm:"<b>Échauffe-toi avec des tirages scapulaires avec élastique, penché vers l'arrière.</b> La poitrine face à la barre, les coudes légèrement vers l'avant. Ça libère tes épaules pour qu'elles bougent en douceur.",
@@ -507,11 +507,11 @@ var T={
   share:function(m,l,s){return "My pull-ups: "+(s?s+" (about "+m+" max)":m+" max")+". Stage: "+l+". (breakthrough guide)";},
   contiTxt:function(c){return c+" Conti reps";},
   dayTitle:["Heavy","Light","Medium"],
-  dayPurpose:["Heavy weighted, then Conti back-downs.","No weight: one threshold set, then Conti sets.","Lighter weighted, then Conti back-downs."],
-  main:[[{n:"Weighted pull-ups, heavy",d:"Hard but strict",s:"1–2 × 3–6"},{n:"Conti back-downs",d:"Bodyweight, new grip",s:"2–4 sets"}],
+  dayPurpose:["Heavy weighted, then Conti sets.","No weight: one threshold set, then Conti sets.","Lighter weighted, then Conti sets."],
+  main:[[{n:"Weighted pull-ups, heavy",d:"Hard but strict",s:"1–2 × 3–6"},{n:"Conti sets (back-downs)",d:"Bodyweight, after the weighted sets. New grip",s:"2–4 sets"}],
         [{n:"Threshold set",d:"Bodyweight. Past failure with partials, then dead hang until your grip goes",s:"1 set"},{n:"Conti sets",d:"Bodyweight. Beat your best",s:"2–4 sets"}],
-        [{n:"Weighted pull-ups, lighter",d:"Endurance",s:"2 × 8–12"},{n:"Conti back-downs",d:"Bodyweight, new grip",s:"2–4 sets"}]],
-  colA:"Pull-up work", colB:"Sets × reps", planH:"Your 5 weeks", planP:"Weeks 1 to 3 build. Week 4 is a deload: lighter, and day 3 off.",
+        [{n:"Weighted pull-ups, lighter",d:"Endurance",s:"2 × 8–12"},{n:"Conti sets (back-downs)",d:"Bodyweight, after the weighted sets. New grip",s:"2–4 sets"}]],
+  colA:"Pull-up work", colB:"Sets × reps", planH:"Your 5 weeks", planP:"Weeks 1 to 3 build. Week 4 is a deload: fewer sets, and day 3 off.",
   weeks:[["Week 1","Start",["Day 1: heavy 1 × 3–6 + 2 Conti","Day 2: 1 threshold + 2 Conti, write down your best","Day 3: lighter 2 × 8–12 + 2 Conti"]],
          ["Week 2","Build",["Day 1: heavy 2 × 3–6 + 3 Conti","Day 2: 1 threshold + 3 Conti, beat last week","Day 3: lighter 2 × 8–12 + 3 Conti"]],
          ["Week 3","Peak",["Day 1: heavy 2 × 3–6, a little heavier + 4 Conti","Day 2: 1 threshold + 4 Conti, beat your best","Day 3: lighter 2 × 8–12 + 4 Conti"]],
@@ -526,11 +526,11 @@ var T={
   share:function(m,l,s){return "Mes tractions : "+(s?s+" (environ "+m+" max)":m+" max")+". Stade : "+l+". (guide percer ton plafond)";},
   contiTxt:function(c){return c+" rép. Conti";},
   dayTitle:["Lourd","Léger","Moyen"],
-  dayPurpose:["Lesté lourd, puis des séries de retour Conti.","Sans poids : une série seuil, puis des séries Conti.","Lesté plus léger, puis des séries de retour Conti."],
-  main:[[{n:"Tractions lestées, lourd",d:"Difficile mais strict",s:"1–2 × 3–6"},{n:"Séries de retour Conti",d:"Poids du corps, nouvelle prise",s:"2–4 séries"}],
+  dayPurpose:["Lesté lourd, puis des séries Conti.","Sans poids : une série seuil, puis des séries Conti.","Lesté plus léger, puis des séries Conti."],
+  main:[[{n:"Tractions lestées, lourd",d:"Difficile mais strict",s:"1–2 × 3–6"},{n:"Séries Conti (retour)",d:"Poids du corps, après les séries lestées. Nouvelle prise",s:"2–4 séries"}],
         [{n:"Série seuil",d:"Poids du corps. Au-delà de l'échec avec des partielles, puis suspendu jusqu'à ce que ta prise lâche",s:"1 série"},{n:"Séries Conti",d:"Poids du corps. Bats ton meilleur",s:"2–4 séries"}],
-        [{n:"Tractions lestées, plus léger",d:"Endurance",s:"2 × 8–12"},{n:"Séries de retour Conti",d:"Poids du corps, nouvelle prise",s:"2–4 séries"}]],
-  colA:"Travail de tractions", colB:"Séries × rép.", planH:"Tes 5 semaines", planP:"Les semaines 1 à 3 bâtissent. La semaine 4 est une décharge : plus léger, et pas de jour 3.",
+        [{n:"Tractions lestées, plus léger",d:"Endurance",s:"2 × 8–12"},{n:"Séries Conti (retour)",d:"Poids du corps, après les séries lestées. Nouvelle prise",s:"2–4 séries"}]],
+  colA:"Travail de tractions", colB:"Séries × rép.", planH:"Tes 5 semaines", planP:"Les semaines 1 à 3 bâtissent. La semaine 4 est une décharge : moins de séries, et pas de jour 3.",
   weeks:[["Semaine 1","Départ",["Jour 1 : lourd 1 × 3–6 + 2 Conti","Jour 2 : 1 seuil + 2 Conti, note ton meilleur","Jour 3 : plus léger 2 × 8–12 + 2 Conti"]],
          ["Semaine 2","Montée",["Jour 1 : lourd 2 × 3–6 + 3 Conti","Jour 2 : 1 seuil + 3 Conti, bats la semaine passée","Jour 3 : plus léger 2 × 8–12 + 3 Conti"]],
          ["Semaine 3","Sommet",["Jour 1 : lourd 2 × 3–6, un peu plus lourd + 4 Conti","Jour 2 : 1 seuil + 4 Conti, bats ton meilleur","Jour 3 : plus léger 2 × 8–12 + 4 Conti"]],
