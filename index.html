@@ -122,6 +122,9 @@ section{display:grid;gap:12px;padding-block:18px}
 .daynote p{margin:0}
 .daynote p.lb{font-weight:600}
 .daynote .eyebrow{font-size:12px}
+.daynote ul{margin:0;padding-left:18px;display:grid;gap:5px}
+.daynote li{padding-left:2px}
+.daynote li::marker{color:var(--accent-text)}
 .wknote{margin-bottom:10px}
 .daycard>div{min-width:0}
 .state{font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:4px 8px;border-radius:6px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
@@ -869,16 +872,22 @@ function dayNoteParts(w,d,card){
   // On the one-line card, the day's own text comes before an age-group line it shares with other days.
   return card?parts.filter(p=>!DN_AGE.test(p)).concat(parts.filter(p=>DN_AGE.test(p))):parts;
 }
-/* Workout page: one line per part; short labels at the start (a weekday, "Optional", "Test day") read as a heading. */
+/* Bullets (Martin, Nov 24): each sentence of the coach's text is its own bullet, so a long note doesn't read as one
+   block. A sentence ends at . or ! followed by a space and a capital or a number (a question stays with its answer:
+   "Time trial this week? Do this day…"); the final period is dropped.
+   A note that's only one sentence stays a plain line. */
+const dnSentences=p=>String(p).split(/(?<=[.!])\s+(?=[A-Z0-9À-Ý"“(])/).map(x=>x.trim().replace(/\.$/,"")).filter(Boolean);
+function dnList(parts){const items=parts.flatMap(dnSentences);
+  return items.length>1?`<ul>${items.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:items.length?`<p>${esc(items[0])}</p>`:""}
+/* Workout page: short labels at the start (a weekday, "Optional", "Test day") read as a heading, then the bullets. */
 function dayNoteHtml(w,d){
   const parts=dayNoteParts(w,d,false);if(!parts.length)return "";
   const isLbl=p=>p.length<=28&&!/[.:?!]/.test(p);let n=0;while(n<parts.length&&isLbl(parts[n]))n++;
-  const out=(n?[`<p class="lb">${esc(parts.slice(0,n).join(" · "))}</p>`]:[]).concat(parts.slice(n).map(p=>`<p>${esc(p)}</p>`));
-  return `<div class="daynote">${out.join("")}</div>`;
+  return `<div class="daynote">${n?`<p class="lb">${esc(parts.slice(0,n).join(" · "))}</p>`:""}${dnList(parts.slice(n))}</div>`;
 }
 function weekNoteHtml(w){
   const parts=weekNoteParts(w);
-  return parts.length?`<div class="daynote wknote"><div class="eyebrow">${T("dnWeek")}</div>${parts.map(p=>`<p>${esc(p)}</p>`).join("")}</div>`:"";
+  return parts.length?`<div class="daynote wknote"><div class="eyebrow">${T("dnWeek")}</div>${dnList(parts)}</div>`:"";
 }
 function restSecs(r){r=String(r||"").trim();if(/super/i.test(r))return 0;const m=r.match(/^(\d+)(?:\s*-\s*(\d+))?\s*\+?\s*(?:min)?$/i);if(!m)return 90;return +(m[2]||m[1])*60}
 function restLabel(r){r=String(r||"");if(/super/i.test(r))return "Superset";if(/^\d+(\s*-\s*\d+)?\s*\+?$/.test(r))return r.replace(/\s*-\s*/,"–").replace(/\s+/g,"")+" min";return r}
