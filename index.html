@@ -688,6 +688,25 @@ button.dg-say:active{transform:scale(.97)}
 .shotsess{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline;font-size:14px}
 .shotsess>span:first-child{font-family:var(--display);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:12px;color:var(--muted)}
 @media (max-width:370px){.pfs.perg .pf span{font-size:10px;letter-spacing:.04em}.pf input{font-size:16px}}
+/* Protein check (pilot, per athlete: Copies U) */
+.prot{display:grid;gap:10px;padding:14px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line);margin-top:12px}
+.prot .ph{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.prot .ph b{display:block;margin-top:4px;font-family:var(--display);font-weight:800;font-size:22px;line-height:1;text-transform:uppercase;letter-spacing:.02em}
+.prot.met .ph b{color:var(--good)}
+.prot .pbar{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.prot .pbar i{display:block;height:100%;background:var(--blue);border-radius:4px}
+.prot.met .pbar i{background:var(--good)}
+.prot .plist{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.prot .plist li{display:grid;grid-template-columns:auto 1fr auto auto;gap:10px;align-items:center;font-size:14px}
+.prot .plist .tm{color:var(--muted);font-variant-numeric:tabular-nums}
+.prot .plist .ml{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prot .plist .ck{display:block;font-size:12px;color:var(--good)}
+.prot .plist b{font-variant-numeric:tabular-nums}
+.prot .pdel{border:0;background:none;color:var(--muted);font-size:18px;line-height:1;padding:4px 2px 4px 6px;min-width:28px}
+.prot .pdel.sure{color:var(--accent-text);font-size:13px;font-weight:700}
+.protsheet .items{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.protsheet .items li{display:flex;justify-content:space-between;gap:12px;font-size:15px}
+.protsheet .items li span{color:var(--muted)}
 </style>
 
 </head>
@@ -1152,6 +1171,7 @@ function viewToday(){
      ${weekNoteHtml(w)}
      ${days.map(d=>dayCard(w.week,d,firstOpen&&d.day===firstOpen.day)).join("")}
    </section>
+   ${protCard()}
   </div>`;
 }
 /* Weeks in a row with every gym session done (team circuits don't count). The current week only
@@ -2619,7 +2639,7 @@ app.addEventListener("change",e=>{
   toggleSet(row,true);if(!was&&(S.logs[k]||{}).done)row.dataset.auto=String(Date.now());
 });
 /* Paddling sets and the session card save when a box is left; the athlete's note saves as they type. */
-app.addEventListener("change",e=>{if(e.target.dataset.pf)pcField(e.target);else if(e.target.dataset.sf)pcSessField(e.target);else if(e.target.hasAttribute("data-shot"))pcShot(e.target)});
+app.addEventListener("change",e=>{if(e.target.dataset.pf)pcField(e.target);else if(e.target.dataset.sf)pcSessField(e.target);else if(e.target.hasAttribute("data-shot"))pcShot(e.target);else if(e.target.hasAttribute("data-prot"))protSnap(e.target)});
 app.addEventListener("input",e=>{const rk=e.target.dataset.pnote;if(rk){S.pnote[rk]=e.target.value;queuePNote(rk)}});
 function updateCount(){if(VIEW.name!=="workout")return;const d=WEEKS[VIEW.w-1].days.find(x=>x.day===VIEW.d);let total=0,done=0;
   d.items.forEach((it,i)=>(it.sets||[]).forEach((_,s)=>{total++;if(S.logs[keyOf(VIEW.w,VIEW.d,i,s)]?.done)done++}));
@@ -2953,6 +2973,75 @@ function swapIn(data,failMsg){
     REFRESHING=false;flushQueue();
   });
 }
+/* ---------- Protein check (pilot) ----------
+   Switched on per athlete in Gym Program Admin → Copies U ("Yes" = 0.8 g per lb of bodyweight, or a number of grams).
+   The app asks the screenshot reader (READER_URL) once on open whether it's on; if it is, Today gets a Protein card:
+   the athlete snaps a meal, Claude estimates the protein, the photo and the estimate go to Martin's log sheet,
+   and the card shows today's total against the target. Martin's own number in the log replaces Claude's.
+   Off for everyone else: nothing shows and nothing is sent but that one check (repeated once a day). */
+const PROT_DEMO=!LIVE&&/[?&]protein\b/i.test(location.search);
+const PROT_KEY="training-prot-"+(TOKEN||"demo");
+let PROT=(()=>{if(PROT_DEMO)return{on:true,target:140,day:isoDay(),total:52,entries:[{id:"d1",time:"08:10",meal:"Greek yogurt and berries",g:17,checked:true},{id:"d2",time:"12:40",meal:"Tuna sandwich",g:35,checked:false}]};
+  try{return JSON.parse(localStorage.getItem(PROT_KEY)||"null")}catch(e){return null}})();
+let protBusy=false,protLast=0;
+const PT_TXT={en:{title:"Protein today",snap:"Snap a meal",reading:"Checking your meal…",hint:"Estimates from your photos. Your coach checks them.",empty:"No meals yet today.",checked:"checked by your coach",sure:"Remove?",about:g=>`About ${g} g of protein`,ok:"Got it",undo:"Not right? Remove it",err:"Couldn’t send the photo. Try again.",notFood:"That doesn’t look like food, so nothing was counted.",met:"Target reached",left:g=>`${g} g to go`,removed:"Removed"},
+  fr:{title:"Protéines aujourd’hui",snap:"Photo d’un repas",reading:"Analyse de ton repas…",hint:"Estimations à partir de tes photos. Ton coach les vérifie.",empty:"Aucun repas aujourd’hui pour l’instant.",checked:"vérifié par ton coach",sure:"Retirer?",about:g=>`Environ ${g} g de protéines`,ok:"OK",undo:"Pas bon? Le retirer",err:"Impossible d’envoyer la photo. Réessaie.",notFood:"Ça ne ressemble pas à de la nourriture, rien n’a été compté.",met:"Objectif atteint",left:g=>`Encore ${g} g`,removed:"Retiré"}};
+const PT=k=>(PT_TXT[S.profile.lang==="fr"?"fr":"en"]||PT_TXT.en)[k];
+const protOn=()=>!!(PROT&&PROT.on&&((LIVE&&READER_URL)||PROT_DEMO));
+function protSave(){if(PROT_DEMO)return;try{localStorage.setItem(PROT_KEY,JSON.stringify({...PROT,at:Date.now()}))}catch(e){}}
+/* Today's numbers: the saved ones only count if they're from today. */
+function protToday(){if(!PROT||PROT.day!==isoDay())return{total:0,entries:[]};return{total:PROT.total||0,entries:PROT.entries||[]}}
+function protCard(){if(!protOn())return"";const t=protToday(),tg=+PROT.target||0,met=tg&&t.total>=tg;
+  const pct=tg?Math.min(100,Math.round(t.total/tg*100)):0;
+  const list=t.entries.length?`<ul class="plist">${t.entries.map(e=>`<li><span class="tm">${esc(e.time)}</span><span class="ml">${esc(e.meal)}${e.checked?`<span class="ck">✓ ${PT("checked")}</span>`:""}</span><b>${e.checked?"":"~"}${+e.g||0} g</b><button class="pdel" data-protdel="${esc(e.id)}" aria-label="${PT("sure")}">×</button></li>`).join("")}</ul>`:`<p class="phint">${PT("empty")}</p>`;
+  return `<div class="prot ${met?"met":""}" id="protCard"><div class="ph"><div><div class="eyebrow">${PT("title")}</div><b class="num">${t.total}${tg?` / ${tg}`:""} g</b></div>
+    <span class="muted small">${tg?(met?PT("met")+" 💪":esc(PT("left")(tg-t.total))):""}</span></div>
+    ${tg?`<div class="pbar" aria-hidden="true"><i style="width:${pct}%"></i></div>`:""}
+    ${list}
+    <div class="shotbox"><label class="shotbtn ${protBusy?"busy":""}" id="protBtn"><input type="file" accept="image/*" data-prot aria-label="${PT("snap")}">${I.camera}<span>${protBusy?PT("reading"):PT("snap")}</span></label><p class="phint">${PT("hint")}</p></div></div>`}
+function protApply(j){PROT={on:!!j.on,target:+j.target||0,day:j.day||isoDay(),total:+j.total||0,entries:Array.isArray(j.entries)?j.entries:[]};protSave()}
+function protRedraw(){if(VIEW.name==="today")render()}
+/* Asks whether it's on (and today's meals). Off: asked again after a day. On: every open, at most once a minute. */
+async function protLoad(){if(!LIVE||!READER_URL||PROT_DEMO||!TOKEN)return;
+  const off=PROT&&!PROT.on,age=Date.now()-((PROT&&PROT.at)||0);
+  if(off?age<864e5:Date.now()-protLast<60000)return;protLast=Date.now();
+  try{const ac=typeof AbortController==="function"?new AbortController():null;const to=ac&&setTimeout(()=>ac.abort(),30000);
+    const r=await fetch(READER_URL+"?action=protein&t="+encodeURIComponent(TOKEN)+"&day="+isoDay(),ac?{signal:ac.signal}:undefined);clearTimeout(to);
+    const j=await r.json();if(!j||!j.ok){if(j&&(j.error==="paused"||j.error==="inactive")){PROT={on:false};protSave();protRedraw()}return}
+    if(typeof j.on!=="boolean")return;   // a reader without the protein check yet: ask again next open
+    const was=JSON.stringify(protToday())+protOn();protApply(j);if(JSON.stringify(protToday())+protOn()!==was)protRedraw()}catch(e){}}
+/* Photo → JPEG, longest side 1280 px. */
+async function protImg(f){let src;try{src=await createImageBitmap(f)}catch(e){src=await new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=URL.createObjectURL(f)})}
+  const s=Math.min(1,1280/Math.max(src.width,src.height)),c=document.createElement("canvas");c.width=Math.round(src.width*s);c.height=Math.round(src.height*s);
+  const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(src,0,0,c.width,c.height);
+  return{type:"image/jpeg",data:c.toDataURL("image/jpeg",.8).split(",")[1]}}
+async function protSnap(inp){const f=(inp.files||[])[0];inp.value="";if(!f||protBusy||!protOn())return;
+  protBusy=true;protRedraw();let j;
+  try{if(PROT_DEMO){await new Promise(r=>setTimeout(r,1200));const id="d"+Date.now();const add={id,meal:"Chicken, rice and broccoli",g:48,items:[{food:"Chicken breast",portion:"about 150 g",g:44},{food:"Rice",portion:"1 cup",g:4}],note:"",conf:"medium"};
+      const now=new Date();PROT.entries.push({id,time:String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0"),meal:add.meal,g:add.g,checked:false});PROT.total+=add.g;j={ok:true,added:add}}
+    else{const image=await protImg(f);const now=new Date();
+      const ac=typeof AbortController==="function"?new AbortController():null;const to=ac&&setTimeout(()=>ac.abort(),90000);
+      const r=await fetch(READER_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"protein",t:TOKEN,lang:S.profile.lang||"en",today:isoDay(),time:String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0"),image}),signal:ac?ac.signal:undefined});
+      clearTimeout(to);j=await r.json();if(!j.ok)throw new Error(j.error||PT("err"));protApply(j)}}
+  catch(e){protBusy=false;protRedraw();toast(e&&e.message&&!/fetch|abort|network|JSON|Load failed/i.test(e.message)?e.message:PT("err"),4000);return}
+  protBusy=false;protRedraw();const a=j.added||{};
+  if(!a.g&&/not food/i.test(a.meal||"")){toast(PT("notFood"),4000);return}
+  document.getElementById("overlay").innerHTML=`<div class="scrim" data-close></div><div class="sheet"><div class="inner wrap shotsheet protsheet">
+    <div class="eyebrow">${esc(a.meal||"")}</div><h2>${esc(PT("about")(+a.g||0))}</h2>
+    ${(a.items||[]).length?`<ul class="items">${a.items.map(x=>`<li><b>${esc(x.food)}${x.portion?` <span>· ${esc(x.portion)}</span>`:""}</b><span class="num">~${+x.g||0} g</span></li>`).join("")}</ul>`:""}
+    ${a.note?`<p class="phint">${esc(a.note)}</p>`:""}<p class="phint">${PT("hint")}</p>
+    <button class="btn block" data-close>${PT("ok")}</button><button class="btn block ghost" data-protundo="${esc(a.id||"")}">${PT("undo")}</button></div></div>`}
+async function protDel(id){if(!id||!protOn())return;
+  if(PROT_DEMO){PROT.entries=PROT.entries.filter(e=>e.id!==id);PROT.total=PROT.entries.reduce((a,e)=>a+(+e.g||0),0);protRedraw();toast(PT("removed"));return}
+  try{const r=await fetch(READER_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"protein_del",t:TOKEN,lang:S.profile.lang||"en",today:isoDay(),id})});
+    const j=await r.json();if(!j.ok)throw new Error(j.error||PT("err"));protApply(j);protRedraw();toast(PT("removed"))}
+  catch(e){toast(e&&e.message&&!/fetch|abort|network|JSON|Load failed/i.test(e.message)?e.message:PT("err"),4000)}}
+document.addEventListener("click",e=>{
+  const u=e.target.closest("[data-protundo]");if(u){const id=u.dataset.protundo;document.getElementById("overlay").innerHTML="";protDel(id);return}
+  const d=e.target.closest("[data-protdel]");if(!d)return;
+  if(d.classList.contains("sure")){protDel(d.dataset.protdel);return}
+  d.classList.add("sure");d.textContent=PT("sure");setTimeout(()=>{if(d.isConnected){d.classList.remove("sure");d.textContent="×"}},3000)});
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"){protLoad();if(PROT&&PROT.day&&PROT.day!==isoDay())protRedraw()}});
 async function boot(){
   if(!LIVE){render();return}
   let shown=false,cached=null;
@@ -2972,7 +3061,7 @@ async function boot(){
     saveCache(data);REFRESHING=false;READY=true;if(showProgram())flushQueue();return}
   swapIn(data,"Offline: showing your last saved program");
 }
-boot();
+boot().then(()=>protLoad());
 /* Coming back to the app (a home-screen app left open since Sunday, say) after more than 5 minutes away:
    fetch the latest program the same quiet way, so nobody has to close and reopen the app for a new week.
    A save that's already on its way finishes first, so the program fetched includes it. */
