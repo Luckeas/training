@@ -841,31 +841,41 @@ function dayTitle(d){
 }
 /* Coach's day note (Martin, Nov 24): the Day row text (column D) on gym days. Before, it showed only on circuit and
    paddling days (and fed the "Optional" check), so tips, swaps and Option B written there never reached athletes.
-   Split on " · ". Left out: "Optional" on the day card (the card already says it) and a part that only repeats the
-   day's title ("Upper body"). A long part that every gym day of the week repeats word for word (e.g. an age-group
-   rule line) is the week's note: shown once at the top of the week, not on every day.
-   Preview only: ?dn=skip hides the week's note instead, for Martin to compare. Circuit and paddling days are unchanged. */
+   Split on " · ". Left out:
+   - "Optional" on the day card (the card already says it), and a part that only repeats the day's title ("Upper body");
+   - a part already in one of that day's exercise notes (column P), so a tip copied there never shows twice;
+   - the age-group rule line ("Senior A: …", "Junior B: …") when every gym day of the week repeats it word for word:
+     it shows once at the top of the week instead. Any other repeated line (Option B, deload) stays on each day.
+   Preview only: ?dn=skip hides the age-group line instead, for Martin to compare. Circuit and paddling days are unchanged. */
 const DN_MODE=(()=>{try{return new URLSearchParams(location.search).get("dn")==="skip"?"skip":"week"}catch(e){return "week"}})();
-const DN_WEEK_MIN=40;   // shorter repeats (a one- or two-word label) stay on each day
+const DN_AGE=/^(senior|junior|u\s?\d{2}|premier)\b[^:]{0,12}:/i;   // the age-group rule line
 const isGymDay=d=>!!d&&!isCircuit(d)&&!isPaddleDay(d);
 const dnSplit=d=>String(d&&d.summary||"").split(" · ").map(s=>s.trim()).filter(Boolean);
 const dnTitles=d=>{const t=dayTitle(d).toLowerCase();const k=Object.keys(STR.en.dayNames).find(x=>STR.en.dayNames[x].toLowerCase()===t||STR.fr.dayNames[x].toLowerCase()===t);
   return k?[STR.en.dayNames[k],STR.fr.dayNames[k]].map(x=>x.toLowerCase()):[t]};
+/* Same tip in an exercise note: at least 70% of the part's 4-word runs appear in one note of that day. */
+const dnWords=t=>String(t||"").toLowerCase().match(/[\p{L}\p{N}']+/gu)||[];
+const dnRuns=t=>{const w=dnWords(t),r=new Set();for(let i=0;i+4<=w.length;i++)r.add(w.slice(i,i+4).join(" "));return r};
+function dnInNotes(p,d){const r=dnRuns(p);if(!r.size)return false;
+  return d.items.some(it=>{const n=dnRuns(it.note);if(!n.size)return false;let k=0;r.forEach(x=>{if(n.has(x))k++});return k/r.size>=.7})}
 function weekNoteParts(w){
   const gym=((w&&w.days)||[]).filter(isGymDay);if(gym.length<2)return [];
-  return dnSplit(gym[0]).filter(p=>p.length>=DN_WEEK_MIN&&gym.every(d=>dnSplit(d).includes(p)));
+  return dnSplit(gym[0]).filter(p=>DN_AGE.test(p)&&gym.every(d=>dnSplit(d).includes(p)));
 }
 function dayNoteParts(w,d,card){
   if(!isGymDay(d))return [];
   const wk=weekNoteParts(w),tt=dnTitles(d);
-  return dnSplit(d).map((p,i)=>i===0&&card?p.replace(/^optional\b[\s:,-]*/i,""):p).filter(p=>p&&!wk.includes(p)&&!tt.includes(p.toLowerCase()));
+  const parts=dnSplit(d).map((p,i)=>i===0&&card?p.replace(/^optional\b[\s:,-]*/i,""):p)
+    .filter(p=>p&&!wk.includes(p)&&!tt.includes(p.toLowerCase())&&!dnInNotes(p,d));
+  // On the one-line card, the day's own text comes before an age-group line it shares with other days.
+  return card?parts.filter(p=>!DN_AGE.test(p)).concat(parts.filter(p=>DN_AGE.test(p))):parts;
 }
-/* Workout page: one line per part; short labels in a row (a weekday, "Optional") read as a heading. */
+/* Workout page: one line per part; short labels at the start (a weekday, "Optional", "Test day") read as a heading. */
 function dayNoteHtml(w,d){
   const parts=dayNoteParts(w,d,false);if(!parts.length)return "";
-  const isLbl=p=>p.length<=28&&!/[.:?!]/.test(p);const out=[];
-  parts.forEach(p=>{const l=isLbl(p),prev=out[out.length-1];if(l&&prev&&prev.l)prev.t.push(p);else out.push({l,t:[p]})});
-  return `<div class="daynote">${out.map(o=>`<p class="${o.l?"lb":""}">${esc(o.t.join(" · "))}</p>`).join("")}</div>`;
+  const isLbl=p=>p.length<=28&&!/[.:?!]/.test(p);let n=0;while(n<parts.length&&isLbl(parts[n]))n++;
+  const out=(n?[`<p class="lb">${esc(parts.slice(0,n).join(" · "))}</p>`]:[]).concat(parts.slice(n).map(p=>`<p>${esc(p)}</p>`));
+  return `<div class="daynote">${out.join("")}</div>`;
 }
 function weekNoteHtml(w){
   if(DN_MODE==="skip")return "";const parts=weekNoteParts(w);
