@@ -846,8 +846,7 @@ function dayTitle(d){
    - a part already in one of that day's exercise notes (column P), so a tip copied there never shows twice;
    - the age-group rule line ("Senior A: …", "Junior B: …") when every gym day of the week repeats it word for word:
      it shows once at the top of the week instead. Any other repeated line (Option B, deload) stays on each day.
-   Preview only: ?dn=skip hides the age-group line instead, for Martin to compare. Circuit and paddling days are unchanged. */
-const DN_MODE=(()=>{try{return new URLSearchParams(location.search).get("dn")==="skip"?"skip":"week"}catch(e){return "week"}})();
+   Circuit and paddling days are unchanged. */
 const DN_AGE=/^(senior|junior|u\s?\d{2}|premier)\b[^:]{0,12}:/i;   // the age-group rule line
 const isGymDay=d=>!!d&&!isCircuit(d)&&!isPaddleDay(d);
 const dnSplit=d=>String(d&&d.summary||"").split(" · ").map(s=>s.trim()).filter(Boolean);
@@ -878,7 +877,7 @@ function dayNoteHtml(w,d){
   return `<div class="daynote">${out.join("")}</div>`;
 }
 function weekNoteHtml(w){
-  if(DN_MODE==="skip")return "";const parts=weekNoteParts(w);
+  const parts=weekNoteParts(w);
   return parts.length?`<div class="daynote wknote"><div class="eyebrow">${T("dnWeek")}</div>${parts.map(p=>`<p>${esc(p)}</p>`).join("")}</div>`:"";
 }
 function restSecs(r){r=String(r||"").trim();if(/super/i.test(r))return 0;const m=r.match(/^(\d+)(?:\s*-\s*(\d+))?\s*\+?\s*(?:min)?$/i);if(!m)return 90;return +(m[2]||m[1])*60}
