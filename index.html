@@ -3002,6 +3002,7 @@ function protCard(){if(!protOn())return"";const t=protToday(),tg=+PROT.target||0
 function protApply(j){PROT={on:!!j.on,target:+j.target||0,day:j.day||isoDay(),total:+j.total||0,entries:Array.isArray(j.entries)?j.entries:[]};protSave()}
 function protRedraw(){if(VIEW.name==="today")render()}
 /* Asks whether it's on (and today's meals). Off: asked again after a day. On: every open, at most once a minute. */
+let protRetry=0;
 async function protLoad(){if(!LIVE||!READER_URL||PROT_DEMO||!TOKEN)return;
   const off=PROT&&!PROT.on,age=Date.now()-((PROT&&PROT.at)||0);
   if(off?age<864e5:Date.now()-protLast<60000)return;protLast=Date.now();
@@ -3009,7 +3010,7 @@ async function protLoad(){if(!LIVE||!READER_URL||PROT_DEMO||!TOKEN)return;
     const r=await fetch(READER_URL+"?action=protein&t="+encodeURIComponent(TOKEN)+"&day="+isoDay(),ac?{signal:ac.signal}:undefined);clearTimeout(to);
     const j=await r.json();if(!j||!j.ok){if(j&&(j.error==="paused"||j.error==="inactive")){PROT={on:false};protSave();protRedraw()}return}
     if(typeof j.on!=="boolean")return;   // a reader without the protein check yet: ask again next open
-    const was=JSON.stringify(protToday())+protOn();protApply(j);if(JSON.stringify(protToday())+protOn()!==was)protRedraw()}catch(e){}}
+    const was=JSON.stringify(protToday())+protOn();protApply(j);if(JSON.stringify(protToday())+protOn()!==was)protRedraw()}catch(e){protLast=0;if(!protRetry){protRetry=1;setTimeout(protLoad,8000)}}}
 /* Photo → JPEG, longest side 1280 px. */
 async function protImg(f){let src;try{src=await createImageBitmap(f)}catch(e){src=await new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=URL.createObjectURL(f)})}
   const s=Math.min(1,1280/Math.max(src.width,src.height)),c=document.createElement("canvas");c.width=Math.round(src.width*s);c.height=Math.round(src.height*s);
