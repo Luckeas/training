@@ -708,6 +708,9 @@ button.dg-say:active{transform:scale(.97)}
 .protsheet .items li{display:flex;justify-content:space-between;gap:12px;font-size:15px}
 .protsheet .items li span{color:var(--muted)}
 .protsheet .items li .num{white-space:nowrap;flex:none}
+.protsheet .pprev{width:100%;max-height:220px;object-fit:cover;border-radius:12px;display:block}
+.protsheet .pnote{display:grid;gap:6px;font-size:14px;color:var(--muted)}
+.protsheet .pnote input{height:46px;border-radius:10px;border:1px solid var(--line);background:var(--raised);color:var(--fg);padding:0 12px;font-size:16px;width:100%;min-width:0}
 </style>
 
 </head>
@@ -2985,8 +2988,8 @@ const PROT_KEY="training-prot-"+(TOKEN||"demo");
 let PROT=(()=>{if(PROT_DEMO)return{on:true,target:140,day:isoDay(),total:52,entries:[{id:"d1",time:"08:10",meal:"Greek yogurt and berries",g:17,checked:true},{id:"d2",time:"12:40",meal:"Tuna sandwich",g:35,checked:false}]};
   try{return JSON.parse(localStorage.getItem(PROT_KEY)||"null")}catch(e){return null}})();
 let protBusy=false,protLast=0;
-const PT_TXT={en:{title:"Protein today",snap:"Snap a meal",reading:"Checking your meal…",hint:"Martin checks every photo.",empty:"No meals yet today.",checked:"checked by Martin",sure:"Remove?",about:g=>`About ${g} g of protein`,ok:"Got it",undo:"Not right? Remove it",err:"Couldn’t send the photo. Try again.",notFood:"That doesn’t look like food, so nothing was counted.",met:"Target reached",left:g=>`${g} g to go`,removed:"Removed"},
-  fr:{title:"Protéines aujourd’hui",snap:"Photo d’un repas",reading:"Analyse de ton repas…",hint:"Martin vérifie chaque photo.",empty:"Aucun repas aujourd’hui pour l’instant.",checked:"vérifié par Martin",sure:"Retirer?",about:g=>`Environ ${g} g de protéines`,ok:"OK",undo:"Pas bon? Le retirer",err:"Impossible d’envoyer la photo. Réessaie.",notFood:"Ça ne ressemble pas à de la nourriture, rien n’a été compté.",met:"Objectif atteint",left:g=>`Encore ${g} g`,removed:"Retiré"}};
+const PT_TXT={en:{title:"Protein today",snap:"Snap a meal",reading:"Checking your meal…",hint:"Martin checks every photo.",empty:"No meals yet today.",checked:"checked by Martin",sure:"Remove?",about:g=>`About ${g} g of protein`,ok:"Got it",undo:"Not right? Remove it",err:"Couldn’t send the photo. Try again.",notFood:"That doesn’t look like food, so nothing was counted.",met:"Target reached",left:g=>`${g} g to go`,removed:"Removed",noteLabel:"Add a note (optional)",notePh:"e.g. 2 scoops of whey, ate half",send:"Send",cancel:"Cancel"},
+  fr:{title:"Protéines aujourd’hui",snap:"Photo d’un repas",reading:"Analyse de ton repas…",hint:"Martin vérifie chaque photo.",empty:"Aucun repas aujourd’hui pour l’instant.",checked:"vérifié par Martin",sure:"Retirer?",about:g=>`Environ ${g} g de protéines`,ok:"OK",undo:"Pas bon? Le retirer",err:"Impossible d’envoyer la photo. Réessaie.",notFood:"Ça ne ressemble pas à de la nourriture, rien n’a été compté.",met:"Objectif atteint",left:g=>`Encore ${g} g`,removed:"Retiré",noteLabel:"Ajouter une note (facultatif)",notePh:"ex. 2 mesures de whey, mangé la moitié",send:"Envoyer",cancel:"Annuler"}};
 const PT=k=>(PT_TXT[S.profile.lang==="fr"?"fr":"en"]||PT_TXT.en)[k];
 const protOn=()=>!!(PROT&&PROT.on&&((LIVE&&READER_URL)||PROT_DEMO));
 function protSave(){if(PROT_DEMO)return;try{localStorage.setItem(PROT_KEY,JSON.stringify({...PROT,at:Date.now()}))}catch(e){}}
@@ -3017,13 +3020,21 @@ async function protImg(f){let src;try{src=await createImageBitmap(f)}catch(e){sr
   const s=Math.min(1,1280/Math.max(src.width,src.height)),c=document.createElement("canvas");c.width=Math.round(src.width*s);c.height=Math.round(src.height*s);
   const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(src,0,0,c.width,c.height);
   return{type:"image/jpeg",data:c.toDataURL("image/jpeg",.8).split(",")[1]}}
-async function protSnap(inp){const f=(inp.files||[])[0];inp.value="";if(!f||protBusy||!protOn())return;
+let PROT_PICK=null;
+/* Photo picked → a short sheet: preview, optional note, Send. */
+function protSnap(inp){const f=(inp.files||[])[0];inp.value="";if(!f||protBusy||!protOn())return;PROT_PICK=f;let url="";try{url=URL.createObjectURL(f)}catch(e){}
+  document.getElementById("overlay").innerHTML=`<div class="scrim" data-close></div><div class="sheet"><div class="inner wrap shotsheet protsheet">
+    ${url?`<img class="pprev" src="${url}" alt="">`:""}
+    <label class="pnote"><span>${PT("noteLabel")}</span><input id="protNote" type="text" maxlength="200" autocomplete="off" enterkeyhint="send" placeholder="${esc(PT("notePh"))}"></label>
+    <button class="btn block" data-protsend>${PT("send")}</button><button class="btn block ghost" data-close>${PT("cancel")}</button></div></div>`}
+async function protSend(){const f=PROT_PICK;PROT_PICK=null;const el=document.getElementById("protNote");const note=(el&&el.value||"").replace(/\s+/g," ").trim().slice(0,200);
+  document.getElementById("overlay").innerHTML="";if(!f||protBusy||!protOn())return;
   protBusy=true;protRedraw();let j;
   try{if(PROT_DEMO){await new Promise(r=>setTimeout(r,1200));const id="d"+Date.now();const add={id,meal:"Chicken, rice and broccoli",g:48,items:[{food:"Chicken breast",portion:"about 150 g",g:44},{food:"Rice",portion:"1 cup",g:4}],note:"",conf:"medium"};
       const now=new Date();PROT.entries.push({id,time:String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0"),meal:add.meal,g:add.g,checked:false});PROT.total+=add.g;j={ok:true,added:add}}
     else{const image=await protImg(f);const now=new Date();
       const ac=typeof AbortController==="function"?new AbortController():null;const to=ac&&setTimeout(()=>ac.abort(),90000);
-      const r=await fetch(READER_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"protein",t:TOKEN,lang:S.profile.lang||"en",today:isoDay(),time:String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0"),image}),signal:ac?ac.signal:undefined});
+      const r=await fetch(READER_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"protein",t:TOKEN,lang:S.profile.lang||"en",today:isoDay(),time:String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0"),note,image}),signal:ac?ac.signal:undefined});
       clearTimeout(to);j=await r.json();if(!j.ok)throw new Error(j.error||PT("err"));protApply(j)}}
   catch(e){protBusy=false;protRedraw();toast(e&&e.message&&!/fetch|abort|network|JSON|Load failed/i.test(e.message)?e.message:PT("err"),4000);return}
   protBusy=false;protRedraw();const a=j.added||{};
@@ -3039,10 +3050,12 @@ async function protDel(id){if(!id||!protOn())return;
     const j=await r.json();if(!j.ok)throw new Error(j.error||PT("err"));protApply(j);protRedraw();toast(PT("removed"))}
   catch(e){toast(e&&e.message&&!/fetch|abort|network|JSON|Load failed/i.test(e.message)?e.message:PT("err"),4000)}}
 document.addEventListener("click",e=>{
+  if(e.target.closest("[data-protsend]")){protSend();return}
   const u=e.target.closest("[data-protundo]");if(u){const id=u.dataset.protundo;document.getElementById("overlay").innerHTML="";protDel(id);return}
   const d=e.target.closest("[data-protdel]");if(!d)return;
   if(d.classList.contains("sure")){protDel(d.dataset.protdel);return}
   d.classList.add("sure");d.textContent=PT("sure");setTimeout(()=>{if(d.isConnected){d.classList.remove("sure");d.textContent="×"}},3000)});
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target&&e.target.id==="protNote"){e.preventDefault();protSend()}});
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"){protLoad();if(PROT&&PROT.day&&PROT.day!==isoDay())protRedraw()}});
 async function boot(){
   if(!LIVE){render();return}
