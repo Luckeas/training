@@ -3042,7 +3042,7 @@ async function protSend(){const f=PROT_PICK;PROT_PICK=null;const el=document.get
   document.getElementById("overlay").innerHTML=`<div class="scrim" data-close></div><div class="sheet"><div class="inner wrap shotsheet protsheet">
     <div class="eyebrow">${esc(a.meal||"")}</div><h2>${esc(PT("about")(+a.g||0))}</h2>
     ${(a.items||[]).length?`<ul class="items">${a.items.map(x=>`<li><b>${esc(x.food)}${x.portion?` <span>· ${esc(x.portion)}</span>`:""}</b><span class="num">~${+x.g||0} g</span></li>`).join("")}</ul>`:""}
-    ${a.note?`<p class="phint">${esc(a.note)}</p>`:""}<p class="phint">${PT("hint")}</p>
+    <p class="phint">${PT("hint")}</p>
     <button class="btn block" data-close>${PT("ok")}</button><button class="btn block ghost" data-protundo="${esc(a.id||"")}">${PT("undo")}</button></div></div>`}
 async function protDel(id){if(!id||!protOn())return;
   if(PROT_DEMO){PROT.entries=PROT.entries.filter(e=>e.id!==id);PROT.total=PROT.entries.reduce((a,e)=>a+(+e.g||0),0);protRedraw();toast(PT("removed"));return}
