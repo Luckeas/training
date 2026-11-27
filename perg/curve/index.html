@@ -267,10 +267,10 @@ input[type=text].bad{border-color:var(--accent)}
       <li><div class="body"><span class="when" data-t="p1w">First 10 strokes</span><h3 data-t="p1h">All out</h3><p class="muted" data-t="p1">Go all out to reach max speed. This is your peak.</p></div></li>
       <li><div class="body"><span class="when" data-t="p2w">Next 5 seconds</span><h3 data-t="p2h">Settle</h3><p class="muted" data-t="p2">Move straight to your target pace with long strokes.</p></div></li>
       <li><div class="body"><span class="when" data-t="p3w">The body of the race</span><h3 data-t="p3h">Hold</h3><p class="muted" data-t="p3">Hold about 20 seconds slower than your peak. Peak at 1:29? Hold 1:48 to 1:52.</p></div></li>
-      <li><div class="body"><span class="when" data-t="p4w">Last 20 seconds</span><h3 data-t="p4h">Empty the tank</h3><p class="muted" data-t="p4">Everything you have left.</p></div></li>
+      <li><div class="body"><span class="when" data-t="p4w">Last 20 seconds</span><h3 data-t="p4h">Empty the tank</h3><p class="muted" data-t="p4">Don't rush into quicker strokes. Think 10 power strokes: the wheel spins faster and your rate comes up on its own.</p></div></li>
     </ol>
     <div class="why">
-      <p data-t="why1">Most tests I've tracked land about 20 to 22 seconds off the peak. The best pacers hold 10 to 15. Fly and die, and it's 30 or more.</p>
+      <p data-t="why1">In the tests I've tracked, men and women hold about 21 seconds off their peak through the body of the race. The best pacers hold 10 to 15. Fly and die, and it's 30 or more.</p>
       <p class="muted" data-t="why2">Only compare your numbers on the same machine. Two PERGs can read very differently.</p>
     </div>
   </section>
@@ -332,8 +332,8 @@ s3eye:"3 · Le plan",s3h:"Ton plan de course pour 2 minutes",
 p1w:"Les 10 premiers coups",p1h:"À fond",p1:"Pars à fond pour atteindre ta vitesse max. C'est ton pic.",
 p2w:"Les 5 secondes suivantes",p2h:"Installe-toi",p2:"Passe directement à ton rythme cible, avec des coups longs.",
 p3w:"Le corps de la course",p3h:"Tiens",p3:"Tiens environ 20 secondes plus lent que ton pic. Pic à 1:29? Tiens 1:48 à 1:52.",
-p4w:"Les 20 dernières secondes",p4h:"Vide le réservoir",p4:"Tout ce qu'il te reste.",
-why1:"La plupart des tests que j'ai suivis finissent à environ 20 à 22 secondes du pic. Les meilleurs tiennent à 10 à 15. Partir trop vite et craquer, c'est 30 ou plus.",
+p4w:"Les 20 dernières secondes",p4h:"Vide le réservoir",p4:"Ne te précipite pas avec des coups plus rapides. Pense à 10 coups de puissance : la roue tourne plus vite et ta cadence monte d'elle-même.",
+why1:"Dans les tests que j'ai suivis, hommes et femmes tiennent environ 21 secondes plus lent que leur pic pendant le corps de la course. Les meilleurs tiennent à 10 à 15. Partir trop vite et craquer, c'est 30 ou plus.",
 why2:"Compare tes chiffres seulement sur la même machine. Deux PERG peuvent afficher des valeurs très différentes.",
 s5eye:"4 · T'entraîner avec moi",s5h:"Prépare ton jour de test avec l'équipe DB Speed",s5p:"Cet outil couvre ton test. DB Speed couvre toute ta saison.",
 o1eye:"Abonnement DB Speed",o1h:"Ton programme et ta communauté, au même endroit",
@@ -350,10 +350,10 @@ n2:"Les deux tests en haut sont de vrais tests d'une équipe que je coache, part
 var T={
  en:{faster:"faster is higher",target:"Target",peak:"Peak",fromScreen:"from your screen",est:"about",
   good:["You paced it","The best pacers I've tracked hold 10 to 15 seconds off their peak. That's you."],
-  mid:["Typical pacing","Most tests land about 20 to 22 seconds off the peak. Tighten the hold and you'll find metres."],
+  mid:["Typical pacing","Most tests hold about 21 seconds off the peak. Tighten the hold and you'll find metres."],
   bad:["You flew and died","Holding your peak + 20 the whole way would be about {m} m more."],
   bad0:["You flew and died","You dropped more than 25 seconds off your peak. Settle into your target sooner."],
-  next:"Next test: if you peak around {p}, settle into <b>{h}</b> in the next 5 seconds and hold it. Empty the tank in the last 20 seconds.",
+  next:"Next test: if you peak around {p}, settle into <b>{h}</b> in the next 5 seconds and hold it. Last 20 seconds: 10 power strokes.",
   next4:"The peak + 20 rule is for the 2-minute test. For the 4-minute test, aim for a flatter line than this one.",
   share:"My PERG curve ({len}): peak {p}, average {a} ({o} s off my peak), {d} m.",
   len2:"2 min",len4:"4 min",
@@ -365,10 +365,10 @@ var T={
   ePartial:"I could only read part of your screen. Check the numbers under “Type my splits”."},
  fr:{faster:"plus haut = plus rapide",target:"Cible",peak:"Pic",fromScreen:"de ton écran",est:"environ",
   good:["Bien géré","Les meilleurs que j'ai suivis tiennent à 10 à 15 secondes de leur pic. C'est toi."],
-  mid:["Gestion typique","La plupart des tests finissent à environ 20 à 22 secondes du pic. Resserre ton rythme et tu vas gagner des mètres."],
+  mid:["Gestion typique","La plupart des tests tiennent environ 21 secondes plus lent que le pic. Resserre ton rythme et tu vas gagner des mètres."],
   bad:["Parti trop vite","Tenir ton pic + 20 s tout le long, ce serait environ {m} m de plus."],
   bad0:["Parti trop vite","Tu as perdu plus de 25 secondes sur ton pic. Installe-toi plus tôt à ta cible."],
-  next:"Prochain test : si ton pic est autour de {p}, installe-toi à <b>{h}</b> dans les 5 secondes suivantes et tiens-le. Vide le réservoir dans les 20 dernières secondes.",
+  next:"Prochain test : si ton pic est autour de {p}, installe-toi à <b>{h}</b> dans les 5 secondes suivantes et tiens-le. Les 20 dernières secondes : 10 coups de puissance.",
   next4:"La règle du pic + 20 s est pour le test de 2 minutes. Pour le test de 4 minutes, vise une ligne plus plate que celle-ci.",
   share:"Ma courbe PERG ({len}) : pic {p}, moyenne {a} ({o} s de mon pic), {d} m.",
   len2:"2 min",len4:"4 min",
