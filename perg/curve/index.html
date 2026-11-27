@@ -200,7 +200,7 @@ input[type=text].bad{border-color:var(--accent)}
       <ul class="tips">
         <li><span class="n">1</span><p><b data-t="t1h">Fill the frame</b><span class="muted" data-t="t1p">Phone close to the monitor, with the whole screen filling the picture.</span></p></li>
         <li><span class="n">2</span><p><b data-t="t2h">No glare</b><span class="muted" data-t="t2p">Tilt the phone until every number is sharp and easy to read.</span></p></li>
-        <li><span class="n">3</span><p><b data-t="t3h">Start early, stop late</b><span class="muted" data-t="t3p">Start filming before your first stroke and stop after the clock ends.</span></p></li>
+        <li><span class="n">3</span><p><b data-t="t3h">Just the test</b><span class="muted" data-t="t3p">Start filming right before your first stroke and stop when the clock ends. Keep the video under 2:20.</span></p></li>
         <li><span class="n">4</span><p><b data-t="t4h">Ask a teammate</b><span class="muted" data-t="t4p">A teammate holding the phone works. So does a phone clamp on the PERG.</span></p></li>
       </ul>
     </div>
@@ -215,10 +215,6 @@ input[type=text].bad{border-color:var(--accent)}
       <div class="seg" role="group" aria-label="How">
         <button type="button" data-mode="video" aria-pressed="true" data-t="mVideo">Upload my video</button>
         <button type="button" data-mode="type" aria-pressed="false" data-t="mType">Type my splits</button>
-      </div>
-      <div class="seg small" role="group" aria-label="Test">
-        <button type="button" data-len="120" aria-pressed="true" data-t="len2">2-minute test</button>
-        <button type="button" data-len="240" aria-pressed="false" data-t="len4">4-minute test</button>
       </div>
 
       <div class="upload" id="videoWrap">
@@ -320,9 +316,9 @@ nav1:"Filme ton écran",nav2:"Ta courbe",nav3:"Le plan",nav4:"T'entraîner avec 
 s1eye:"1 · Filme ton écran",s1h:"Filme seulement l'écran",
 t1h:"Remplis le cadre",t1p:"Téléphone proche du moniteur, avec tout l'écran qui remplit l'image.",
 t2h:"Pas de reflet",t2p:"Incline le téléphone jusqu'à ce que chaque chiffre soit net et facile à lire.",
-t3h:"Commence tôt, arrête tard",t3p:"Commence à filmer avant ton premier coup et arrête après la fin du chrono.",
+t3h:"Juste le test",t3p:"Commence à filmer juste avant ton premier coup et arrête à la fin du chrono. Garde la vidéo sous 2:20.",
 t4h:"Demande à un coéquipier",t4p:"Un coéquipier qui tient le téléphone, ça marche. Un support à téléphone sur le PERG aussi.",
-s2eye:"2 · Ta courbe",s2h:"Obtiens ta courbe",mVideo:"Téléverser ma vidéo",mType:"Entrer mes splits",len2:"Test de 2 minutes",len4:"Test de 4 minutes",
+s2eye:"2 · Ta courbe",s2h:"Obtiens ta courbe",mVideo:"Téléverser ma vidéo",mType:"Entrer mes splits",
 upBtn:"Choisis la vidéo de ton écran",upNote:"Ta vidéo reste sur ton téléphone. Seules des images fixes de l'écran sont lues, et elles ne sont pas conservées.",
 example:"Exemple chargé (un test parti trop vite). Remplace-le par tes chiffres.",peakLab:"Split au pic : le plus rapide que tu as vu au départ",
 private:"Splits au 500 m, comme 2:15. Tout se met à jour pendant que tu tapes. Rien n'est envoyé.",
@@ -359,7 +355,7 @@ var T={
   len2:"2 min",len4:"4 min",
   frames:"Getting frames from your video: {i} of {n}",reading:"Reading your screen… about 20 seconds",
   done:"Done. Check the numbers under “Type my splits” if anything looks off.",
-  eShort:"That video is too short. Film the whole test.",eLoad:"Couldn't open that video on this phone. Try another video, or type your splits.",
+  eShort:"That video is too short. Film the whole test.",eLong:"That video is too long. It has to be just your 2-minute test: trim it to under 2:20 and upload it again.",eLoad:"Couldn't open that video on this phone. Try another video, or type your splits.",
   eRead:"Couldn't read the screen in that video. Try a closer video with no glare, or type your splits.",
   eLimit:"The tracker is busy today. Type your splits, or try the video again tomorrow.",eNet:"Couldn't reach the tracker. Check your connection and try again, or type your splits.",
   ePartial:"I could only read part of your screen. Check the numbers under “Type my splits”."},
@@ -374,7 +370,7 @@ var T={
   len2:"2 min",len4:"4 min",
   frames:"Extraction des images de ta vidéo : {i} sur {n}",reading:"Lecture de ton écran… environ 20 secondes",
   done:"C'est fait. Vérifie les chiffres sous « Entrer mes splits » si quelque chose semble bizarre.",
-  eShort:"Cette vidéo est trop courte. Filme tout le test.",eLoad:"Impossible d'ouvrir cette vidéo sur ce téléphone. Essaie une autre vidéo, ou entre tes splits.",
+  eShort:"Cette vidéo est trop courte. Filme tout le test.",eLong:"Cette vidéo est trop longue. Ça doit être seulement ton test de 2 minutes : coupe-la à moins de 2:20 et téléverse-la de nouveau.",eLoad:"Impossible d'ouvrir cette vidéo sur ce téléphone. Essaie une autre vidéo, ou entre tes splits.",
   eRead:"Impossible de lire l'écran dans cette vidéo. Essaie une vidéo plus proche, sans reflet, ou entre tes splits.",
   eLimit:"L'outil est très occupé aujourd'hui. Entre tes splits, ou réessaie la vidéo demain.",eNet:"Impossible de joindre l'outil. Vérifie ta connexion et réessaie, ou entre tes splits.",
   ePartial:"J'ai pu lire seulement une partie de ton écran. Vérifie les chiffres sous « Entrer mes splits »."}
@@ -485,6 +481,7 @@ async function readVideo(file){
   try{await vid.play();vid.pause();}catch(e){}
   var dur=vid.duration;
   if(!(dur>=20)){status(t().eShort,'err');return;}
+  if(dur>141){status(t().eLong,'err');URL.revokeObjectURL(url);return;}
   // Every second for the first 40 s of the video (the start and the peak), then every 2 s. At most 120 frames, 16 per sheet.
   var times=[],tt;
   for(tt=1;tt<Math.min(40,dur-0.2);tt+=1) times.push(tt);
@@ -558,9 +555,6 @@ document.querySelectorAll('[data-mode]').forEach(function(b){b.addEventListener(
   document.getElementById('videoWrap').hidden=mode!=='video';document.getElementById('typeWrap').hidden=mode!=='type';
   if(mode==='type'){source='type';screenDist=null;series=typedSeries();}
   render();});});
-document.querySelectorAll('[data-len]').forEach(function(b){b.addEventListener('click',function(){var nl=+b.dataset.len;if(nl===L)return;L=nl;
-  document.querySelectorAll('[data-len]').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});
-  buildGrid(false);series=source==='type'?typedSeries():null;screenDist=null;status('');render();});});
 document.getElementById('peak').addEventListener('input',onType);
 document.getElementById('typeWrap').addEventListener('submit',function(e){e.preventDefault();});
 document.getElementById('shareBtn').addEventListener('click',function(){var txt=document.getElementById('shareText').textContent;try{navigator.clipboard.writeText(txt).catch(function(){});}catch(e){}});
@@ -572,7 +566,6 @@ document.getElementById('langFr').addEventListener('click',function(){setLang('f
 buildGrid(false);
 var saved=null;try{saved=JSON.parse(ls('dbs-perg')||'null');}catch(e){}
 if(saved&&saved.v&&saved.v.some(function(x){return x;})){
-  if(saved.L===240){L=240;document.querySelectorAll('[data-len]').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.len==='240'?'true':'false');});buildGrid(false);}
   document.getElementById('peak').value=saved.peak||'';[].forEach.call(document.querySelectorAll('#grid input'),function(i,k){i.value=saved.v[k]||'';});document.getElementById('example').hidden=true;
 }else loadExample();
 series=null;
