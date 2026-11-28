@@ -121,6 +121,14 @@ input[type=text].bad{border-color:var(--accent)}
 .verdict b{font:800 22px/1.1 var(--display);letter-spacing:.04em;text-transform:uppercase}
 .verdict.good b{color:var(--good)} .verdict.bad b{color:var(--accent)} .verdict.mid b{color:var(--amber)}
 .next{font-weight:600}
+.report{display:grid;gap:10px}
+.report h3{font-size:22px}
+.rep{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.rep li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px;align-items:start;background:var(--raised);border-radius:12px;padding:12px 14px}
+.rep .dot{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:800 15px/1 var(--display);color:#121315}
+.rep .dot.ok{background:var(--good)} .rep .dot.fix{background:var(--amber)} .rep .dot.bad{background:var(--accent);color:#fff}
+.rep b{display:block;font:800 18px/1.15 var(--display);letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.rep span{color:var(--muted)}
 .next b{color:var(--good);font-variant-numeric:tabular-nums}
 .share{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:14px}
 .share code{font:500 14px/1.4 var(--body);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;overflow-wrap:anywhere}
@@ -244,6 +252,7 @@ input[type=text].bad{border-color:var(--accent)}
           <div class="stat"><span class="k" data-t="kDist">Distance</span><span class="v" id="vDist">–</span><span class="s" id="vDistS"></span></div>
         </div>
         <div class="verdict" id="verdict"><b id="vTitle"></b><p id="vText"></p></div>
+        <div class="report"><h3 data-t="repH">Your pacing report</h3><ul class="rep" id="rep"></ul></div>
         <p class="next" id="next"></p>
         <div class="share">
           <p class="lab" data-t="shareLab">Send me your curve</p>
@@ -325,7 +334,7 @@ upBtn:"Choisis la vidéo de ton écran",upNote:"Ta vidéo reste sur ton téléph
 example:"Exemple chargé (un test parti trop vite). Remplace-le par tes chiffres.",peakLab:"Split au pic : le plus rapide que tu as vu au départ",
 private:"Splits au 500 m, comme 2:15. Tout se met à jour pendant que tu tapes. Rien n'est envoyé.",
 kPeak:"Pic",kAvg:"Moyenne",kOff:"Écart au pic",kDist:"Distance",
-shareLab:"Envoie-moi ta courbe",shareP:"Touche le bouton : tes chiffres sont copiés et notre conversation Instagram s'ouvre. Colle-les et je te dis ce que je changerais pour ton prochain test.",shareBtn:"Copier et envoyer sur Instagram",
+shareLab:"Envoie-moi ta courbe",shareP:"Touche le bouton : tes chiffres sont copiés et notre conversation Instagram s'ouvre. Colle-les et je te dis ce que je changerais pour ton prochain test.",shareBtn:"Copier et envoyer sur Instagram",repH:"Ton rapport de rythme",
 s3eye:"3 · Le plan",s3h:"Ton plan de course pour 2 minutes",
 p1w:"Les 10 premiers coups",p1h:"À fond",p1:"Pars à fond pour atteindre ta vitesse max. C'est ton pic.",
 p2w:"Les 5 secondes suivantes",p2h:"Installe-toi",p2:"Passe directement à ton rythme cible, avec des coups longs.",
@@ -354,6 +363,16 @@ var T={
   next:"Next test: if you peak around {p}, settle into <b>{h}</b> in the next 5 seconds and hold it. Last 20 seconds: long, powerful strokes.",
   next4:"The peak + 20 rule is for the 2-minute test. For the 4-minute test, aim for a flatter line than this one.",
   share:"My PERG curve ({len}): peak {p}, average {a} ({o} s off my peak), {d} m.",
+  rep:{startLate:["Start: too slow to get going","Your peak came at {t}. Go all out from the first stroke: 10 strokes to reach max speed."],
+   startSoft:["Start: not all out","Your hold was only {d} s off your peak, so the start wasn't all out. The plan starts with 10 strokes all out to reach max speed."],
+   fly:["Settle: you held the start too long","At 0:20 you were still at {s}, only {d} s off your peak. Take the next 5 seconds to move straight to your target pace with long strokes."],
+   slow:["Settle: you dropped too far","By 0:20 you were already {d} s off your peak ({s}). Settle at about {h} instead."],
+   settle:["Settle: good","By 0:20 you were at {s}, {d} s off your peak."],
+   slide:["Hold: your split kept sliding","From {a} at 0:30 to {b} at 1:40. You went out too hard for your hold: start it at about {h} so you can keep it."],
+   hold:["Hold: steady","You held about {a} through the body of the race, {d} s off your peak. Stay positive: if it feels too easy early on, you're in a good place."],
+   cons:["Finish: big finish, too conservative","You sped up by {d} s at the end, so you had more in the tank. Next time hold a few seconds faster."],
+   right:["Finish: paced right","You slowed by only {d} s off your hold. That's a well-paced test.","You held your pace to the end. That's a well-paced test."],
+   drop:["Finish: big drop, aimed too high","You dropped {d} s off your hold at the end. Next time settle a few seconds slower, and think long, powerful strokes."]},
   len2:"2 min",len4:"4 min",
   frames:"Getting frames from your video: {i} of {n}",reading:"Reading your screen… about 20 seconds",
   done:"Done. Check the numbers under “Type my splits” if anything looks off.",
@@ -369,6 +388,16 @@ var T={
   next:"Prochain test : si ton pic est autour de {p}, installe-toi à <b>{h}</b> dans les 5 secondes suivantes et tiens-le. Les 20 dernières secondes : des coups longs et puissants.",
   next4:"La règle du pic + 20 s est pour le test de 2 minutes. Pour le test de 4 minutes, vise une ligne plus plate que celle-ci.",
   share:"Ma courbe PERG ({len}) : pic {p}, moyenne {a} ({o} s de mon pic), {d} m.",
+  rep:{startLate:["Départ : trop lent à démarrer","Ton pic est arrivé à {t}. Pars à fond dès le premier coup : 10 coups pour atteindre ta vitesse max."],
+   startSoft:["Départ : pas à fond","Ton rythme n'était qu'à {d} s de ton pic, donc le départ n'était pas à fond. Le plan commence par 10 coups à fond pour atteindre ta vitesse max."],
+   fly:["Transition : tu as gardé le départ trop longtemps","À 0:20, tu étais encore à {s}, à seulement {d} s de ton pic. Prends les 5 secondes suivantes pour passer directement à ton rythme cible avec des coups longs."],
+   slow:["Transition : tu as trop ralenti","À 0:20, tu étais déjà à {d} s de ton pic ({s}). Installe-toi plutôt autour de {h}."],
+   settle:["Transition : bien","À 0:20, tu étais à {s}, à {d} s de ton pic."],
+   slide:["Rythme : ton split a glissé","De {a} à 0:30 à {b} à 1:40. Tu es parti trop fort pour ton rythme : commence-le autour de {h} pour pouvoir le tenir."],
+   hold:["Rythme : stable","Tu as tenu environ {a} pendant le corps de la course, à {d} s de ton pic. Reste positif : si c'est trop facile au début, tu es au bon endroit."],
+   cons:["Finale : grosse finale, trop prudent","Tu as accéléré de {d} s à la fin, donc il t'en restait. La prochaine fois, tiens quelques secondes plus vite."],
+   right:["Finale : bien géré","Tu as ralenti de seulement {d} s par rapport à ton rythme. C'est un test bien géré.","Tu as tenu ton rythme jusqu'à la fin. C'est un test bien géré."],
+   drop:["Finale : grosse chute, trop ambitieux","Tu as perdu {d} s par rapport à ton rythme à la fin. La prochaine fois, installe-toi quelques secondes plus lent, et pense à des coups longs et puissants."]},
   len2:"2 min",len4:"4 min",
   frames:"Extraction des images de ta vidéo : {i} sur {n}",reading:"Lecture de ton écran… environ 20 secondes",
   done:"C'est fait. Vérifie les chiffres sous « Entrer mes splits » si quelque chose semble bizarre.",
@@ -449,6 +478,31 @@ function chart(pts,st){
   document.getElementById('chart').innerHTML=o;
 }
 
+/* ---------- pacing report: the #58 race plan, checked against this test ---------- */
+function avgIn(pts,a,b){var v=pts.filter(function(p){return p[0]>=a&&p[0]<=b;});if(!v.length)return null;var sp=v.reduce(function(s,p){return s+500/p[1];},0)/v.length;return 500/sp;}
+function report(pts,st){
+  var R=t().rep, out=[], peak=st.peak, h=peak+20;
+  var pk=pts.reduce(function(a,p){return p[0]<=20&&p[1]<a[1]?p:a;},[0,1e9]);
+  var s20=avgIn(pts,15,25), s30=avgIn(pts,25,35), s100=avgIn(pts,90,100), hold=avgIn(pts,20,100), fin=avgIn(pts,105,120);
+  if(s20===null||hold===null||fin===null||s30===null||s100===null) return out;
+  var d20=s20-peak, dh=hold-peak, slide=s100-s30;
+  // start + settle (the best pacers settle only 10 to 15 s off their peak, so "still fast at 0:20" only counts as flying when the split then slides)
+  if(source==='video'&&pk[0]>12) out.push(['fix',R.startLate[0],fill(R.startLate[1],{t:fmt(pk[0])})]);
+  if(d20<12&&slide>12) out.push(['bad',R.fly[0],fill(R.fly[1],{s:fmt(s20),d:Math.round(d20)})]);
+  else if(dh<10) out.push(['fix',R.startSoft[0],fill(R.startSoft[1],{d:Math.round(dh)})]);
+  else if(d20>28) out.push(['fix',R.slow[0],fill(R.slow[1],{s:fmt(s20),d:Math.round(d20),h:fmt(h)})]);
+  else out.push(['ok',R.settle[0],fill(R.settle[1],{s:fmt(s20),d:Math.round(d20)})]);
+  // hold
+  if(slide>12) out.push(['bad',R.slide[0],fill(R.slide[1],{a:fmt(s30),b:fmt(s100),h:fmt(h)})]);
+  else out.push(['ok',R.hold[0],fill(R.hold[1],{a:fmt(hold),d:Math.round(dh)})]);
+  // finish
+  var fd=fin-hold;
+  if(fd<-3) out.push(['fix',R.cons[0],fill(R.cons[1],{d:Math.round(-fd)})]);
+  else if(fd<=10) out.push(['ok',R.right[0],fd>0?fill(R.right[1],{d:Math.round(fd)}):R.right[2]]);
+  else out.push(['bad',R.drop[0],fill(R.drop[1],{d:Math.round(fd)})]);
+  return out;
+}
+
 /* ---------- render ---------- */
 function render(){
   var res=document.getElementById('result');
@@ -466,6 +520,7 @@ function render(){
   else{c='bad';var plan=L===120?500*L/(st.peak+20)-st.dist:0;txt=plan>=5?[t().bad[0],fill(t().bad[1],{m:Math.round(plan)})]:t().bad0;}
   vd.className='verdict '+c; document.getElementById('vTitle').textContent=txt[0]; document.getElementById('vText').textContent=txt[1];
   document.getElementById('next').innerHTML=L===120?fill(t().next,{p:fmt(st.peak),h:fmt(st.peak+20)}):t().next4;
+  document.getElementById('rep').innerHTML=report(series,st).map(function(r){return '<li><span class="dot '+r[0]+'">'+(r[0]==='ok'?'✓':'!')+'</span><p><b>'+r[1]+'</b><span>'+r[2]+'</span></p></li>';}).join('');
   document.getElementById('shareText').textContent=fill(t().share,{len:L===120?t().len2:t().len4,p:fmt(st.peak),a:fmt(st.avg),o:Math.round(st.off),d:Math.round(st.dist)});
 }
 
