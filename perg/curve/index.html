@@ -248,7 +248,7 @@ input[type=text].bad{border-color:var(--accent)}
         <div class="stats">
           <div class="stat"><span class="k" data-t="kPeak">Peak</span><span class="v" id="vPeak">–</span></div>
           <div class="stat"><span class="k" data-t="kAvg">Average</span><span class="v" id="vAvg">–</span></div>
-          <div class="stat"><span class="k" data-t="kOff">Off your peak</span><span class="v" id="vOff">–</span></div>
+          <div class="stat"><span class="k" data-t="kOff">Hold vs peak</span><span class="v" id="vOff">–</span></div>
           <div class="stat"><span class="k" data-t="kDist">Distance</span><span class="v" id="vDist">–</span><span class="s" id="vDistS"></span></div>
         </div>
         <div class="verdict" id="verdict"><b id="vTitle"></b><p id="vText"></p></div>
@@ -333,14 +333,14 @@ s2eye:"2 · Ta courbe",s2h:"Obtiens ta courbe",mVideo:"Téléverser ma vidéo",m
 upBtn:"Choisis la vidéo de ton écran",upNote:"Ta vidéo reste sur ton téléphone. Seules des images fixes de l'écran sont lues, et elles ne sont pas conservées.",
 example:"Exemple chargé (un test parti trop vite). Remplace-le par tes chiffres.",peakLab:"Split au pic : le plus rapide que tu as vu au départ",
 private:"Splits au 500 m, comme 2:15. Tout se met à jour pendant que tu tapes. Rien n'est envoyé.",
-kPeak:"Pic",kAvg:"Moyenne",kOff:"Écart au pic",kDist:"Distance",
+kPeak:"Pic",kAvg:"Moyenne",kOff:"Rythme vs pic",kDist:"Distance",
 shareLab:"Envoie-moi ta courbe",shareP:"Touche le bouton : tes chiffres sont copiés et notre conversation Instagram s'ouvre. Colle-les et je te dis ce que je changerais pour ton prochain test.",shareBtn:"Copier et envoyer sur Instagram",repH:"Ton rapport de rythme",
 s3eye:"3 · Le plan",s3h:"Ton plan de course pour 2 minutes",
 p1w:"Les 10 premiers coups",p1h:"À fond",p1:"Pars à fond pour atteindre ta vitesse max. C'est ton pic.",
 p2w:"Les 5 secondes suivantes",p2h:"Installe-toi",p2:"Passe directement à ton rythme cible, avec des coups longs.",
 p3w:"Le corps de la course",p3h:"Tiens",p3:"Tiens environ 20 secondes plus lent que ton pic. Pic à 1:29? Tiens 1:48 à 1:52.",
 p4w:"Les 20 dernières secondes",p4h:"Vide le réservoir",p4:"Ne te précipite pas avec des coups plus rapides. Pense à des coups longs et puissants : la roue tourne plus vite et ta cadence monte d'elle-même.",
-why1:"Dans les tests que j'ai suivis, hommes et femmes tiennent environ 21 secondes plus lent que leur pic pendant le corps de la course. Les meilleurs tiennent à 10 à 15. Partir trop vite et craquer, c'est 30 ou plus.",
+why1:"Dans les tests que j'ai suivis, hommes et femmes tiennent environ 21 secondes plus lent que leur pic pendant le corps de la course. Les meilleurs tiennent entre 10 et 15. Partir trop vite et craquer, c'est 30 ou plus.",
 why2:"Compare tes chiffres seulement sur la même machine. Deux PERG peuvent afficher des valeurs très différentes.",
 s5eye:"4 · T'entraîner avec moi",s5h:"Prépare ton jour de test avec l'équipe DB Speed",s5p:"Cet outil couvre ton test. DB Speed couvre toute ta saison.",
 o1eye:"Abonnement DB Speed",o1h:"Ton programme et ta communauté, au même endroit",
@@ -356,8 +356,8 @@ n2:"Les deux tests en haut sont de vrais tests d'une équipe que je coache, part
 };
 var T={
  en:{faster:"faster is higher",target:"Target",peak:"Peak",fromScreen:"from your screen",est:"about",
-  good:["You paced it","The best pacers I've tracked hold 10 to 15 seconds off their peak. That's you."],
-  mid:["Typical pacing","Most tests hold about 21 seconds off the peak. Tighten the hold and you'll find metres."],
+  good:["On plan","You held steady and faded by less than 10 s at the end. Use your finish to fine-tune the next test."],
+  mid:["Too conservative","You sped up a lot at the end, so you had more in the tank. Next time hold a few seconds faster."],
   bad:["You flew and died","Holding your peak + 20 the whole way would be about {m} m more."],
   bad0:["You flew and died","You dropped more than 25 seconds off your peak. Settle into your target sooner."],
   next:"Next test: if you peak around {p}, settle into <b>{h}</b> in the next 5 seconds and hold it. Last 20 seconds: long, powerful strokes.",
@@ -379,10 +379,10 @@ var T={
   eShort:"That video is too short. Film the whole test.",eLong:"That video is too long. It has to be just your 2-minute test: trim it to under 2:10 and upload it again.",eLoad:"Couldn't open that video on this phone. Try another video, or type your splits.",
   eRead:"Couldn't read the screen in that video. Try a closer video with no glare, or type your splits.",eScreen:"That doesn't look like a PERG screen. Film only the screen during your test, close up, then upload it again.",
   eLimit:"The tracker is busy today. Type your splits, or try the video again tomorrow.",eNet:"Couldn't reach the tracker. Check your connection and try again, or type your splits.",eDown:"Getting your curve from a video isn't working right now. Come back a bit later, or type your splits below.",
-  ePartial:"I could only read part of your screen. Check the numbers under “Type my splits”."},
+  ePartial:"I could only read part of your screen. Fill in the missing splits under “Type my splits”."},
  fr:{faster:"plus haut = plus rapide",target:"Cible",peak:"Pic",fromScreen:"de ton écran",est:"environ",
-  good:["Bien géré","Les meilleurs que j'ai suivis tiennent à 10 à 15 secondes de leur pic. C'est toi."],
-  mid:["Gestion typique","La plupart des tests tiennent environ 21 secondes plus lent que le pic. Resserre ton rythme et tu vas gagner des mètres."],
+  good:["Selon le plan","Tu as tenu ton rythme et tu as ralenti de moins de 10 s à la fin. Sers-toi de ta finale pour ajuster ton prochain test."],
+  mid:["Trop prudent","Tu as beaucoup accéléré à la fin, donc il t'en restait. La prochaine fois, tiens quelques secondes plus vite."],
   bad:["Parti trop vite","Tenir ton pic + 20 s tout le long, ce serait environ {m} m de plus."],
   bad0:["Parti trop vite","Tu as perdu plus de 25 secondes sur ton pic. Installe-toi plus tôt à ta cible."],
   next:"Prochain test : si ton pic est autour de {p}, installe-toi à <b>{h}</b> dans les 5 secondes suivantes et tiens-le. Les 20 dernières secondes : des coups longs et puissants.",
@@ -404,7 +404,7 @@ var T={
   eShort:"Cette vidéo est trop courte. Filme tout le test.",eLong:"Cette vidéo est trop longue. Ça doit être seulement ton test de 2 minutes : coupe-la à moins de 2:10 et téléverse-la de nouveau.",eLoad:"Impossible d'ouvrir cette vidéo sur ce téléphone. Essaie une autre vidéo, ou entre tes splits.",
   eRead:"Impossible de lire l'écran dans cette vidéo. Essaie une vidéo plus proche, sans reflet, ou entre tes splits.",eScreen:"Ça ne ressemble pas à un écran de PERG. Filme seulement l'écran pendant ton test, de près, puis téléverse la vidéo de nouveau.",
   eLimit:"L'outil est très occupé aujourd'hui. Entre tes splits, ou réessaie la vidéo demain.",eNet:"Impossible de joindre l'outil. Vérifie ta connexion et réessaie, ou entre tes splits.",eDown:"Obtenir ta courbe à partir d'une vidéo ne fonctionne pas pour le moment. Reviens un peu plus tard, ou entre tes splits plus bas.",
-  ePartial:"J'ai pu lire seulement une partie de ton écran. Vérifie les chiffres sous « Entrer mes splits »."}
+  ePartial:"J'ai pu lire seulement une partie de ton écran. Complète les splits manquants sous « Entrer mes splits »."}
 };
 var EN={}; document.querySelectorAll('[data-t]').forEach(function(el){EN[el.dataset.t]=el.innerHTML;});
 var lang='en', mode='video', L=120, series=null, source='type', screenDist=null;
@@ -417,8 +417,8 @@ function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorag
 function parseSplit(s){
   s=String(s||'').trim().replace(',','.'); if(!s) return null;
   var m=s.match(/^(\d{1,2})[:.h'](\d{1,2}(?:\.\d+)?)$/), sec=null;
-  if(m) sec=+m[1]*60+parseFloat(m[2]);
-  else if(/^\d{3}$/.test(s)) sec=+s[0]*60+ +s.slice(1);
+  if(m){if(parseFloat(m[2])>=60) return null; sec=+m[1]*60+parseFloat(m[2]);}
+  else if(/^\d{3}$/.test(s)){if(+s.slice(1)>=60) return null; sec=+s[0]*60+ +s.slice(1);}
   else if(/^\d{2,3}(\.\d+)?$/.test(s)&&+s>=50) sec=+s;
   return sec!==null&&sec>=50&&sec<=400?sec:null;
 }
@@ -497,10 +497,17 @@ function report(pts,st){
   else out.push(['ok',R.hold[0],fill(R.hold[1],{a:fmt(hold),d:Math.round(dh)})]);
   // finish
   var fd=fin-hold;
-  if(fd<-3) out.push(['fix',R.cons[0],fill(R.cons[1],{d:Math.round(-fd)})]);
+  if(fd<-8) out.push(['fix',R.cons[0],fill(R.cons[1],{d:Math.round(-fd)})]);
   else if(fd<=10) out.push(['ok',R.right[0],fd>0?fill(R.right[1],{d:Math.round(fd)}):R.right[2]]);
   else out.push(['bad',R.drop[0],fill(R.drop[1],{d:Math.round(fd)})]);
   return out;
+}
+
+function paceOf(pts,st){
+  var s30=avgIn(pts,25,35), s100=avgIn(pts,90,100), hold=avgIn(pts,20,100), fin=avgIn(pts,105,120);
+  if(s30===null||s100===null||hold===null||fin===null) return null;
+  var fd=fin-hold, slide=s100-s30;
+  return {hold:hold,fd:fd,slide:slide,cat:(slide>12||fd>10)?'bad':(fd<-8?'cons':'good')};
 }
 
 /* ---------- render ---------- */
@@ -511,15 +518,21 @@ function render(){
   var st=stats(series); chart(series,st);
   document.getElementById('vPeak').textContent=fmt(st.peak);
   document.getElementById('vAvg').textContent=fmt(st.avg);
-  document.getElementById('vOff').textContent='+'+Math.round(st.off)+' s';
+  var pc=paceOf(series,st);
+  document.getElementById('vOff').textContent='+'+Math.round(pc?pc.hold-st.peak:st.off)+' s';
   document.getElementById('vDist').textContent=Math.round(st.dist)+' m';
   document.getElementById('vDistS').textContent=screenDist&&source==='video'?t().fromScreen:t().est;
   var vd=document.getElementById('verdict'), c, txt;
-  if(st.off<=15){c='good';txt=t().good;}
-  else if(st.off<=25){c='mid';txt=t().mid;}
+  var cat=pc?pc.cat:(st.off<=25?'good':'bad');
+  if(cat==='good'){c='good';txt=t().good;}
+  else if(cat==='cons'){c='mid';txt=t().mid;}
   else{c='bad';var plan=L===120?500*L/(st.peak+20)-st.dist:0;txt=plan>=5?[t().bad[0],fill(t().bad[1],{m:Math.round(plan)})]:t().bad0;}
+  // next target: peak + 20, unless they already held faster and finished well (then their own hold, or 3 s faster if too conservative)
+  var tgt=st.peak+20;
+  if(pc&&cat==='good'&&pc.hold<tgt) tgt=pc.hold;
+  if(pc&&cat==='cons') tgt=Math.min(tgt,pc.hold-3);
   vd.className='verdict '+c; document.getElementById('vTitle').textContent=txt[0]; document.getElementById('vText').textContent=txt[1];
-  document.getElementById('next').innerHTML=L===120?fill(t().next,{p:fmt(st.peak),h:fmt(st.peak+20)}):t().next4;
+  document.getElementById('next').innerHTML=L===120?fill(t().next,{p:fmt(st.peak),h:fmt(tgt)}):t().next4;
   document.getElementById('rep').innerHTML=report(series,st).map(function(r){return '<li><span class="dot '+r[0]+'">'+(r[0]==='ok'?'✓':'!')+'</span><p><b>'+r[1]+'</b><span>'+r[2]+'</span></p></li>';}).join('');
   document.getElementById('shareText').textContent=fill(t().share,{len:L===120?t().len2:t().len4,p:fmt(st.peak),a:fmt(st.avg),o:Math.round(st.off),d:Math.round(st.dist)});
 }
@@ -532,13 +545,15 @@ function seek(vid,tt){return new Promise(function(res){var done=false;function f
 function cid(){var c=ls('dbs-perg-cid');if(!c){c=Math.random().toString(36).slice(2,12);ls('dbs-perg-cid',c);}return c||'anon';}
 async function readVideo(file){
   var url=URL.createObjectURL(file), vid=document.createElement('video');
-  vid.muted=true;vid.playsInline=true;vid.setAttribute('playsinline','');vid.preload='auto';vid.src=url;
-  try{await new Promise(function(res,rej){vid.onloadeddata=res;vid.onerror=rej;setTimeout(function(){rej(new Error('timeout'));},20000);});}
-  catch(e){status(t().eLoad,'err');return;}
-  try{await vid.play();vid.pause();}catch(e){}
+  vid.muted=true;vid.playsInline=true;vid.setAttribute('playsinline','');vid.setAttribute('muted','');vid.preload='auto';
+  vid.style.cssText='position:fixed;left:-9999px;top:0;width:4px;height:4px;opacity:0;pointer-events:none';
+  document.body.appendChild(vid);vid.src=url;
+  try{await new Promise(function(res,rej){vid.onloadedmetadata=res;vid.onerror=rej;setTimeout(function(){rej(new Error('timeout'));},20000);});}
+  catch(e){status(t().eLoad,'err');vid.remove();return;}
+  try{await Promise.race([vid.play(),new Promise(function(r){setTimeout(r,2000);})]);vid.pause();}catch(e){}
   var dur=vid.duration;
-  if(!(dur>=20)){status(t().eShort,'err');return;}
-  if(dur>131){status(t().eLong,'err');URL.revokeObjectURL(url);return;}
+  if(!(dur>=20)){status(t().eShort,'err');vid.remove();return;}
+  if(dur>131){status(t().eLong,'err');URL.revokeObjectURL(url);vid.remove();return;}
   // Every second for the first 40 s of the video (the start and the peak), then every 2 s. At most 120 frames, 16 per sheet.
   var times=[],tt;
   for(tt=1;tt<Math.min(40,dur-0.2);tt+=1) times.push(tt);
@@ -556,11 +571,12 @@ async function readVideo(file){
     cx.strokeStyle='#000';cx.lineWidth=2;cx.strokeRect(x+1,y+1,tw-2,th-2);
     labels[labels.length-1].push(Math.round(times[i]));
   }
-  URL.revokeObjectURL(url);
+  URL.revokeObjectURL(url);vid.remove();
   status(t().reading,'',0.7);
   function send(s){
     var imgs=sheets.slice(s,s+2).map(function(c){return {type:'image/jpeg',data:c.toDataURL('image/jpeg',0.72).split(',')[1]};});
-    return fetch(READER_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'perg',lang:lang,cid:cid(),len:L,images:imgs,labels:labels.slice(s,s+2)})}).then(function(r){return r.json().catch(function(){return {ok:false,error:'down'};});});
+    var ac=window.AbortController?new AbortController():null; if(ac) setTimeout(function(){ac.abort();},90000);
+    return fetch(READER_URL,{signal:ac?ac.signal:undefined,method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'perg',lang:lang,cid:cid(),len:L,images:imgs,labels:labels.slice(s,s+2)})}).then(function(r){return r.json().catch(function(){return {ok:false,error:'down'};});});
   }
   var out;
   try{
@@ -580,6 +596,11 @@ async function readVideo(file){
   var frames=[];out.forEach(function(o){if(o&&o.ok)frames=frames.concat(o.frames||[]);});
   var got=toSeries(frames);
   if(!got||got.pts.length<6){status(t().eRead,'err');return;}
+  if(got.pts[got.pts.length-1][0]<100){
+    // only part of the test was read: put what we have in the typed grid and let them fill the rest
+    fillTyped(got.pts);series=null;screenDist=null;setMode('type',false);
+    status(t().ePartial,'err',null);document.getElementById('curve').scrollIntoView({block:'start'});return;
+  }
   series=got.pts;screenDist=got.dist;source='video';
   fillTyped(series);
   status(bad.length||got.pts.length<12?t().ePartial:t().done,'ok',null);
@@ -617,11 +638,12 @@ function fillTyped(pts){
 
 /* ---------- controls ---------- */
 document.getElementById('file').addEventListener('change',function(){var f=this.files&&this.files[0];if(f)readVideo(f);this.value='';});
-document.querySelectorAll('[data-mode]').forEach(function(b){b.addEventListener('click',function(){mode=b.dataset.mode;
-  document.querySelectorAll('[data-mode]').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});
-  document.getElementById('videoWrap').hidden=mode!=='video';document.getElementById('typeWrap').hidden=mode!=='type';
-  if(mode==='type'){source='type';screenDist=null;series=typedSeries();}
-  render();});});
+function setMode(m,recalc){mode=m;
+  document.querySelectorAll('[data-mode]').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.mode===m?'true':'false');});
+  document.getElementById('videoWrap').hidden=m!=='video';document.getElementById('typeWrap').hidden=m!=='type';
+  if(m==='type'&&recalc!==false){source='type';screenDist=null;series=typedSeries();}
+  render();}
+document.querySelectorAll('[data-mode]').forEach(function(b){b.addEventListener('click',function(){setMode(b.dataset.mode);});});
 document.getElementById('peak').addEventListener('input',onType);
 document.getElementById('typeWrap').addEventListener('submit',function(e){e.preventDefault();});
 document.getElementById('shareBtn').addEventListener('click',function(){var txt=document.getElementById('shareText').textContent;try{navigator.clipboard.writeText(txt).catch(function(){});}catch(e){}});
