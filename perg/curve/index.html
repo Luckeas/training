@@ -358,6 +358,8 @@ var T={
  en:{faster:"faster is higher",target:"Target",peak:"Peak",fromScreen:"from your screen",est:"about",
   good:["On plan","You held steady and faded by less than 10 s at the end. Use your finish to fine-tune the next test."],
   mid:["Too conservative","You sped up a lot at the end, so you had more in the tank. Next time hold a few seconds faster."],
+  close:["Close: not bad","You held about {g} s off your peak. Aim for about 20 next time: settle sooner and hold it."],
+  high:["Aimed too high","Your hold was fine, but you dropped a lot at the end. Next time settle a few seconds slower."],
   bad:["You flew and died","Holding your peak + 20 the whole way would be about {m} m more."],
   bad0:["You flew and died","You dropped more than 25 seconds off your peak. Settle into your target sooner."],
   next:"Next test: if you peak around {p}, settle into <b>{h}</b> in the next 5 seconds and hold it. Last 20 seconds: long, powerful strokes.",
@@ -383,6 +385,8 @@ var T={
  fr:{faster:"plus haut = plus rapide",target:"Cible",peak:"Pic",fromScreen:"de ton écran",est:"environ",
   good:["Selon le plan","Tu as tenu ton rythme et tu as ralenti de moins de 10 s à la fin. Sers-toi de ta finale pour ajuster ton prochain test."],
   mid:["Trop prudent","Tu as beaucoup accéléré à la fin, donc il t'en restait. La prochaine fois, tiens quelques secondes plus vite."],
+  close:["Presque : pas mal","Tu as tenu environ {g} s plus lent que ton pic. Vise environ 20 la prochaine fois : installe-toi plus tôt et tiens-le."],
+  high:["Trop ambitieux","Ton rythme était correct, mais tu as beaucoup ralenti à la fin. La prochaine fois, installe-toi quelques secondes plus lent."],
   bad:["Parti trop vite","Tenir ton pic + 20 s tout le long, ce serait environ {m} m de plus."],
   bad0:["Parti trop vite","Tu as perdu plus de 25 secondes sur ton pic. Installe-toi plus tôt à ta cible."],
   next:"Prochain test : si ton pic est autour de {p}, installe-toi à <b>{h}</b> dans les 5 secondes suivantes et tiens-le. Les 20 dernières secondes : des coups longs et puissants.",
@@ -493,7 +497,7 @@ function report(pts,st){
   else if(d20>28) out.push(['fix',R.slow[0],fill(R.slow[1],{s:fmt(s20),d:Math.round(d20),h:fmt(h)})]);
   else out.push(['ok',R.settle[0],fill(R.settle[1],{s:fmt(s20),d:Math.round(d20)})]);
   // hold
-  if(slide>12) out.push(['bad',R.slide[0],fill(R.slide[1],{a:fmt(s30),b:fmt(s100),h:fmt(h)})]);
+  if(slide>15) out.push(['bad',R.slide[0],fill(R.slide[1],{a:fmt(s30),b:fmt(s100),h:fmt(h)})]);
   else out.push(['ok',R.hold[0],fill(R.hold[1],{a:fmt(hold),d:Math.round(dh)})]);
   // finish
   var fd=fin-hold;
@@ -506,8 +510,11 @@ function report(pts,st){
 function paceOf(pts,st){
   var s30=avgIn(pts,25,35), s100=avgIn(pts,90,100), hold=avgIn(pts,20,100), fin=avgIn(pts,105,120);
   if(s30===null||s100===null||hold===null||fin===null) return null;
-  var fd=fin-hold, slide=s100-s30;
-  return {hold:hold,fd:fd,slide:slide,cat:(slide>12||fd>10)?'bad':(fd<-8?'cons':'good')};
+  var fd=fin-hold, slide=s100-s30, gap=hold-st.peak;
+  // Zones (Martin, Nov 27): hold about peak + 20 is the plan, up to +25 is fine, +25 to +28 is close, over +28 (or a split that keeps sliding) is fly and die.
+  // The finish decides the rest: a massive finish (8+ s faster) = too conservative; a big drop (10+ s slower) = aimed too high.
+  var cat=fd<-8?'cons':(gap>28||slide>15)?'fly':fd>10?'high':gap>25?'close':'good';
+  return {hold:hold,fd:fd,slide:slide,gap:gap,cat:cat};
 }
 
 /* ---------- render ---------- */
@@ -523,14 +530,17 @@ function render(){
   document.getElementById('vDist').textContent=Math.round(st.dist)+' m';
   document.getElementById('vDistS').textContent=screenDist&&source==='video'?t().fromScreen:t().est;
   var vd=document.getElementById('verdict'), c, txt;
-  var cat=pc?pc.cat:(st.off<=25?'good':'bad');
+  var cat=pc?pc.cat:(st.off<=25?'good':'fly');
   if(cat==='good'){c='good';txt=t().good;}
   else if(cat==='cons'){c='mid';txt=t().mid;}
+  else if(cat==='close'){c='mid';txt=[t().close[0],fill(t().close[1],{g:Math.round(pc.gap)})];}
+  else if(cat==='high'){c='mid';txt=t().high;}
   else{c='bad';var plan=L===120?500*L/(st.peak+20)-st.dist:0;txt=plan>=5?[t().bad[0],fill(t().bad[1],{m:Math.round(plan)})]:t().bad0;}
   // next target: peak + 20, unless they already held faster and finished well (then their own hold, or 3 s faster if too conservative)
   var tgt=st.peak+20;
   if(pc&&cat==='good'&&pc.hold<tgt) tgt=pc.hold;
   if(pc&&cat==='cons') tgt=Math.min(tgt,pc.hold-3);
+  if(pc&&cat==='high') tgt=Math.max(tgt,pc.hold+3);
   vd.className='verdict '+c; document.getElementById('vTitle').textContent=txt[0]; document.getElementById('vText').textContent=txt[1];
   document.getElementById('next').innerHTML=L===120?fill(t().next,{p:fmt(st.peak),h:fmt(tgt)}):t().next4;
   document.getElementById('rep').innerHTML=report(series,st).map(function(r){return '<li><span class="dot '+r[0]+'">'+(r[0]==='ok'?'✓':'!')+'</span><p><b>'+r[1]+'</b><span>'+r[2]+'</span></p></li>';}).join('');
