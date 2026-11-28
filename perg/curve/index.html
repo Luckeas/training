@@ -378,7 +378,7 @@ var T={
   done:"Done. Check the numbers under “Type my splits” if anything looks off.",
   eShort:"That video is too short. Film the whole test.",eLong:"That video is too long. It has to be just your 2-minute test: trim it to under 2:10 and upload it again.",eLoad:"Couldn't open that video on this phone. Try another video, or type your splits.",
   eRead:"Couldn't read the screen in that video. Try a closer video with no glare, or type your splits.",eScreen:"That doesn't look like a PERG screen. Film only the screen during your test, close up, then upload it again.",
-  eLimit:"The tracker is busy today. Type your splits, or try the video again tomorrow.",eNet:"Couldn't reach the tracker. Check your connection and try again, or type your splits.",
+  eLimit:"The tracker is busy today. Type your splits, or try the video again tomorrow.",eNet:"Couldn't reach the tracker. Check your connection and try again, or type your splits.",eDown:"Getting your curve from a video isn't working right now. Come back a bit later, or type your splits below.",
   ePartial:"I could only read part of your screen. Check the numbers under “Type my splits”."},
  fr:{faster:"plus haut = plus rapide",target:"Cible",peak:"Pic",fromScreen:"de ton écran",est:"environ",
   good:["Bien géré","Les meilleurs que j'ai suivis tiennent à 10 à 15 secondes de leur pic. C'est toi."],
@@ -403,7 +403,7 @@ var T={
   done:"C'est fait. Vérifie les chiffres sous « Entrer mes splits » si quelque chose semble bizarre.",
   eShort:"Cette vidéo est trop courte. Filme tout le test.",eLong:"Cette vidéo est trop longue. Ça doit être seulement ton test de 2 minutes : coupe-la à moins de 2:10 et téléverse-la de nouveau.",eLoad:"Impossible d'ouvrir cette vidéo sur ce téléphone. Essaie une autre vidéo, ou entre tes splits.",
   eRead:"Impossible de lire l'écran dans cette vidéo. Essaie une vidéo plus proche, sans reflet, ou entre tes splits.",eScreen:"Ça ne ressemble pas à un écran de PERG. Filme seulement l'écran pendant ton test, de près, puis téléverse la vidéo de nouveau.",
-  eLimit:"L'outil est très occupé aujourd'hui. Entre tes splits, ou réessaie la vidéo demain.",eNet:"Impossible de joindre l'outil. Vérifie ta connexion et réessaie, ou entre tes splits.",
+  eLimit:"L'outil est très occupé aujourd'hui. Entre tes splits, ou réessaie la vidéo demain.",eNet:"Impossible de joindre l'outil. Vérifie ta connexion et réessaie, ou entre tes splits.",eDown:"Obtenir ta courbe à partir d'une vidéo ne fonctionne pas pour le moment. Reviens un peu plus tard, ou entre tes splits plus bas.",
   ePartial:"J'ai pu lire seulement une partie de ton écran. Vérifie les chiffres sous « Entrer mes splits »."}
 };
 var EN={}; document.querySelectorAll('[data-t]').forEach(function(el){EN[el.dataset.t]=el.innerHTML;});
@@ -560,13 +560,14 @@ async function readVideo(file){
   status(t().reading,'',0.7);
   function send(s){
     var imgs=sheets.slice(s,s+2).map(function(c){return {type:'image/jpeg',data:c.toDataURL('image/jpeg',0.72).split(',')[1]};});
-    return fetch(READER_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'perg',lang:lang,cid:cid(),len:L,images:imgs,labels:labels.slice(s,s+2)})}).then(function(r){return r.json();});
+    return fetch(READER_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'perg',lang:lang,cid:cid(),len:L,images:imgs,labels:labels.slice(s,s+2)})}).then(function(r){return r.json().catch(function(){return {ok:false,error:'down'};});});
   }
   var out;
   try{
     // Read the first 2 sheets first: if they show no PERG screen at all, stop there (saves the rest of the reads).
     var first=await send(0);
-    if(first&&first.ok){
+    if(!first||(!first.ok&&(first.error==='down'||first.error==='off'))){status(t().eDown,'err');return;}
+    if(first.ok){
       var seen=(first.frames||[]).filter(function(f){return f.readable!==false&&(f.time||f.split);}).length;
       if(seen<3){status(t().eScreen,'err');return;}
     }
@@ -575,7 +576,7 @@ async function readVideo(file){
     out=await Promise.all(reqs);
   }catch(e){status(t().eNet,'err');return;}
   var bad=out.filter(function(o){return !o||!o.ok;});
-  if(bad.length===out.length){status(bad[0]&&bad[0].error==='limit'?t().eLimit:t().eRead,'err');return;}
+  if(bad.length===out.length){var be=bad[0]&&bad[0].error;status(be==='limit'?t().eLimit:(be==='down'||be==='off'||!bad[0])?t().eDown:t().eRead,'err');return;}
   var frames=[];out.forEach(function(o){if(o&&o.ok)frames=frames.concat(o.frames||[]);});
   var got=toSeries(frames);
   if(!got||got.pts.length<6){status(t().eRead,'err');return;}
